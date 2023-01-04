@@ -1,5 +1,9 @@
 #!/bin/bash
 
+git checkout main
+git pull
+git fetch --tags
+
 LIB_NAME="Akvo-ResponseGrouper"
 CURRENT_VERSION=$(< ./src/AkvoResponseGrouper/__init__.py tr ' ' _ \
     | grep __version__ \
