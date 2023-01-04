@@ -38,6 +38,7 @@ if [[ $# -eq 0 ]]; then
     printf "Release: %s %s\n" "$LIB_NAME" "$CURRENT_VERSION"
     printf "Description:\n"
     git tag -a "$CURRENT_VERSION" -m "New Release $CURRENT_VERSION: $DESC"
+    git push --tags
     printf "%s" "${DESC}"
-    push_release "${CURRENT_VERSION} ${DESC}"
+    push_release "${CURRENT_VERSION}" "${DESC}"
 fi
