@@ -1,4 +1,4 @@
-class Example(object):
+class response_grouper(object):
     def __init__(self, n):
         self.value = n
 
