@@ -27,7 +27,6 @@ setuptools.setup(
         'Topic :: Software Development :: Build Tools',
         'Topic :: Database :: Database Engines/Servers',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3 :: Only',
@@ -35,7 +34,7 @@ setuptools.setup(
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: OS Independent',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.8.5',
     install_requires=['pandas', 'pydantic'],
     extras_require={
         'dev': ['check-manifest'],
