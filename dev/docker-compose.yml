@@ -1,9 +1,6 @@
 ---
 version: "3.9"
 services:
-  mainnetwork:
-    image: alpine:3.14.0
-    command: ["tail", "-f", "/dev/null"]
   db:
     image: postgres:12-alpine
     volumes:
@@ -21,9 +18,10 @@ services:
     volumes:
       - ./backend:/app:delegated
     environment:
-      - DATABASE_URL=postgresql://akvo:password@db:5432/example
+      - DATABASE_URL=postgresql://akvo:password@db:5432/demo
     depends_on:
       - db
-    network_mode: service:mainnetwork
+    ports:
+      - 5000:5000
 volumes:
   pg-data:
