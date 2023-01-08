@@ -1,0 +1,129 @@
+#+PROPERTY: header-args:sql     :exports both
+#+PROPERTY: header-args:sql+    :engine postgresql
+#+PROPERTY: header-args:sql+    :dbhost localhost
+#+PROPERTY: header-args:sql+    :dbuser akvo
+#+PROPERTY: header-args:sql+    :dbpassword password
+#+PROPERTY: header-args:sql+    :database demo
+#+PROPERTY: header-args :tangle data-model.sql
+#+STARTUP: showall
+
+* Table Schema
+
+#+begin_src sql
+  \d
+#+end_src
+
+#+RESULTS:
+| List of relations |                       |          |       |
+|-------------------+-----------------------+----------+-------|
+| Schema            | Name                  | Type     | Owner |
+| public            | alembic_version       | table    | akvo  |
+| public            | answer                | table    | akvo  |
+| public            | answer_id_seq         | sequence | akvo  |
+| public            | data                  | table    | akvo  |
+| public            | data_id_seq           | sequence | akvo  |
+| public            | form                  | table    | akvo  |
+| public            | form_id_seq           | sequence | akvo  |
+| public            | option                | table    | akvo  |
+| public            | option_id_seq         | sequence | akvo  |
+| public            | question              | table    | akvo  |
+| public            | question_group        | table    | akvo  |
+| public            | question_group_id_seq | sequence | akvo  |
+| public            | question_id_seq       | sequence | akvo  |
+
+** Form
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'form'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name | data_type         |
+|-------------+-------------------|
+| id          | integer           |
+| name        | character varying |
+
+** Question Group
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'question_group'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name | data_type         |
+|-------------+-------------------|
+| id          | integer           |
+| order       | integer           |
+| name        | character varying |
+| form        | integer           |
+
+** Question
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'question'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name    | data_type         |
+|----------------+-------------------|
+| id             | integer           |
+| order          | integer           |
+| name           | character varying |
+| form           | integer           |
+| type           | USER-DEFINED      |
+| question_group | integer           |
+
+** Option
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'option'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name | data_type         |
+|-------------+-------------------|
+| id          | integer           |
+| order       | integer           |
+| name        | character varying |
+| question    | integer           |
+
+** Data
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'data'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name | data_type                   |
+|-------------+-----------------------------|
+| id          | integer                     |
+| form        | integer                     |
+| created     | timestamp without time zone |
+
+** Answer
+#+begin_src sql
+  SELECT column_name, data_type
+  FROM   information_schema.columns
+  WHERE  table_name = 'answer'
+  ORDER  BY ordinal_position;
+#+end_src
+
+#+RESULTS:
+| column_name | data_type        |
+|-------------+------------------|
+| id          | integer          |
+| question    | integer          |
+| data        | integer          |
+| value       | double precision |
+| text        | text             |
+| options     | ARRAY            |
