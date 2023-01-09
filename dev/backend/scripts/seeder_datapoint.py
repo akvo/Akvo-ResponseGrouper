@@ -26,7 +26,6 @@ if len(sys.argv) > 1:
     repeats = sys.argv[1]
 
 for form in forms:
-    answer_options = []
     for i in range(1, int(repeats)):
         data = Data(
                 form=form.id,
@@ -34,27 +33,18 @@ for form in forms:
                 created=datetime.now())
         for qg in form.question_group:
             for q in qg.question:
+                answer = Answer(
+                        question=q.id,
+                        data=data.id)
                 if len(q.option):
                     ox = random.randint(0, len(q.option) - 1)
                     opt = q.option[ox]
-                    answer = Answer(
-                        question=q.id,
-                        data=data.id,
-                        options=[opt.name]
-                    )
-                    data.answer.append(answer)
+                    answer.options = [opt.name]
                 if q.type == QuestionType.number:
-                    answer = Answer(
-                        question=q.id,
-                        data=data.id,
-                        value=random.randint(1, 5)
-                    )
-                    data.answer.append(answer)
+                    answer.value = random.randint(1, 5)
                 if q.type == QuestionType.text:
-                    answer = Answer(
-                        question=q.id,
-                        data=data.id,
-                        text=fake.name())
+                    answer.text = fake.name()
+                data.answer.append(answer)
         session.add(data)
         session.commit()
         session.refresh(data)

@@ -30,4 +30,3 @@ def truncate(session: Session, table: str):
     session.commit()
     session.flush()
     return f"{table} Truncated"
-

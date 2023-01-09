@@ -110,6 +110,16 @@
 | form        | integer                     |
 | created     | timestamp without time zone |
 
+#+begin_src sql
+  SELECT COUNT(*)
+  FROM   data;
+#+end_src
+
+#+RESULTS:
+| count |
+|-------|
+|    99 |
+
 ** Answer
 #+begin_src sql
   SELECT column_name, data_type
@@ -127,3 +137,31 @@
 | value       | double precision |
 | text        | text             |
 | options     | ARRAY            |
+
+#+begin_src sql
+  SELECT COUNT(*)
+  FROM   answer;
+#+end_src
+
+#+RESULTS:
+| count |
+|-------|
+|   693 |
+
+#+begin_src sql
+  SELECT *
+  FROM   answer
+  LIMIT 8;
+#+end_src
+
+#+RESULTS:
+| id | question | data | value | text            | options              |
+|----+----------+------+-------+-----------------+----------------------|
+|  1 |        1 |    1 |       |                 | {Urban}              |
+|  2 |        2 |    1 |       |                 | {Female}             |
+|  3 |        3 |    1 |       |                 | {sibling}            |
+|  4 |        4 |    1 |       |                 | {Female}             |
+|  5 |        5 |    1 |     5 |                 |                      |
+|  6 |        6 |    1 |     1 |                 |                      |
+|  7 |        7 |    1 |       |                 | {"Seasonal migrant"} |
+|  8 |        8 |    1 |       | Michael Jackson |                      |

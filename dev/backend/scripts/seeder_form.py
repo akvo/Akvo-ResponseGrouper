@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Base.metadata.create_all(bind=engine)
 session = SessionLocal()
 
-file_path = f"./sources/form.json"
+file_path = "./sources/form.json"
 
 start_time = time.process_time()
 
