@@ -170,72 +170,53 @@
 * Example Query
 
 #+begin_src sql
-  SELECT data, category
-  FROM (
-      SELECT
-        data,
-        COUNT(non_rural_female_spouse),
-        3 as valid,
-        'Non-Rural Female Head' as category
-      from
-        (
-          SELECT
-            data,
-            CASE WHEN ('Urban' = ANY(options))
-            OR ('Peri-urban' = ANY(options))
-            AND (question = 1) THEN True WHEN ('Female' = ANY(options))
-            AND (question = 2) THEN True WHEN ('Head' = ANY(options))
-            AND (question = 3) THEN True ELSE False END AS non_rural_female_spouse
-          FROM
-            answer
-        ) aw
-      WHERE
-        non_rural_female_spouse = True
-      GROUP BY
-        data
-      UNION
-      SELECT
-        data,
-        COUNT(rural_any_gender_head),
-        2 as valid,
-        'Rural Any-Head' as category
-      from
-        (
-          SELECT
-            data,
-            CASE WHEN ('Rural' = ANY(options))
-            AND (question = 1) THEN True WHEN ('Head' = ANY(options))
-            AND (question = 3) THEN True ELSE False END AS rural_any_gender_head
-          FROM
-            answer
-        ) aw
-      WHERE
-        rural_any_gender_head = True
-      GROUP BY
-        data
-  ) d
-  where d.count = d.valid;
+SELECT data, 'Category 1' as name, category
+FROM (
+  SELECT data, COUNT(non_rural_female_spouse), 3 as valid, 'Non-Rural Female Spouse' as category
+  FROM (SELECT data, CASE
+    WHEN ('Peri-urban' = ANY(options)) AND (question = 1) THEN True
+    WHEN ('Urban' = ANY(options)) AND (question = 1) THEN True
+    WHEN ('Female' = ANY(options)) AND (question = 2) THEN True
+    WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
+    END AS non_rural_female_spouse
+    FROM
+    answer
+   ) aw
+  WHERE non_rural_female_spouse = True
+  GROUP BY data
+  UNION
+  SELECT data, COUNT(rural_any_gender_head), 2 as valid, 'Rural Any-Gender Head' as category
+  FROM (SELECT data, CASE
+    WHEN ('Rural' = ANY(options)) AND (question = 1) THEN True
+    WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
+    END AS rural_any_gender_head
+    FROM
+    answer
+   ) aw
+  WHERE rural_any_gender_head = True
+  GROUP BY data
+) d WHERE d.count = d.valid;
 #+end_src
 
 #+RESULTS:
-| data | category              |
-|------+-----------------------|
-|    3 | Non-Rural Female Head |
-|    6 | Non-Rural Female Head |
-|   24 | Non-Rural Female Head |
-|   25 | Rural Any-Head        |
-|   32 | Non-Rural Female Head |
-|   35 | Non-Rural Female Head |
-|   43 | Non-Rural Female Head |
-|   53 | Rural Any-Head        |
-|   58 | Rural Any-Head        |
-|   63 | Non-Rural Female Head |
-|   66 | Non-Rural Female Head |
-|   79 | Non-Rural Female Head |
-|   81 | Non-Rural Female Head |
-|   92 | Non-Rural Female Head |
-|   93 | Non-Rural Female Head |
-|   96 | Rural Any-Head        |
+| data | name       | category                |
+|------+------------+-------------------------|
+|    3 | Category 1 | Non-Rural Female Spouse |
+|    6 | Category 1 | Non-Rural Female Spouse |
+|   24 | Category 1 | Non-Rural Female Spouse |
+|   25 | Category 1 | Rural Any-Gender Head   |
+|   32 | Category 1 | Non-Rural Female Spouse |
+|   35 | Category 1 | Non-Rural Female Spouse |
+|   43 | Category 1 | Non-Rural Female Spouse |
+|   53 | Category 1 | Rural Any-Gender Head   |
+|   58 | Category 1 | Rural Any-Gender Head   |
+|   63 | Category 1 | Non-Rural Female Spouse |
+|   66 | Category 1 | Non-Rural Female Spouse |
+|   79 | Category 1 | Non-Rural Female Spouse |
+|   81 | Category 1 | Non-Rural Female Spouse |
+|   92 | Category 1 | Non-Rural Female Spouse |
+|   93 | Category 1 | Non-Rural Female Spouse |
+|   96 | Category 1 | Rural Any-Gender Head   |
 
 #+begin_src sql
   select data
