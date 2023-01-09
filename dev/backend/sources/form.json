@@ -1,0 +1,115 @@
+{
+  "id": 1,
+  "name": "Example Questionnaire",
+  "question_groups": [
+    {
+      "question_group": "Group 1",
+      "questions": [
+        {
+          "id": 1,
+          "name": "Whether Urban, Peri Urban or Rural",
+          "order": 1,
+          "type": "option",
+          "options": [
+            {
+              "name": "Rural"
+            },
+            {
+              "name": "Peri-urban"
+            },
+            {
+              "name": "Urban"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Respondent Gender",
+          "order": 2,
+          "type": "option",
+          "options": [
+            {
+              "name": "Male"
+            },
+            {
+              "name": "Female"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Relationship to HH Head",
+          "order": 3,
+          "type": "option",
+          "options": [
+            {
+              "name": "Head"
+            },
+            {
+              "name": "Spouse"
+            },
+            {
+              "name": "Offspring"
+            },
+            {
+              "name": "sibling"
+            },
+            {
+              "name": "Parent"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "HH Head Gender",
+          "order": 4,
+          "type": "option",
+          "options": [
+            {
+              "name": "Male"
+            },
+            {
+              "name": "Female"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "HH Age",
+          "order": 5,
+          "type": "number"
+        },
+        {
+          "id": 6,
+          "name": "HH Members",
+          "order": 6,
+          "required": true,
+          "type": "number"
+        },
+        {
+          "id": 7,
+          "name": "Residential Status",
+          "order": 7,
+          "type": "option",
+          "options": [
+            {
+              "name": "Permanent"
+            },
+            {
+              "name": "Seasonal migrant"
+            },
+            {
+              "name": "Nomadic"
+            },
+            {
+              "name": "Tenant"
+            },
+            {
+              "name": "Refugee/IDPs"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

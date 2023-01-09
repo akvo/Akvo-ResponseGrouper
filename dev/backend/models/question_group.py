@@ -29,10 +29,10 @@ class QuestionGroup(Base):
                             backref="question")
 
     def __init__(self,
-                 id: Optional[int],
                  name: str,
                  form: form,
-                 order: order):
+                 order: order,
+                 id: Optional[int] = None):
         self.id = id
         self.name = name
         self.form = form

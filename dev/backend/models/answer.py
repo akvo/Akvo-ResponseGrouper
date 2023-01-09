@@ -36,7 +36,6 @@ class Answer(Base):
 
     def __init__(self,
                  question: int,
-                 created: datetime,
                  data: Optional[int] = None,
                  text: Optional[str] = None,
                  value: Optional[float] = None,
