@@ -1,0 +1,55 @@
+[
+  {
+    "name": "Category 1",
+    "rules": [
+      {
+        "name": "Non-Rural Female Spouse",
+        "or": [
+          {
+            "question": 1,
+            "options": [
+              "Peri-urban"
+            ]
+          },
+          {
+            "question": 1,
+            "options": [
+              "Urban"
+            ]
+          }
+        ],
+        "and": [
+          {
+            "question": 2,
+            "options": [
+              "Female"
+            ]
+          },
+          {
+            "question": 3,
+            "options": [
+              "Head"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Rural Any-Gender Head",
+        "and": [
+          {
+            "question": 1,
+            "options": [
+              "Rural"
+            ]
+          },
+          {
+            "question": 3,
+            "options": [
+              "Head"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

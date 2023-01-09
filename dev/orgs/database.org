@@ -165,3 +165,86 @@
 |  6 |        6 |    1 |     1 |                 |                      |
 |  7 |        7 |    1 |       |                 | {"Seasonal migrant"} |
 |  8 |        8 |    1 |       | Michael Jackson |                      |
+
+
+* Example Query
+
+#+begin_src sql
+  SELECT data, category
+  FROM (
+      SELECT
+        data,
+        COUNT(non_rural_female_spouse),
+        3 as valid,
+        'Non-Rural Female Head' as category
+      from
+        (
+          SELECT
+            data,
+            CASE WHEN ('Urban' = ANY(options))
+            OR ('Peri-urban' = ANY(options))
+            AND (question = 1) THEN True WHEN ('Female' = ANY(options))
+            AND (question = 2) THEN True WHEN ('Head' = ANY(options))
+            AND (question = 3) THEN True ELSE False END AS non_rural_female_spouse
+          FROM
+            answer
+        ) aw
+      WHERE
+        non_rural_female_spouse = True
+      GROUP BY
+        data
+      UNION
+      SELECT
+        data,
+        COUNT(rural_any_gender_head),
+        2 as valid,
+        'Rural Any-Head' as category
+      from
+        (
+          SELECT
+            data,
+            CASE WHEN ('Rural' = ANY(options))
+            AND (question = 1) THEN True WHEN ('Head' = ANY(options))
+            AND (question = 3) THEN True ELSE False END AS rural_any_gender_head
+          FROM
+            answer
+        ) aw
+      WHERE
+        rural_any_gender_head = True
+      GROUP BY
+        data
+  ) d
+  where d.count = d.valid;
+#+end_src
+
+#+RESULTS:
+| data | category              |
+|------+-----------------------|
+|    3 | Non-Rural Female Head |
+|    6 | Non-Rural Female Head |
+|   24 | Non-Rural Female Head |
+|   25 | Rural Any-Head        |
+|   32 | Non-Rural Female Head |
+|   35 | Non-Rural Female Head |
+|   43 | Non-Rural Female Head |
+|   53 | Rural Any-Head        |
+|   58 | Rural Any-Head        |
+|   63 | Non-Rural Female Head |
+|   66 | Non-Rural Female Head |
+|   79 | Non-Rural Female Head |
+|   81 | Non-Rural Female Head |
+|   92 | Non-Rural Female Head |
+|   93 | Non-Rural Female Head |
+|   96 | Rural Any-Head        |
+
+#+begin_src sql
+  select data
+  from answer where 'Urban'=ANY(options) and question = 1 LIMIT 3;
+#+end_src
+
+#+RESULTS:
+| data |
+|------|
+|    1 |
+|    3 |
+|    6 |
