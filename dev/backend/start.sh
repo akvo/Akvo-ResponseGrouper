@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
-set -eu
 pip -q install --upgrade pip
 pip -q install --cache-dir=.pip -r requirements.txt
 pip check
 
 if [[ -z "${DEV}" ]]; then
-	pip install --upgrade AkvoResponseGrouper
+	pip uninstall AkvoResponseGrouper || true
+	pip install AkvoResponseGrouper
 else
 	pip uninstall AkvoResponseGrouper || true
 fi

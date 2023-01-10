@@ -10,6 +10,19 @@ from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 
 
+parser = argparse.ArgumentParser("akvo-responsegrouper")
+parser.add_argument(
+    "-c",
+    "--config",
+    help="akvo-responsegrouper -c <json_file_config>",
+    type=str,
+)
+parser.add_argument(
+    "-d", "--drop", help="Drop the ar_category view table", action="store_true"
+)
+args = parser.parse_args()
+
+
 class Operator(Enum):
     _or = "or"
     _and = "and"
@@ -78,7 +91,7 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-def check(commands: List[str]):
+def check(args: List[str]):
     DATABASE_URL = os.environ.get("DATABASE_URL")
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
@@ -90,7 +103,7 @@ def check(commands: List[str]):
         print(f"Error connection from {DATABASE_URL}")
         exit(1)
 
-    if commands.drop:
+    if args.drop:
         with engine.connect() as connection:
             with connection.begin():
                 connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
@@ -98,9 +111,9 @@ def check(commands: List[str]):
     return engine
 
 
-def main(commands):
-    engine = check(commands)
-    file_config = open(commands.config)
+def main():
+    engine = check(args)
+    file_config = open(args.config)
     config_dict = json.load(file_config)
     file_config.close()
 
@@ -144,17 +157,5 @@ def main(commands):
             connection.execute(text(mview))
 
 
-parser = argparse.ArgumentParser("akvo-responsegrouper")
-parser.add_argument(
-    "-c",
-    "--config",
-    help="akvo-responsegrouper -c <json_file_config>",
-    type=str,
-)
-parser.add_argument(
-    "-d", "--drop", help="Drop the ar_category view table", action="store_true"
-)
-args = parser.parse_args()
-
 if __name__ == "__main__":
-    main(args)
+    main()
