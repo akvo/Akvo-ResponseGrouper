@@ -35,7 +35,7 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.8.5',
-    install_requires=['pandas', 'pydantic'],
+    install_requires=['pydantic', 'sqlalchemy-views'],
     extras_require={
         'dev': ['check-manifest'],
         # 'test': ['coverage'],

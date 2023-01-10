@@ -3,33 +3,25 @@
     "name": "Category 1",
     "categories": [
       {
-        "name": "Non-Rural Female Spouse",
+        "name": "Non-Rural Female Head",
         "or": [
           {
             "question": 1,
-            "options": [
-              "Peri-urban"
-            ]
+            "options": ["Peri-urban"]
           },
           {
             "question": 1,
-            "options": [
-              "Urban"
-            ]
+            "options": ["Urban"]
           }
         ],
         "and": [
           {
             "question": 2,
-            "options": [
-              "Female"
-            ]
+            "options": ["Female"]
           },
           {
             "question": 3,
-            "options": [
-              "Head"
-            ]
+            "options": ["Head"]
           }
         ]
       },
@@ -38,15 +30,11 @@
         "and": [
           {
             "question": 1,
-            "options": [
-              "Rural"
-            ]
+            "options": ["Rural"]
           },
           {
             "question": 3,
-            "options": [
-              "Head"
-            ]
+            "options": ["Head"]
           }
         ]
       }
@@ -60,15 +48,11 @@
         "and": [
           {
             "question": 2,
-            "options": [
-              "Male"
-            ]
+            "options": ["Male"]
           },
           {
             "question": 7,
-            "options": [
-              "Nomadic"
-            ]
+            "options": ["Nomadic"]
           }
         ]
       },
@@ -77,15 +61,11 @@
         "and": [
           {
             "question": 7,
-            "options": [
-              "Permanent"
-            ]
+            "options": ["Permanent"]
           },
           {
             "question": 4,
-            "options": [
-              "Female"
-            ]
+            "options": ["Female"]
           }
         ]
       }

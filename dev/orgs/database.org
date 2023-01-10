@@ -178,19 +178,19 @@
 * Example Query
 
 #+begin_src sql
-  SELECT data, 'Category 1' as name, category
+    SELECT data, 'Category 1' as name, category
   FROM (
-    SELECT data, COUNT(non_rural_female_spouse), 3 as valid, 'Non-Rural Female Spouse' as category
+    SELECT data, COUNT(non_rural_female_head), 3 as valid, 'Non-Rural Female Head' as category
     FROM (SELECT data, CASE
       WHEN ('Female' = ANY(options)) AND (question = 2) THEN True
       WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
       WHEN ('Peri-urban' = ANY(options)) AND (question = 1) THEN True
       WHEN ('Urban' = ANY(options)) AND (question = 1) THEN True
-      END AS non_rural_female_spouse
+      END AS non_rural_female_head
       FROM
       answer
      ) aw
-    WHERE non_rural_female_spouse = True
+    WHERE non_rural_female_head = True
     GROUP BY data
     UNION
     SELECT data, COUNT(rural_any_gender_head), 2 as valid, 'Rural Any-Gender Head' as category
@@ -235,8 +235,8 @@
 #+RESULTS:
 | data | name       | category                    |
 |------+------------+-----------------------------|
-|    3 | Category 1 | Non-Rural Female Spouse     |
-|    6 | Category 1 | Non-Rural Female Spouse     |
+|    3 | Category 1 | Non-Rural Female Head       |
+|    6 | Category 1 | Non-Rural Female Head       |
 |    8 | Category 2 | Male Non-Permanent Resident |
 |    9 | Category 2 | Male Non-Permanent Resident |
 |   16 | Category 2 | Male Non-Permanent Resident |
@@ -244,41 +244,122 @@
 |   18 | Category 2 | Male Non-Permanent Resident |
 |   21 | Category 2 | Female Permanent Resident   |
 |   22 | Category 2 | Male Non-Permanent Resident |
-|   24 | Category 1 | Non-Rural Female Spouse     |
+|   24 | Category 1 | Non-Rural Female Head       |
 |   25 | Category 1 | Rural Any-Gender Head       |
 |   27 | Category 2 | Male Non-Permanent Resident |
 |   28 | Category 2 | Male Non-Permanent Resident |
 |   29 | Category 2 | Female Permanent Resident   |
 |   30 | Category 2 | Male Non-Permanent Resident |
-|   32 | Category 1 | Non-Rural Female Spouse     |
-|   35 | Category 1 | Non-Rural Female Spouse     |
-|   43 | Category 1 | Non-Rural Female Spouse     |
+|   32 | Category 1 | Non-Rural Female Head       |
+|   35 | Category 1 | Non-Rural Female Head       |
+|   43 | Category 1 | Non-Rural Female Head       |
 |   48 | Category 2 | Female Permanent Resident   |
 |   53 | Category 1 | Rural Any-Gender Head       |
 |   55 | Category 2 | Male Non-Permanent Resident |
 |   56 | Category 2 | Male Non-Permanent Resident |
 |   58 | Category 1 | Rural Any-Gender Head       |
-|   63 | Category 1 | Non-Rural Female Spouse     |
-|   66 | Category 1 | Non-Rural Female Spouse     |
+|   63 | Category 1 | Non-Rural Female Head       |
+|   66 | Category 1 | Non-Rural Female Head       |
 |   70 | Category 2 | Female Permanent Resident   |
 |   71 | Category 2 | Male Non-Permanent Resident |
 |   73 | Category 2 | Male Non-Permanent Resident |
-|   79 | Category 1 | Non-Rural Female Spouse     |
-|   81 | Category 1 | Non-Rural Female Spouse     |
+|   79 | Category 1 | Non-Rural Female Head       |
+|   81 | Category 1 | Non-Rural Female Head       |
 |   91 | Category 2 | Male Non-Permanent Resident |
-|   92 | Category 1 | Non-Rural Female Spouse     |
-|   93 | Category 1 | Non-Rural Female Spouse     |
+|   92 | Category 1 | Non-Rural Female Head       |
+|   93 | Category 1 | Non-Rural Female Head       |
 |   96 | Category 1 | Rural Any-Gender Head       |
 |   97 | Category 2 | Female Permanent Resident   |
 
 #+begin_src sql
-  select data
-  from answer where 'Urban'=ANY(options) and question = 1 LIMIT 3;
+  select * from (
+  select data, count(options) FROM (
+    select *
+    from answer where 'Head'=ANY(options) and question = 3
+    UNION
+    select *
+    from answer where 'Female'=ANY(options) and question = 2
+    UNION
+    select *
+    from answer where 'Urban'=ANY(options) or 'Peri-urban'=ANY(options) and question = 1
+  ) d
+  GROUP BY data) dd
+  WHERE count = 3
+  ORDER BY data
 #+end_src
 
 #+RESULTS:
-| data |
-|------|
-|    1 |
-|    3 |
-|    6 |
+| data | count |
+|------+-------|
+|    3 |     3 |
+|    6 |     3 |
+|   24 |     3 |
+|   32 |     3 |
+|   35 |     3 |
+|   43 |     3 |
+|   63 |     3 |
+|   66 |     3 |
+|   79 |     3 |
+|   81 |     3 |
+|   92 |     3 |
+|   93 |     3 |
+
+
+* Views
+
+#+begin_src sql
+select * from ar_category
+#+end_src
+
+#+RESULTS:
+| id | data | name       | category                    |
+|----+------+------------+-----------------------------|
+|  1 |    3 | Category 1 | Non-Rural Female Head       |
+|  2 |    6 | Category 1 | Non-Rural Female Head       |
+|  1 |    8 | Category 2 | Male Non-Permanent Resident |
+|  2 |    9 | Category 2 | Male Non-Permanent Resident |
+|  3 |   16 | Category 2 | Male Non-Permanent Resident |
+|  4 |   17 | Category 2 | Female Permanent Resident   |
+|  5 |   18 | Category 2 | Male Non-Permanent Resident |
+|  6 |   21 | Category 2 | Female Permanent Resident   |
+|  7 |   22 | Category 2 | Male Non-Permanent Resident |
+|  3 |   24 | Category 1 | Non-Rural Female Head       |
+|  4 |   25 | Category 1 | Rural Any-Gender Head       |
+|  8 |   27 | Category 2 | Male Non-Permanent Resident |
+|  9 |   28 | Category 2 | Male Non-Permanent Resident |
+| 10 |   29 | Category 2 | Female Permanent Resident   |
+| 11 |   30 | Category 2 | Male Non-Permanent Resident |
+|  5 |   32 | Category 1 | Non-Rural Female Head       |
+|  6 |   35 | Category 1 | Non-Rural Female Head       |
+|  7 |   43 | Category 1 | Non-Rural Female Head       |
+| 12 |   48 | Category 2 | Female Permanent Resident   |
+|  8 |   53 | Category 1 | Rural Any-Gender Head       |
+| 13 |   55 | Category 2 | Male Non-Permanent Resident |
+| 14 |   56 | Category 2 | Male Non-Permanent Resident |
+|  9 |   58 | Category 1 | Rural Any-Gender Head       |
+| 10 |   63 | Category 1 | Non-Rural Female Head       |
+| 11 |   66 | Category 1 | Non-Rural Female Head       |
+| 15 |   70 | Category 2 | Female Permanent Resident   |
+| 16 |   71 | Category 2 | Male Non-Permanent Resident |
+| 17 |   73 | Category 2 | Male Non-Permanent Resident |
+| 12 |   79 | Category 1 | Non-Rural Female Head       |
+| 13 |   81 | Category 1 | Non-Rural Female Head       |
+| 18 |   91 | Category 2 | Male Non-Permanent Resident |
+| 14 |   92 | Category 1 | Non-Rural Female Head       |
+| 15 |   93 | Category 1 | Non-Rural Female Head       |
+| 16 |   96 | Category 1 | Rural Any-Gender Head       |
+| 19 |   97 | Category 2 | Female Permanent Resident   |
+
+** Check
+#+begin_src sql
+select count(relkind)
+from pg_class
+where relname = 'ar_category'
+and relkind = 'm';
+
+#+end_src
+
+#+RESULTS:
+| count |
+|-------|
+|     1 |
