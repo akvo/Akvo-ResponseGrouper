@@ -9,30 +9,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-if len(sys.argv) < 2:
-    print("You should provide json config file path")
-    exit(1)
-
-if not DATABASE_URL:
-    print("DATABASE_URL variable not found")
-    exit(1)
-
-try:
-    engine = create_engine(DATABASE_URL)
-except ArgumentError:
-    print(f"Error connection from {DATABASE_URL}")
-    exit(1)
-
-if sys.argv[1] == "--drop":
-    with engine.connect() as connection:
-        with connection.begin():
-            connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
-    exit(0)
-
-file_config = open(sys.argv[1])
-
 
 class Operator(Enum):
     _or = "or"
@@ -100,36 +76,75 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-config_dict = json.load(file_config)
-file_config.close()
+def check(commands):
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    if len(sys.argv) < 2:
+        print("You should provide json config file path")
+        exit(1)
 
-with engine.connect() as connection:
-    with connection.begin():
-        existing_view = connection.execute(text("""
-            SELECT count(relkind) from pg_class
-            where relname = 'ar_category'
-            and relkind = 'm'
-        """)).fetchone()
-        if existing_view['count']:
-            connection.execute(text("""
-            DROP MATERIALIZED VIEW ar_category
-            """))
+    if not DATABASE_URL:
+        print("DATABASE_URL variable not found")
+        exit(1)
 
-mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
-for main_union, categories in enumerate(config_dict):
-    categories = CategoryConfigBase.parse_raw(json.dumps(categories))
-    category_name = categories.name
+    try:
+        engine = create_engine(DATABASE_URL)
+    except ArgumentError:
+        print(f"Error connection from {DATABASE_URL}")
+        exit(1)
 
-    mview += "SELECT row_number() over (partition by true) as id,"
-    mview += f"data, '{category_name}' as name, category\n"
-    mview += "FROM (\n"
-    mview += generate_query(categories=categories)
-    mview += ") d WHERE d.count = d.valid"
-    if main_union < len(config_dict) - 1:
-        mview += "\nUNION\n"
-    if main_union == len(config_dict) - 1:
-        mview += "\nORDER BY data;"
+    if sys.argv[1] == "--drop":
+        with engine.connect() as connection:
+            with connection.begin():
+                connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
+        exit(0)
+    return engine
 
-with engine.connect() as connection:
-    with connection.begin():
-        connection.execute(text(mview))
+
+def main(commands: List[str]):
+    engine = check(commands)
+    file_config = open(commands[1])
+    config_dict = json.load(file_config)
+    file_config.close()
+
+    with engine.connect() as connection:
+        with connection.begin():
+            existing_view = connection.execute(
+                text(
+                    """
+                SELECT count(relkind) from pg_class
+                where relname = 'ar_category'
+                and relkind = 'm'
+            """
+                )
+            ).fetchone()
+            if existing_view["count"]:
+                connection.execute(
+                    text(
+                        """
+                DROP MATERIALIZED VIEW ar_category
+                """
+                    )
+                )
+
+    mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
+    for main_union, categories in enumerate(config_dict):
+        categories = CategoryConfigBase.parse_raw(json.dumps(categories))
+        category_name = categories.name
+
+        mview += "SELECT row_number() over (partition by true) as id,"
+        mview += f"data, '{category_name}' as name, category\n"
+        mview += "FROM (\n"
+        mview += generate_query(categories=categories)
+        mview += ") d WHERE d.count = d.valid"
+        if main_union < len(config_dict) - 1:
+            mview += "\nUNION\n"
+        if main_union == len(config_dict) - 1:
+            mview += "\nORDER BY data;"
+
+    with engine.connect() as connection:
+        with connection.begin():
+            connection.execute(text(mview))
+
+
+if __name__ == "__main__":
+    main(commands=sys.argv)
