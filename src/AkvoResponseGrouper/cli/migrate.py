@@ -1,5 +1,5 @@
 import json
-import sys
+import argparse
 import re
 import os
 from enum import Enum
@@ -33,7 +33,9 @@ class CategoryConfigBase(BaseModel):
     @validator("categories", pre=True, always=True)
     def set_categories(cls, values):
         categories = [
-            CategoryBase(name=v.get("name"), or_=v.get("or"), and_=v.get("and"))
+            CategoryBase(
+                name=v.get("name"), or_=v.get("or"), and_=v.get("and")
+            )
             for v in values
         ]
         return categories
@@ -76,12 +78,8 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-def check(commands):
+def check(commands: List[str]):
     DATABASE_URL = os.environ.get("DATABASE_URL")
-    if len(sys.argv) < 2:
-        print("You should provide json config file path")
-        exit(1)
-
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
         exit(1)
@@ -92,7 +90,7 @@ def check(commands):
         print(f"Error connection from {DATABASE_URL}")
         exit(1)
 
-    if sys.argv[1] == "--drop":
+    if commands.drop:
         with engine.connect() as connection:
             with connection.begin():
                 connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
@@ -100,9 +98,9 @@ def check(commands):
     return engine
 
 
-def main(commands: List[str]):
+def main(commands):
     engine = check(commands)
-    file_config = open(commands[1])
+    file_config = open(commands.config)
     config_dict = json.load(file_config)
     file_config.close()
 
@@ -146,5 +144,17 @@ def main(commands: List[str]):
             connection.execute(text(mview))
 
 
+parser = argparse.ArgumentParser("akvo-responsegrouper")
+parser.add_argument(
+    "-c",
+    "--config",
+    help="akvo-responsegrouper -c <json_file_config>",
+    type=str,
+)
+parser.add_argument(
+    "-d", "--drop", help="Drop the ar_category view table", action="store_true"
+)
+args = parser.parse_args()
+
 if __name__ == "__main__":
-    main(commands=sys.argv)
+    main(args)

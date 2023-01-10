@@ -7,8 +7,10 @@ pip -q install --upgrade pip
 pip -q install --cache-dir=.pip -r requirements.txt
 pip check
 
-if [[ -z "${INSTALL}" ]]; then
-	pip install response_grouper==1.0.5
+if [[ -z "${DEV}" ]]; then
+	pip install --upgrade AkvoResponseGrouper
+else
+	pip uninstall AkvoResponseGrouper || true
 fi
 
 alembic upgrade head
