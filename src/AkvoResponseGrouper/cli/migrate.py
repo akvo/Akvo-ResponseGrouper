@@ -22,6 +22,13 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+if args.config:
+    print(f"Migrating new config: {args.config}")
+elif args.drop:
+    print("Drop Table ar_category")
+else:
+    print(parser.print_help())
+
 
 class Operator(Enum):
     _or = "or"
@@ -91,7 +98,23 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-def check(args: List[str]):
+def drop(engine) -> None:
+    with engine.connect() as connection:
+        with connection.begin():
+            existing_view = connection.execute(
+                text(
+                    """
+                SELECT count(relkind) from pg_class
+                where relname = 'ar_category'
+                and relkind = 'm'
+                """
+                )
+            ).fetchone()
+            if existing_view["count"]:
+                connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
+
+
+def check(args):
     DATABASE_URL = os.environ.get("DATABASE_URL")
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
@@ -103,10 +126,10 @@ def check(args: List[str]):
         print(f"Error connection from {DATABASE_URL}")
         exit(1)
 
+    if args.drop or args.config:
+        drop(engine)
     if args.drop:
-        with engine.connect() as connection:
-            with connection.begin():
-                connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
+        print("Done")
         exit(0)
     return engine
 
@@ -116,26 +139,6 @@ def main():
     file_config = open(args.config)
     config_dict = json.load(file_config)
     file_config.close()
-
-    with engine.connect() as connection:
-        with connection.begin():
-            existing_view = connection.execute(
-                text(
-                    """
-                SELECT count(relkind) from pg_class
-                where relname = 'ar_category'
-                and relkind = 'm'
-            """
-                )
-            ).fetchone()
-            if existing_view["count"]:
-                connection.execute(
-                    text(
-                        """
-                DROP MATERIALIZED VIEW ar_category
-                """
-                    )
-                )
 
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
     for main_union, categories in enumerate(config_dict):
@@ -155,6 +158,7 @@ def main():
     with engine.connect() as connection:
         with connection.begin():
             connection.execute(text(mview))
+    print("Done")
 
 
 if __name__ == "__main__":

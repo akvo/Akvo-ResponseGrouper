@@ -20,7 +20,6 @@ services:
       - ./../../Akvo-ResponseGrouper/src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
     environment:
       - DATABASE_URL=postgresql://akvo:password@db:5432/demo
-      - DEV=true
     depends_on:
       - db
     ports:

@@ -40,6 +40,8 @@ setuptools.setup(
         # 'test': ['coverage'],
     },
     entry_points={
-        "console_scripts": ["arg-migrate=AkvoResponseGrouper.cli.migrate:main"]
+        "console_scripts": [
+            "akvo-responsegrouper=AkvoResponseGrouper.cli.migrate:main"
+        ]
     },
 )
