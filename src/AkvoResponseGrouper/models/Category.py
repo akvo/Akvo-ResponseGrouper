@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Text
-from db.connection import Base
+from typing_extensions import TypedDict
+from ..db.connection import Base
 
 
 class Category(Base):
@@ -11,3 +12,10 @@ class Category(Base):
 
     def __repr__(self) -> int:
         return f"<Category {self.id}>"
+
+
+class CategoryDict(TypedDict):
+    id: int
+    data: int
+    name: str
+    category: str
