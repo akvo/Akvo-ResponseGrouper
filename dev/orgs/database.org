@@ -151,7 +151,7 @@
 #+begin_src sql
   SELECT *
   FROM   answer
-  LIMIT 8;
+  LIMIT 16;
 #+end_src
 
 #+RESULTS:
@@ -165,58 +165,111 @@
 |  6 |        6 |    1 |     1 |                 |                      |
 |  7 |        7 |    1 |       |                 | {"Seasonal migrant"} |
 |  8 |        8 |    1 |       | Michael Jackson |                      |
+|  9 |        1 |    2 |       |                 | {Peri-urban}         |
+| 10 |        2 |    2 |       |                 | {Male}               |
+| 11 |        3 |    2 |       |                 | {Offspring}          |
+| 12 |        4 |    2 |       |                 | {Male}               |
+| 13 |        5 |    2 |     2 |                 |                      |
+| 14 |        6 |    2 |     4 |                 |                      |
+| 15 |        7 |    2 |       |                 | {"Seasonal migrant"} |
+| 16 |        8 |    2 |       | Antonio Morris  |                      |
 
 
 * Example Query
 
 #+begin_src sql
-SELECT data, 'Category 1' as name, category
-FROM (
-  SELECT data, COUNT(non_rural_female_spouse), 3 as valid, 'Non-Rural Female Spouse' as category
-  FROM (SELECT data, CASE
-    WHEN ('Peri-urban' = ANY(options)) AND (question = 1) THEN True
-    WHEN ('Urban' = ANY(options)) AND (question = 1) THEN True
-    WHEN ('Female' = ANY(options)) AND (question = 2) THEN True
-    WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
-    END AS non_rural_female_spouse
-    FROM
-    answer
-   ) aw
-  WHERE non_rural_female_spouse = True
-  GROUP BY data
+  SELECT data, 'Category 1' as name, category
+  FROM (
+    SELECT data, COUNT(non_rural_female_spouse), 3 as valid, 'Non-Rural Female Spouse' as category
+    FROM (SELECT data, CASE
+      WHEN ('Female' = ANY(options)) AND (question = 2) THEN True
+      WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
+      WHEN ('Peri-urban' = ANY(options)) AND (question = 1) THEN True
+      WHEN ('Urban' = ANY(options)) AND (question = 1) THEN True
+      END AS non_rural_female_spouse
+      FROM
+      answer
+     ) aw
+    WHERE non_rural_female_spouse = True
+    GROUP BY data
+    UNION
+    SELECT data, COUNT(rural_any_gender_head), 2 as valid, 'Rural Any-Gender Head' as category
+    FROM (SELECT data, CASE
+      WHEN ('Rural' = ANY(options)) AND (question = 1) THEN True
+      WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
+      END AS rural_any_gender_head
+      FROM
+      answer
+     ) aw
+    WHERE rural_any_gender_head = True
+    GROUP BY data
+  ) d WHERE d.count = d.valid
   UNION
-  SELECT data, COUNT(rural_any_gender_head), 2 as valid, 'Rural Any-Gender Head' as category
-  FROM (SELECT data, CASE
-    WHEN ('Rural' = ANY(options)) AND (question = 1) THEN True
-    WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
-    END AS rural_any_gender_head
-    FROM
-    answer
-   ) aw
-  WHERE rural_any_gender_head = True
-  GROUP BY data
-) d WHERE d.count = d.valid;
+  SELECT data, 'Category 2' as name, category
+  FROM (
+    SELECT data, COUNT(male_non_permanent_resident), 2 as valid, 'Male Non-Permanent Resident' as category
+    FROM (SELECT data, CASE
+      WHEN ('Male' = ANY(options)) AND (question = 2) THEN True
+      WHEN ('Nomadic' = ANY(options)) AND (question = 7) THEN True
+      END AS male_non_permanent_resident
+      FROM
+      answer
+     ) aw
+    WHERE male_non_permanent_resident = True
+    GROUP BY data
+    UNION
+    SELECT data, COUNT(female_permanent_resident), 2 as valid, 'Female Permanent Resident' as category
+    FROM (SELECT data, CASE
+      WHEN ('Permanent' = ANY(options)) AND (question = 7) THEN True
+      WHEN ('Female' = ANY(options)) AND (question = 4) THEN True
+      END AS female_permanent_resident
+      FROM
+      answer
+     ) aw
+    WHERE female_permanent_resident = True
+    GROUP BY data
+  ) d WHERE d.count = d.valid
+  ORDER BY data
 #+end_src
 
 #+RESULTS:
-| data | name       | category                |
-|------+------------+-------------------------|
-|    3 | Category 1 | Non-Rural Female Spouse |
-|    6 | Category 1 | Non-Rural Female Spouse |
-|   24 | Category 1 | Non-Rural Female Spouse |
-|   25 | Category 1 | Rural Any-Gender Head   |
-|   32 | Category 1 | Non-Rural Female Spouse |
-|   35 | Category 1 | Non-Rural Female Spouse |
-|   43 | Category 1 | Non-Rural Female Spouse |
-|   53 | Category 1 | Rural Any-Gender Head   |
-|   58 | Category 1 | Rural Any-Gender Head   |
-|   63 | Category 1 | Non-Rural Female Spouse |
-|   66 | Category 1 | Non-Rural Female Spouse |
-|   79 | Category 1 | Non-Rural Female Spouse |
-|   81 | Category 1 | Non-Rural Female Spouse |
-|   92 | Category 1 | Non-Rural Female Spouse |
-|   93 | Category 1 | Non-Rural Female Spouse |
-|   96 | Category 1 | Rural Any-Gender Head   |
+| data | name       | category                    |
+|------+------------+-----------------------------|
+|    3 | Category 1 | Non-Rural Female Spouse     |
+|    6 | Category 1 | Non-Rural Female Spouse     |
+|    8 | Category 2 | Male Non-Permanent Resident |
+|    9 | Category 2 | Male Non-Permanent Resident |
+|   16 | Category 2 | Male Non-Permanent Resident |
+|   17 | Category 2 | Female Permanent Resident   |
+|   18 | Category 2 | Male Non-Permanent Resident |
+|   21 | Category 2 | Female Permanent Resident   |
+|   22 | Category 2 | Male Non-Permanent Resident |
+|   24 | Category 1 | Non-Rural Female Spouse     |
+|   25 | Category 1 | Rural Any-Gender Head       |
+|   27 | Category 2 | Male Non-Permanent Resident |
+|   28 | Category 2 | Male Non-Permanent Resident |
+|   29 | Category 2 | Female Permanent Resident   |
+|   30 | Category 2 | Male Non-Permanent Resident |
+|   32 | Category 1 | Non-Rural Female Spouse     |
+|   35 | Category 1 | Non-Rural Female Spouse     |
+|   43 | Category 1 | Non-Rural Female Spouse     |
+|   48 | Category 2 | Female Permanent Resident   |
+|   53 | Category 1 | Rural Any-Gender Head       |
+|   55 | Category 2 | Male Non-Permanent Resident |
+|   56 | Category 2 | Male Non-Permanent Resident |
+|   58 | Category 1 | Rural Any-Gender Head       |
+|   63 | Category 1 | Non-Rural Female Spouse     |
+|   66 | Category 1 | Non-Rural Female Spouse     |
+|   70 | Category 2 | Female Permanent Resident   |
+|   71 | Category 2 | Male Non-Permanent Resident |
+|   73 | Category 2 | Male Non-Permanent Resident |
+|   79 | Category 1 | Non-Rural Female Spouse     |
+|   81 | Category 1 | Non-Rural Female Spouse     |
+|   91 | Category 2 | Male Non-Permanent Resident |
+|   92 | Category 1 | Non-Rural Female Spouse     |
+|   93 | Category 1 | Non-Rural Female Spouse     |
+|   96 | Category 1 | Rural Any-Gender Head       |
+|   97 | Category 2 | Female Permanent Resident   |
 
 #+begin_src sql
   select data
