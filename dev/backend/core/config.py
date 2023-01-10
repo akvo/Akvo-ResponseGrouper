@@ -1,6 +1,6 @@
 from routes.main import main_route
 from fastapi import FastAPI
-from AkvoResponseGrouper.routes import collection
+from AkvoResponseGrouper.routes.collection import collection_route
 
 app = FastAPI(
     root_path="/api",
@@ -18,7 +18,7 @@ app = FastAPI(
 )
 
 app.include_router(main_route)
-app.include_router(collection.router)
+app.include_router(collection_route)
 
 
 @app.get("/", tags=["Dev"])

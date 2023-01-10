@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 
-router = APIRouter(
+collection_route = APIRouter(
     prefix="/collection",
     tags=["Collection"],
 )
 
-@router.get(
+@collection_route.get(
     "/",
     name="collection:get_index",
     summary="initial index page for collection",
