@@ -17,10 +17,9 @@ services:
     command: ["./start.sh"]
     volumes:
       - ./backend:/app:delegated
-      - ./../../Akvo-ResponseGrouper/src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
     environment:
       - DATABASE_URL=postgresql://akvo:password@db:5432/demo
-      - INSTALL=$INSTALL
+      - INSTALL=true
     depends_on:
       - db
     ports:
