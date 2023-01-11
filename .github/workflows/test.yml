@@ -11,6 +11,23 @@ on:
       - master
 
 jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Start containers
+        run: docker compose up -d
+        working-directory: ./dev
+      - name: Run tests
+        run: docker compose exec backend python -m pytest -vvv -rP
+        working-directory: ./dev
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
+        working-directory: ./dev
+
   build:
     runs-on: ubuntu-latest
     strategy:
