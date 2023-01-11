@@ -45,7 +45,6 @@ class Form(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "version": self.version,
             "question_group": self.question_group,
         }
 

@@ -56,7 +56,6 @@ def session() -> Session:
     TestingSessionLocal = sessionmaker(autocommit=False,
                                        autoflush=False,
                                        bind=engine)
-
     return TestingSessionLocal()
 
 

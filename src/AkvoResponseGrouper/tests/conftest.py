@@ -1,37 +1,50 @@
 import pytest
-import pytest_asyncio
-import asyncio
 from os import environ
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy.orm import Session
-from ..db.connection import SessionLocal
-from ..main import get_application
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from asgi_lifespan import LifespanManager
+from ..db.connection import Base, get_session, get_db_url
 
 environ["APP_ENV"] = "test"
 
 
 @pytest.fixture
 def app() -> FastAPI:
-    return get_application()
+    from core.config import app
 
+    engine = create_engine(get_db_url())
+    Base.metadata.create_all(bind=engine)
+    TestingSessionLocal = sessionmaker(
+        autocommit=False, autoflush=False, bind=engine
+    )
 
-@pytest_asyncio.fixture(scope="session")
-async def client() -> AsyncClient:
-    async with AsyncClient(
-        app=get_application(),
-        base_url="http://test",
-        headers={"Content-Type": "application/json"},
-    ) as client:
-        yield client
+    def override_get_db():
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            db.close()
 
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
+    app.dependency_overrides[get_session] = override_get_db
+    return app
 
 
 @pytest.fixture
 def session() -> Session:
-    session = SessionLocal()
-    return session
+    engine = create_engine(get_db_url())
+    Base.metadata.create_all(bind=engine)
+    TestingSessionLocal = sessionmaker(
+        autocommit=False, autoflush=False, bind=engine
+    )
+    return TestingSessionLocal()
+
+
+@pytest.fixture
+async def client(app: FastAPI) -> AsyncClient:
+    async with LifespanManager(app):
+        async with AsyncClient(
+            app=app, base_url="http://testserver"
+        ) as client:
+            yield client
