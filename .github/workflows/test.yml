@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Container
-        run: docker compose -f "docker-compose.ci.yml" up
+        run: docker compose -f "docker-compose.ci.yml" up --exit-code-from backend
       - name: Stop Containers
         if: always()
         run: docker compose -f "docker-compose.ci.yml" down
