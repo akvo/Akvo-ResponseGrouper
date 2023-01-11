@@ -314,52 +314,53 @@ select * from ar_category
 #+RESULTS:
 | id | data | name       | category                    |
 |----+------+------------+-----------------------------|
-|  1 |    3 | Category 1 | Non-Rural Female Head       |
-|  2 |    6 | Category 1 | Non-Rural Female Head       |
-|  1 |    8 | Category 2 | Male Non-Permanent Resident |
-|  2 |    9 | Category 2 | Male Non-Permanent Resident |
-|  3 |   16 | Category 2 | Male Non-Permanent Resident |
-|  4 |   17 | Category 2 | Female Permanent Resident   |
-|  5 |   18 | Category 2 | Male Non-Permanent Resident |
-|  6 |   21 | Category 2 | Female Permanent Resident   |
-|  7 |   22 | Category 2 | Male Non-Permanent Resident |
-|  3 |   24 | Category 1 | Non-Rural Female Head       |
-|  4 |   25 | Category 1 | Rural Any-Gender Head       |
-|  8 |   27 | Category 2 | Male Non-Permanent Resident |
-|  9 |   28 | Category 2 | Male Non-Permanent Resident |
-| 10 |   29 | Category 2 | Female Permanent Resident   |
-| 11 |   30 | Category 2 | Male Non-Permanent Resident |
-|  5 |   32 | Category 1 | Non-Rural Female Head       |
-|  6 |   35 | Category 1 | Non-Rural Female Head       |
-|  7 |   43 | Category 1 | Non-Rural Female Head       |
-| 12 |   48 | Category 2 | Female Permanent Resident   |
-|  8 |   53 | Category 1 | Rural Any-Gender Head       |
-| 13 |   55 | Category 2 | Male Non-Permanent Resident |
-| 14 |   56 | Category 2 | Male Non-Permanent Resident |
-|  9 |   58 | Category 1 | Rural Any-Gender Head       |
-| 10 |   63 | Category 1 | Non-Rural Female Head       |
-| 11 |   66 | Category 1 | Non-Rural Female Head       |
-| 15 |   70 | Category 2 | Female Permanent Resident   |
-| 16 |   71 | Category 2 | Male Non-Permanent Resident |
-| 17 |   73 | Category 2 | Male Non-Permanent Resident |
-| 12 |   79 | Category 1 | Non-Rural Female Head       |
-| 13 |   81 | Category 1 | Non-Rural Female Head       |
-| 18 |   91 | Category 2 | Male Non-Permanent Resident |
-| 14 |   92 | Category 1 | Non-Rural Female Head       |
-| 15 |   93 | Category 1 | Non-Rural Female Head       |
-| 16 |   96 | Category 1 | Rural Any-Gender Head       |
-| 19 |   97 | Category 2 | Female Permanent Resident   |
+|  1 |    1 | Category 2 | Female Permanent Resident   |
+|  1 |    1 | Category 1 | Non-Rural Female Head       |
+|  2 |    2 | Category 1 | Rural Any-Gender Head       |
+|  2 |    4 | Category 2 | Male Non-Permanent Resident |
+|  3 |    7 | Category 2 | Female Permanent Resident   |
+|  3 |   10 | Category 1 | Non-Rural Female Head       |
+|  4 |   15 | Category 2 | Female Permanent Resident   |
+|  5 |   16 | Category 2 | Female Permanent Resident   |
+|  6 |   18 | Category 2 | Female Permanent Resident   |
+|  4 |   21 | Category 1 | Rural Any-Gender Head       |
+|  7 |   27 | Category 2 | Male Non-Permanent Resident |
+|  5 |   28 | Category 1 | Non-Rural Female Head       |
+|  6 |   30 | Category 1 | Non-Rural Female Head       |
+|  8 |   33 | Category 2 | Female Permanent Resident   |
+|  9 |   34 | Category 2 | Female Permanent Resident   |
+| 10 |   35 | Category 2 | Male Non-Permanent Resident |
+| 11 |   37 | Category 2 | Male Non-Permanent Resident |
+| 12 |   40 | Category 2 | Female Permanent Resident   |
+|  7 |   42 | Category 1 | Rural Any-Gender Head       |
+| 13 |   45 | Category 2 | Female Permanent Resident   |
+| 14 |   47 | Category 2 | Male Non-Permanent Resident |
+| 15 |   51 | Category 2 | Male Non-Permanent Resident |
+| 16 |   52 | Category 2 | Male Non-Permanent Resident |
+| 17 |   53 | Category 2 | Female Permanent Resident   |
+| 18 |   54 | Category 2 | Male Non-Permanent Resident |
+|  8 |   57 | Category 1 | Non-Rural Female Head       |
+|  9 |   66 | Category 1 | Rural Any-Gender Head       |
+| 10 |   67 | Category 1 | Rural Any-Gender Head       |
+| 11 |   71 | Category 1 | Non-Rural Female Head       |
+| 12 |   73 | Category 1 | Rural Any-Gender Head       |
+| 13 |   75 | Category 1 | Non-Rural Female Head       |
+| 19 |   78 | Category 2 | Male Non-Permanent Resident |
+| 20 |   79 | Category 2 | Male Non-Permanent Resident |
+| 21 |   81 | Category 2 | Female Permanent Resident   |
+| 14 |   87 | Category 1 | Non-Rural Female Head       |
+| 22 |   94 | Category 2 | Male Non-Permanent Resident |
+| 15 |   96 | Category 1 | Non-Rural Female Head       |
 
 ** Check
 #+begin_src sql
-select count(relkind)
+select relname, relkind
 from pg_class
-where relname = 'ar_category'
-and relkind = 'm';
+where relkind = 'm';
 
 #+end_src
 
 #+RESULTS:
-| count |
-|-------|
-|     1 |
+| relname     | relkind |
+|-------------+---------|
+| ar_category | m       |

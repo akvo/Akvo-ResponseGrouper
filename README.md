@@ -8,7 +8,7 @@ $ pip install AkvoResponseGrouper
 
 ## Schema Requirements
 
-Please follow [the required schema](https://github.com/akvo/Akvo-ResponseGrouper/blob/main/dev/orgs/database.org) before using AkvoResponseGrouper.
+Please follow [the required schema](https://github.com/akvo/Akvo-ResponseGrouper/blob/main/docs/database.org) before using AkvoResponseGrouper.
 
 ## Usage
 
