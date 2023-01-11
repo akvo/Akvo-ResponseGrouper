@@ -1,11 +1,10 @@
-import sys
 import pytest
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from ..db import crud_category
 
-sys.path.append("..")
 pytestmark = pytest.mark.asyncio
 
 
@@ -20,4 +19,4 @@ class TestCategoryRoutes:
         data = crud_category.get_categories(session=session)
         assert res.status_code == 200
         res = res.json()
-        assert res == data
+        assert res == jsonable_encoder(data)
