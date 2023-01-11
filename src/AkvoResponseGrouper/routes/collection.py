@@ -6,7 +6,7 @@ from ..views import categories
 
 collection_route = APIRouter(
     prefix="/collection",
-    tags=["Collection"],
+    tags=["AkvoResponseGrouper - Collection"],
 )
 
 
@@ -20,7 +20,7 @@ async def get_index():
 
 
 @collection_route.get(
-    "/categories/",
+    "/categories",
     name="collection:get_index_category",
     summary="get all category items",
 )
