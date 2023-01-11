@@ -21,7 +21,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src"),
     classifiers=[
         # https://pypi.org/classifiers/
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Database :: Database Engines/Servers",
