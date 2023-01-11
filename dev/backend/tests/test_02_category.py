@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 from AkvoResponseGrouper.cli.generate_schema import generate_schema
-from AkvoResponseGrouper.db.crud_category import get_categories
+from AkvoResponseGrouper.views import categories
 from scripts.seeder_datapoint import seed
 
 pytestmark = pytest.mark.asyncio
@@ -19,7 +19,9 @@ class TestForm:
     ) -> None:
         schema = generate_schema(file_config="/app/sources/category.json")
         session.execute(text(schema))
-        categories = get_categories(session=session)
-        assert len(categories) == 0
-        seed(session=session, file_path="/app/sources/form.json", repeats=10)
-        assert len(categories) == 0
+        res = categories.get(session=session)
+        assert len(res) == 0
+        seed(session=session, file_path="/app/sources/form.json", repeats=100)
+        categories.refresh(session=session)
+        res = categories.get(session=session)
+        assert len(res) > 1

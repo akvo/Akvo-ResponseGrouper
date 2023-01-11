@@ -5,7 +5,7 @@ from sqlalchemy.sql.operators import ilike_op
 from ..models.Category import Category, CategoryDict
 
 
-def get_categories(
+def get(
     session: Session,
     id: Optional[int] = None,
     data: Optional[int] = None,
@@ -20,6 +20,10 @@ def get_categories(
     if name:
         queries.append(func.lower(Category.name) == func.lower(name))
     if category:
-        queries.append(ilike_op(Category.category, f'%{category}%'))
+        queries.append(ilike_op(Category.category, f"%{category}%"))
 
     return session.query(Category).filter(*queries).all()
+
+
+def refresh(session: Session):
+    session.execute("REFRESH MATERIALIZED VIEW ar_category;")
