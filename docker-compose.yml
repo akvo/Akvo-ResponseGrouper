@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:12-alpine
     volumes:
-      - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./dev/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - pg-data:/var/lib/postgresql/data
-      - ./db/script:/script:ro
+      - ./dev/db/script:/script:ro
     environment:
       - POSTGRES_PASSWORD=password
     ports:
@@ -16,8 +16,8 @@ services:
     working_dir: /app
     command: ["./start.sh"]
     volumes:
-      - ./backend:/app:delegated
-      - ./../../Akvo-ResponseGrouper/src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
+      - ./dev/backend:/app:delegated
+      - ./src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
     environment:
       - DATABASE_URL=postgresql://akvo:password@db:5432/demo
     depends_on:

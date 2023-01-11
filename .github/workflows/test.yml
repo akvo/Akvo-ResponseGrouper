@@ -1,5 +1,4 @@
-name: Test
-
+name: Build & Test
 on:
   push:
     branches:
@@ -8,31 +7,12 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Start containers
-        run: docker compose up -d
-        working-directory: ./dev
-      - name: Run tests
-        run: docker compose exec backend pytest -vvv -rP
-        working-directory: ./dev
-      - name: Stop containers
-        if: always()
-        run: docker-compose down
-        working-directory: ./dev
-
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: [3.8, 3.9]
-
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
@@ -44,3 +24,13 @@ jobs:
       - name: Run Tox
         # Run tox using the version of Python in `PATH`
         run: tox -e py
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Container Test
+        run: docker compose -f "docker-compose.ci.yml" up -d
+      - name: Stop containers
+        if: always()
+        run: docker compose -f "docker-compose.ci.yml" down
