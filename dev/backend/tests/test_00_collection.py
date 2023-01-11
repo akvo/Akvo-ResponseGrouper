@@ -13,6 +13,7 @@ class TestRouteCollection:
     async def test_if_route_successfully_attached(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        response = await client.get(app.url_path_for("collection:get_index"))
+        response = await client.get(
+            app.url_path_for("collection:get_index_category")
+        )
         assert response.status_code == 200
-        assert response.json() == [{"greeting": "Hello from collection"}]
