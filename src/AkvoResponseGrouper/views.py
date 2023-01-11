@@ -2,10 +2,10 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from sqlalchemy.sql.operators import ilike_op
-from ..models.Category import Category, CategoryDict
+from .models import Category, CategoryDict
 
 
-def get(
+def get_categories(
     session: Session,
     id: Optional[int] = None,
     data: Optional[int] = None,
@@ -25,5 +25,5 @@ def get(
     return session.query(Category).filter(*queries).all()
 
 
-def refresh(session: Session):
+def refresh_view(session: Session):
     session.execute("REFRESH MATERIALIZED VIEW ar_category;")

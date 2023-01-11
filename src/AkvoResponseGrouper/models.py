@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, Text
 from typing_extensions import TypedDict
-from ..db.connection import Base
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
 
 
 class Category(Base):

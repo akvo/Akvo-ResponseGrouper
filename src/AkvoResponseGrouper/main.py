@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routes.collection import collection_route
+from .routes import collection_route
 
 
 def get_application() -> FastAPI:

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
-from ..db.connection import get_session
-from ..views import categories
+from .db import get_session
+from .views import get_categories
 
 collection_route = APIRouter(
     prefix="/collection",
@@ -31,7 +31,7 @@ async def get_index_category(
     category: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
-    res = categories.get(
+    res = get_categories(
         id=id, data=data, name=name, category=category, session=session
     )
     return res

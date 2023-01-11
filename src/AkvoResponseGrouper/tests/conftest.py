@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from asgi_lifespan import LifespanManager
-from ..db.connection import Base, get_session, get_db_url
+from ..db import Base, get_session, get_db_url
 
 environ["APP_ENV"] = "test"
 
