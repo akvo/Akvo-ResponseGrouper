@@ -2,8 +2,6 @@
 
 set -eo pipefail
 
-pip -q install --upgrade pip
-pip -q install --cache-dir=.pip -r requirements.txt
-pip check
+python -m AkvoResponseGrouper.cli.migrate -c ./sources/category.json
 
 pytest -vvv -rP
