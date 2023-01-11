@@ -1,6 +1,6 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from ..db.connection import get_session
 from ..db import crud_category
 
@@ -24,6 +24,14 @@ async def get_index():
     name="collection:get_index_category",
     summary="get all category items",
 )
-async def get_index_category(session: Session = Depends(get_session)):
-    data = crud_category.get_categories(session=session)
-    return data
+async def get_index_category(
+    id: Optional[int] = Query(default=None),
+    data: Optional[int] = Query(default=None),
+    name: Optional[str] = Query(default=None),
+    category: Optional[str] = Query(default=None),
+    session: Session = Depends(get_session),
+):
+    res = crud_category.get_categories(
+        id=id, data=data, name=name, category=category, session=session
+    )
+    return res
