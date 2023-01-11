@@ -42,7 +42,7 @@ def drop(engine) -> None:
                 connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
 
 
-def check(args):
+def check():
     DATABASE_URL = os.environ.get("DATABASE_URL")
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
@@ -62,8 +62,8 @@ def check(args):
     return engine
 
 
-def main(args) -> None:
-    engine = check(args)
+def main() -> None:
+    engine = check()
     schema = generate_schema(file_config=args.config)
     with engine.connect() as connection:
         with connection.begin():
@@ -72,4 +72,4 @@ def main(args) -> None:
 
 
 if __name__ == "__main__":
-    main(args)
+    main()
