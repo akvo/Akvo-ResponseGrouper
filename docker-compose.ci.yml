@@ -1,16 +1,6 @@
 ---
 version: "3.9"
 services:
-  db:
-    image: postgres:12-alpine
-    volumes:
-      - ./dev/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - pg-data:/var/lib/postgresql/data
-      - ./dev/db/script:/script:ro
-    environment:
-      - POSTGRES_PASSWORD=password
-    ports:
-      - 5432:5432
   backend:
     image: python:3.8.5
     working_dir: /app
@@ -24,5 +14,3 @@ services:
       - db
     ports:
       - 5000:5000
-volumes:
-  pg-data:
