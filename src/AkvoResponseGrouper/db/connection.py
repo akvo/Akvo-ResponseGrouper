@@ -1,6 +1,6 @@
 from os import environ
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, Session, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 
 def get_db_url():
@@ -10,7 +10,7 @@ def get_db_url():
     return DB_URL
 
 
-engine = create_engine(get_db_url())
+engine = create_engine(get_db_url(), pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -21,12 +21,3 @@ def get_session():
         yield session
     finally:
         session.close()
-
-
-def truncate(session: Session, table: str):
-    session.execute(f"TRUNCATE TABLE {table} CASCADE;")
-    session.execute(f"ALTER SEQUENCE {table}_id_seq RESTART WITH 1;")
-    session.execute(f"UPDATE {table} SET id=nextval('{table}_id_seq');")
-    session.commit()
-    session.flush()
-    return f"{table} Truncated"
