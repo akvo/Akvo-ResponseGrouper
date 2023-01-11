@@ -26,22 +26,6 @@ jobs:
         run: tox -e py
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:12-alpine
-          env:
-            POSTGRES_PASSWORD: password
-          volumes:
-            - ./dev/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-            - pg-data:/var/lib/postgresql/data
-            - ./dev/db/script:/script:ro
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
-          ports:
-            - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,4 +33,4 @@ jobs:
         run: docker compose -f "docker-compose.ci.yml" up
       - name: Stop Containers
         if: always()
-        run: docker compose -f "docker-compose.ci.yml" up -d
+        run: docker compose -f "docker-compose.ci.yml" down
