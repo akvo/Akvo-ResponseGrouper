@@ -21,11 +21,11 @@ jobs:
         run: docker compose up -d
         working-directory: ./dev
       - name: Run tests
-        run: docker compose exec backend python -m pytest -vvv -rP
+        run: docker compose exec backend pytest -vvv -rP
         working-directory: ./dev
       - name: Stop containers
         if: always()
-        run: docker-compose -f "docker-compose.yml" down
+        run: docker-compose down
         working-directory: ./dev
 
   build:
