@@ -12,9 +12,9 @@ pytestmark = pytest.mark.asyncio
 sys.path.append("..")
 
 
-class TestForm:
+class TestMigration:
     @pytest.mark.asyncio
-    async def test_category_data(
+    async def test_if_views_is_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         schema = generate_schema(file_config="/app/sources/category.json")

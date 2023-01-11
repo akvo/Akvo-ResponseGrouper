@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
-from AkvoResponseGrouper.db.connection import get_session
-from AkvoResponseGrouper.views import categories
+from ..db.connection import get_session
+from ..views import categories
 
 collection_route = APIRouter(
     prefix="/collection",
