@@ -1,7 +1,6 @@
 from os import environ
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import declarative_base, Session, sessionmaker
 
 
 def get_db_url():
@@ -22,6 +21,7 @@ def get_session():
         yield session
     finally:
         session.close()
+
 
 def truncate(session: Session, table: str):
     session.execute(f"TRUNCATE TABLE {table} CASCADE;")
