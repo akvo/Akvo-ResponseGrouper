@@ -11,6 +11,15 @@ collection_route = APIRouter(
 
 
 @collection_route.get(
+    "/",
+    name="collection:get_index",
+    summary="initial index page for collection",
+)
+async def get_index():
+    return [{"greeting": "Hello from collection"}]
+
+
+@collection_route.get(
     "/categories",
     name="collection:get_index_category",
     summary="get all category items",
