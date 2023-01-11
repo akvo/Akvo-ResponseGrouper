@@ -1,6 +1,4 @@
 import pytest
-import pytest_asyncio
-import asyncio
 from os import environ
 from fastapi import FastAPI
 from httpx import AsyncClient
@@ -16,7 +14,7 @@ def app() -> FastAPI:
     return get_application()
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest.fixture(scope="session")
 async def client() -> AsyncClient:
     async with AsyncClient(
         app=get_application(),
@@ -24,11 +22,6 @@ async def client() -> AsyncClient:
         headers={"Content-Type": "application/json"},
     ) as client:
         yield client
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
 
 
 @pytest.fixture
