@@ -8,6 +8,7 @@ Base = declarative_base()
 class Category(Base):
     __tablename__ = "ar_category"
     id = Column(Integer, primary_key=True)
+    form = Column(Integer)
     data = Column(Integer)
     name = Column(Text)
     category = Column(Text)
@@ -19,5 +20,6 @@ class Category(Base):
 class CategoryDict(TypedDict):
     id: int
     data: int
+    form: int
     name: str
     category: str

@@ -7,16 +7,13 @@ from .models import Category, CategoryDict
 
 def get_categories(
     session: Session,
-    id: Optional[int] = None,
-    data: Optional[int] = None,
+    form: Optional[int] = None,
     name: Optional[int] = None,
     category: Optional[int] = None,
 ) -> List[CategoryDict]:
     queries = []
-    if id:
-        queries.append(Category.id == id)
-    if data:
-        queries.append(Category.data == data)
+    if form:
+        queries.append(Category.form == form)
     if name:
         queries.append(func.lower(Category.name) == func.lower(name))
     if category:

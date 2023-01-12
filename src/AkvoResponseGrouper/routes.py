@@ -25,13 +25,12 @@ async def get_index():
     summary="get all category items",
 )
 async def get_index_category(
-    id: Optional[int] = Query(default=None),
-    data: Optional[int] = Query(default=None),
+    form: Optional[int] = Query(default=None),
     name: Optional[str] = Query(default=None),
     category: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
     res = get_categories(
-        id=id, data=data, name=name, category=category, session=session
+        form=form, name=name, category=category, session=session
     )
     return res

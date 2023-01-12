@@ -178,98 +178,128 @@
 * Example Query
 
 #+begin_src sql
-    SELECT data, 'Category 1' as name, category
-  FROM (
-    SELECT data, COUNT(non_rural_female_head), 3 as valid, 'Non-Rural Female Head' as category
-    FROM (SELECT data, CASE
-      WHEN ('Female' = ANY(options)) AND (question = 2) THEN True
-      WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
-      WHEN ('Peri-urban' = ANY(options)) AND (question = 1) THEN True
-      WHEN ('Urban' = ANY(options)) AND (question = 1) THEN True
-      END AS non_rural_female_head
-      FROM
-      answer
-     ) aw
-    WHERE non_rural_female_head = True
-    GROUP BY data
-    UNION
-    SELECT data, COUNT(rural_any_gender_head), 2 as valid, 'Rural Any-Gender Head' as category
-    FROM (SELECT data, CASE
-      WHEN ('Rural' = ANY(options)) AND (question = 1) THEN True
-      WHEN ('Head' = ANY(options)) AND (question = 3) THEN True
-      END AS rural_any_gender_head
-      FROM
-      answer
-     ) aw
-    WHERE rural_any_gender_head = True
-    GROUP BY data
-  ) d WHERE d.count = d.valid
+SELECT row_number() over (partition by true) as id,form, data, 'Category 1' as name, category
+FROM (
+  SELECT form, data, COUNT(non_rural_female_head), 3 as valid, 'Non-Rural Female Head' as category
+  FROM (SELECT form, data, CASE
+    WHEN ((opt = ANY(ARRAY['Female'])) AND (question = 2)) THEN True
+    WHEN ((opt = ANY(ARRAY['Head'])) AND (question = 3)) THEN True
+    WHEN
+    (CASE WHEN  ((opt = ANY(ARRAY['Peri-urban', 'Urban'])) AND (question = 1)) THEN True END) THEN True
+    END AS non_rural_female_head
+    FROM
+    (SELECT
+     q.form, aa.data, aa.question, unnest(aa.options)::TEXT as opt
+     FROM answer aa
+     LEFT JOIN question q ON q.id = aa.question) a
+   ) aw
+  WHERE non_rural_female_head = True
+  GROUP BY data, form
   UNION
-  SELECT data, 'Category 2' as name, category
-  FROM (
-    SELECT data, COUNT(male_non_permanent_resident), 2 as valid, 'Male Non-Permanent Resident' as category
-    FROM (SELECT data, CASE
-      WHEN ('Male' = ANY(options)) AND (question = 2) THEN True
-      WHEN ('Nomadic' = ANY(options)) AND (question = 7) THEN True
-      END AS male_non_permanent_resident
-      FROM
-      answer
-     ) aw
-    WHERE male_non_permanent_resident = True
-    GROUP BY data
-    UNION
-    SELECT data, COUNT(female_permanent_resident), 2 as valid, 'Female Permanent Resident' as category
-    FROM (SELECT data, CASE
-      WHEN ('Permanent' = ANY(options)) AND (question = 7) THEN True
-      WHEN ('Female' = ANY(options)) AND (question = 4) THEN True
-      END AS female_permanent_resident
-      FROM
-      answer
-     ) aw
-    WHERE female_permanent_resident = True
-    GROUP BY data
-  ) d WHERE d.count = d.valid
-  ORDER BY data
+  SELECT form, data, COUNT(rural_parent_or_refugee), 2 as valid, 'Rural Parent or Refugee' as category
+  FROM (SELECT form, data, CASE
+    WHEN ((opt = ANY(ARRAY['Rural'])) AND (question = 1)) THEN True
+    WHEN
+    (CASE WHEN  ((opt = ANY(ARRAY['Parent'])) AND (question = 3)) THEN True END) OR
+
+    (CASE WHEN  ((opt = ANY(ARRAY['Refugee/IDPs'])) AND (question = 7)) THEN True END) THEN True
+    END AS rural_parent_or_refugee
+    FROM
+    (SELECT
+     q.form, aa.data, aa.question, unnest(aa.options)::TEXT as opt
+     FROM answer aa
+     LEFT JOIN question q ON q.id = aa.question) a
+   ) aw
+  WHERE rural_parent_or_refugee = True
+  GROUP BY data, form
+) d WHERE d.count >= d.valid
+UNION
+SELECT row_number() over (partition by true) as id,form, data, 'Category 2' as name, category
+FROM (
+  SELECT form, data, COUNT(male_non_permanent_resident), 2 as valid, 'Male Non-Permanent Resident' as category
+  FROM (SELECT form, data, CASE
+    WHEN ((opt = ANY(ARRAY['Male'])) AND (question = 2)) THEN True
+    WHEN ((opt = ANY(ARRAY['Nomadic'])) AND (question = 7)) THEN True
+    END AS male_non_permanent_resident
+    FROM
+    (SELECT
+     q.form, aa.data, aa.question, unnest(aa.options)::TEXT as opt
+     FROM answer aa
+     LEFT JOIN question q ON q.id = aa.question) a
+   ) aw
+  WHERE male_non_permanent_resident = True
+  GROUP BY data, form
+  UNION
+  SELECT form, data, COUNT(female_permanent_resident), 2 as valid, 'Female Permanent Resident' as category
+  FROM (SELECT form, data, CASE
+    WHEN ((opt = ANY(ARRAY['Permanent'])) AND (question = 7)) THEN True
+    WHEN ((opt = ANY(ARRAY['Female'])) AND (question = 4)) THEN True
+    END AS female_permanent_resident
+    FROM
+    (SELECT
+     q.form, aa.data, aa.question, unnest(aa.options)::TEXT as opt
+     FROM answer aa
+     LEFT JOIN question q ON q.id = aa.question) a
+   ) aw
+  WHERE female_permanent_resident = True
+  GROUP BY data, form
+) d WHERE d.count >= d.valid
+ORDER BY data;
 #+end_src
 
 #+RESULTS:
-| data | name       | category                    |
-|------+------------+-----------------------------|
-|    3 | Category 1 | Non-Rural Female Head       |
-|    6 | Category 1 | Non-Rural Female Head       |
-|    8 | Category 2 | Male Non-Permanent Resident |
-|    9 | Category 2 | Male Non-Permanent Resident |
-|   16 | Category 2 | Male Non-Permanent Resident |
-|   17 | Category 2 | Female Permanent Resident   |
-|   18 | Category 2 | Male Non-Permanent Resident |
-|   21 | Category 2 | Female Permanent Resident   |
-|   22 | Category 2 | Male Non-Permanent Resident |
-|   24 | Category 1 | Non-Rural Female Head       |
-|   25 | Category 1 | Rural Any-Gender Head       |
-|   27 | Category 2 | Male Non-Permanent Resident |
-|   28 | Category 2 | Male Non-Permanent Resident |
-|   29 | Category 2 | Female Permanent Resident   |
-|   30 | Category 2 | Male Non-Permanent Resident |
-|   32 | Category 1 | Non-Rural Female Head       |
-|   35 | Category 1 | Non-Rural Female Head       |
-|   43 | Category 1 | Non-Rural Female Head       |
-|   48 | Category 2 | Female Permanent Resident   |
-|   53 | Category 1 | Rural Any-Gender Head       |
-|   55 | Category 2 | Male Non-Permanent Resident |
-|   56 | Category 2 | Male Non-Permanent Resident |
-|   58 | Category 1 | Rural Any-Gender Head       |
-|   63 | Category 1 | Non-Rural Female Head       |
-|   66 | Category 1 | Non-Rural Female Head       |
-|   70 | Category 2 | Female Permanent Resident   |
-|   71 | Category 2 | Male Non-Permanent Resident |
-|   73 | Category 2 | Male Non-Permanent Resident |
-|   79 | Category 1 | Non-Rural Female Head       |
-|   81 | Category 1 | Non-Rural Female Head       |
-|   91 | Category 2 | Male Non-Permanent Resident |
-|   92 | Category 1 | Non-Rural Female Head       |
-|   93 | Category 1 | Non-Rural Female Head       |
-|   96 | Category 1 | Rural Any-Gender Head       |
-|   97 | Category 2 | Female Permanent Resident   |
+| id | form | data | name       | category                    |
+|----+------+------+------------+-----------------------------|
+| 18 |    1 |    1 | Category 1 | Non-Rural Female Head       |
+| 12 |    1 |    1 | Category 2 | Female Permanent Resident   |
+| 10 |    1 |    4 | Category 2 | Male Non-Permanent Resident |
+| 20 |    1 |    7 | Category 2 | Female Permanent Resident   |
+|  4 |    1 |    7 | Category 1 | Rural Parent or Refugee     |
+|  9 |    1 |   10 | Category 1 | Non-Rural Female Head       |
+| 11 |    1 |   15 | Category 2 | Female Permanent Resident   |
+| 19 |    1 |   15 | Category 1 | Rural Parent or Refugee     |
+|  1 |    1 |   16 | Category 2 | Female Permanent Resident   |
+| 18 |    1 |   18 | Category 2 | Female Permanent Resident   |
+|  1 |    1 |   20 | Category 1 | Rural Parent or Refugee     |
+| 16 |    1 |   23 | Category 1 | Rural Parent or Refugee     |
+| 17 |    1 |   27 | Category 2 | Male Non-Permanent Resident |
+| 22 |    1 |   28 | Category 1 | Non-Rural Female Head       |
+|  3 |    1 |   30 | Category 1 | Non-Rural Female Head       |
+| 14 |    1 |   33 | Category 2 | Female Permanent Resident   |
+|  3 |    1 |   34 | Category 2 | Female Permanent Resident   |
+|  8 |    1 |   35 | Category 1 | Rural Parent or Refugee     |
+|  4 |    1 |   35 | Category 2 | Male Non-Permanent Resident |
+| 13 |    1 |   37 | Category 2 | Male Non-Permanent Resident |
+| 24 |    1 |   38 | Category 1 | Rural Parent or Refugee     |
+| 15 |    1 |   40 | Category 2 | Female Permanent Resident   |
+|  2 |    1 |   43 | Category 1 | Rural Parent or Refugee     |
+| 21 |    1 |   45 | Category 2 | Female Permanent Resident   |
+|  2 |    1 |   47 | Category 2 | Male Non-Permanent Resident |
+| 25 |    1 |   49 | Category 1 | Rural Parent or Refugee     |
+| 28 |    1 |   50 | Category 1 | Rural Parent or Refugee     |
+| 19 |    1 |   51 | Category 2 | Male Non-Permanent Resident |
+| 16 |    1 |   52 | Category 2 | Male Non-Permanent Resident |
+|  8 |    1 |   53 | Category 2 | Female Permanent Resident   |
+|  5 |    1 |   54 | Category 2 | Male Non-Permanent Resident |
+| 12 |    1 |   56 | Category 1 | Rural Parent or Refugee     |
+| 27 |    1 |   57 | Category 1 | Non-Rural Female Head       |
+| 11 |    1 |   58 | Category 1 | Rural Parent or Refugee     |
+| 21 |    1 |   59 | Category 1 | Rural Parent or Refugee     |
+| 20 |    1 |   60 | Category 1 | Rural Parent or Refugee     |
+| 10 |    1 |   69 | Category 1 | Rural Parent or Refugee     |
+|  6 |    1 |   71 | Category 1 | Non-Rural Female Head       |
+| 23 |    1 |   75 | Category 1 | Non-Rural Female Head       |
+|  9 |    1 |   78 | Category 2 | Male Non-Permanent Resident |
+|  6 |    1 |   79 | Category 2 | Male Non-Permanent Resident |
+|  7 |    1 |   81 | Category 2 | Female Permanent Resident   |
+|  7 |    1 |   86 | Category 1 | Rural Parent or Refugee     |
+|  5 |    1 |   87 | Category 1 | Non-Rural Female Head       |
+| 15 |    1 |   88 | Category 1 | Rural Parent or Refugee     |
+| 14 |    1 |   92 | Category 1 | Rural Parent or Refugee     |
+| 17 |    1 |   93 | Category 1 | Rural Parent or Refugee     |
+| 22 |    1 |   94 | Category 2 | Male Non-Permanent Resident |
+| 13 |    1 |   96 | Category 1 | Non-Rural Female Head       |
+| 26 |    1 |   97 | Category 1 | Rural Parent or Refugee     |
 
 #+begin_src sql
   select * from (
@@ -312,45 +342,58 @@ select * from ar_category
 #+end_src
 
 #+RESULTS:
-| id | data | name       | category                    |
-|----+------+------------+-----------------------------|
-|  1 |    1 | Category 2 | Female Permanent Resident   |
-|  1 |    1 | Category 1 | Non-Rural Female Head       |
-|  2 |    2 | Category 1 | Rural Any-Gender Head       |
-|  2 |    4 | Category 2 | Male Non-Permanent Resident |
-|  3 |    7 | Category 2 | Female Permanent Resident   |
-|  3 |   10 | Category 1 | Non-Rural Female Head       |
-|  4 |   15 | Category 2 | Female Permanent Resident   |
-|  5 |   16 | Category 2 | Female Permanent Resident   |
-|  6 |   18 | Category 2 | Female Permanent Resident   |
-|  4 |   21 | Category 1 | Rural Any-Gender Head       |
-|  7 |   27 | Category 2 | Male Non-Permanent Resident |
-|  5 |   28 | Category 1 | Non-Rural Female Head       |
-|  6 |   30 | Category 1 | Non-Rural Female Head       |
-|  8 |   33 | Category 2 | Female Permanent Resident   |
-|  9 |   34 | Category 2 | Female Permanent Resident   |
-| 10 |   35 | Category 2 | Male Non-Permanent Resident |
-| 11 |   37 | Category 2 | Male Non-Permanent Resident |
-| 12 |   40 | Category 2 | Female Permanent Resident   |
-|  7 |   42 | Category 1 | Rural Any-Gender Head       |
-| 13 |   45 | Category 2 | Female Permanent Resident   |
-| 14 |   47 | Category 2 | Male Non-Permanent Resident |
-| 15 |   51 | Category 2 | Male Non-Permanent Resident |
-| 16 |   52 | Category 2 | Male Non-Permanent Resident |
-| 17 |   53 | Category 2 | Female Permanent Resident   |
-| 18 |   54 | Category 2 | Male Non-Permanent Resident |
-|  8 |   57 | Category 1 | Non-Rural Female Head       |
-|  9 |   66 | Category 1 | Rural Any-Gender Head       |
-| 10 |   67 | Category 1 | Rural Any-Gender Head       |
-| 11 |   71 | Category 1 | Non-Rural Female Head       |
-| 12 |   73 | Category 1 | Rural Any-Gender Head       |
-| 13 |   75 | Category 1 | Non-Rural Female Head       |
-| 19 |   78 | Category 2 | Male Non-Permanent Resident |
-| 20 |   79 | Category 2 | Male Non-Permanent Resident |
-| 21 |   81 | Category 2 | Female Permanent Resident   |
-| 14 |   87 | Category 1 | Non-Rural Female Head       |
-| 22 |   94 | Category 2 | Male Non-Permanent Resident |
-| 15 |   96 | Category 1 | Non-Rural Female Head       |
+| id | form | data | name       | category                    |
+|----+------+------+------------+-----------------------------|
+| 18 |    1 |    1 | Category 1 | Non-Rural Female Head       |
+| 12 |    1 |    1 | Category 2 | Female Permanent Resident   |
+| 10 |    1 |    4 | Category 2 | Male Non-Permanent Resident |
+| 20 |    1 |    7 | Category 2 | Female Permanent Resident   |
+|  4 |    1 |    7 | Category 1 | Rural Parent or Refugee     |
+|  9 |    1 |   10 | Category 1 | Non-Rural Female Head       |
+| 11 |    1 |   15 | Category 2 | Female Permanent Resident   |
+| 19 |    1 |   15 | Category 1 | Rural Parent or Refugee     |
+|  1 |    1 |   16 | Category 2 | Female Permanent Resident   |
+| 18 |    1 |   18 | Category 2 | Female Permanent Resident   |
+|  1 |    1 |   20 | Category 1 | Rural Parent or Refugee     |
+| 16 |    1 |   23 | Category 1 | Rural Parent or Refugee     |
+| 17 |    1 |   27 | Category 2 | Male Non-Permanent Resident |
+| 22 |    1 |   28 | Category 1 | Non-Rural Female Head       |
+|  3 |    1 |   30 | Category 1 | Non-Rural Female Head       |
+| 14 |    1 |   33 | Category 2 | Female Permanent Resident   |
+|  3 |    1 |   34 | Category 2 | Female Permanent Resident   |
+|  8 |    1 |   35 | Category 1 | Rural Parent or Refugee     |
+|  4 |    1 |   35 | Category 2 | Male Non-Permanent Resident |
+| 13 |    1 |   37 | Category 2 | Male Non-Permanent Resident |
+| 24 |    1 |   38 | Category 1 | Rural Parent or Refugee     |
+| 15 |    1 |   40 | Category 2 | Female Permanent Resident   |
+|  2 |    1 |   43 | Category 1 | Rural Parent or Refugee     |
+| 21 |    1 |   45 | Category 2 | Female Permanent Resident   |
+|  2 |    1 |   47 | Category 2 | Male Non-Permanent Resident |
+| 25 |    1 |   49 | Category 1 | Rural Parent or Refugee     |
+| 28 |    1 |   50 | Category 1 | Rural Parent or Refugee     |
+| 19 |    1 |   51 | Category 2 | Male Non-Permanent Resident |
+| 16 |    1 |   52 | Category 2 | Male Non-Permanent Resident |
+|  8 |    1 |   53 | Category 2 | Female Permanent Resident   |
+|  5 |    1 |   54 | Category 2 | Male Non-Permanent Resident |
+| 12 |    1 |   56 | Category 1 | Rural Parent or Refugee     |
+| 27 |    1 |   57 | Category 1 | Non-Rural Female Head       |
+| 11 |    1 |   58 | Category 1 | Rural Parent or Refugee     |
+| 21 |    1 |   59 | Category 1 | Rural Parent or Refugee     |
+| 20 |    1 |   60 | Category 1 | Rural Parent or Refugee     |
+| 10 |    1 |   69 | Category 1 | Rural Parent or Refugee     |
+|  6 |    1 |   71 | Category 1 | Non-Rural Female Head       |
+| 23 |    1 |   75 | Category 1 | Non-Rural Female Head       |
+|  9 |    1 |   78 | Category 2 | Male Non-Permanent Resident |
+|  6 |    1 |   79 | Category 2 | Male Non-Permanent Resident |
+|  7 |    1 |   81 | Category 2 | Female Permanent Resident   |
+|  7 |    1 |   86 | Category 1 | Rural Parent or Refugee     |
+|  5 |    1 |   87 | Category 1 | Non-Rural Female Head       |
+| 15 |    1 |   88 | Category 1 | Rural Parent or Refugee     |
+| 14 |    1 |   92 | Category 1 | Rural Parent or Refugee     |
+| 17 |    1 |   93 | Category 1 | Rural Parent or Refugee     |
+| 22 |    1 |   94 | Category 2 | Male Non-Permanent Resident |
+| 13 |    1 |   96 | Category 1 | Non-Rural Female Head       |
+| 26 |    1 |   97 | Category 1 | Rural Parent or Refugee     |
 
 ** Check
 #+begin_src sql
@@ -364,3 +407,30 @@ where relkind = 'm';
 | relname     | relkind |
 |-------------+---------|
 | ar_category | m       |
+
+
+#+begin_src sql
+  SELECT data, unnest(options) as opt FROM answer limit 5;
+#+end_src
+
+#+RESULTS:
+| data | opt       |
+|------+-----------|
+|    1 | Urban     |
+|    1 | Female    |
+|    1 | Head      |
+|    1 | Female    |
+|    1 | Permanent |
+
+#+begin_src sql
+  SELECT data, options as opt FROM answer limit 5;
+#+end_src
+
+#+RESULTS:
+| data | opt      |
+|------+----------|
+|    1 | {Urban}  |
+|    1 | {Female} |
+|    1 | {Head}   |
+|    1 | {Female} |
+|    1 |          |

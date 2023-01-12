@@ -38,14 +38,27 @@ class CategoryConfigBase(BaseModel):
 
 def generate_case(category: CategoryBase, operator: Operator) -> str:
     view_text = ""
-    if category:
-        for c in category:
-            question_id = c.question
-            for iop, opt in enumerate(c.options):
-                view_text += f"    WHEN ('{opt}' = ANY(options))"
-                view_text += f" AND (question = {question_id}) THEN True\n"
-                if iop < (len(c.options) - 1):
-                    view_text += f"    {operator.value.upper()}\n"
+    if not category:
+        return ""
+    for i, c in enumerate(category):
+        last = i == len(category) - 1
+        question_id = c.question
+        opt = ", ".join([f"'{op}'" for op in c.options])
+        opt = f"ANY(ARRAY[{opt}])"
+        if operator == Operator._and or not i:
+            view_text += "    WHEN"
+        if operator == Operator._or:
+            view_text += " \n    (CASE WHEN "
+        view_text += f" ((opt = {opt})"
+        view_text += f" AND (question = {question_id}))"
+        if operator == Operator._or:
+            view_text += " THEN True END)"
+        if operator == Operator._and:
+            view_text += " THEN True\n"
+        if operator == Operator._or and not last:
+            view_text += " OR\n"
+        if operator == Operator._or and last:
+            view_text += " THEN True\n"
     return view_text
 
 
@@ -56,18 +69,23 @@ def generate_query(categories: CategoryConfigBase) -> str:
         group = re.sub("[^A-Za-z0-9]+", "_", name).lower()
         valid = len(category.and_) if category.and_ else 0
         valid += 1 if category.or_ else 0
-        view_text += f"  SELECT data, COUNT({group}), {valid} as valid,"
+        view_text += "  SELECT form, data"
+        view_text += f", COUNT({group}), {valid} as valid,"
         view_text += f" '{name}' as category\n"
-        view_text += "  FROM (SELECT data, CASE\n"
+        view_text += "  FROM (SELECT form, data, CASE\n"
         view_text += generate_case(category.and_, Operator._and)
         view_text += generate_case(category.or_, Operator._or)
         view_text += f"    END AS {group}\n"
         view_text += "    FROM\n"
-        view_text += "    answer\n"
+        view_text += "    (SELECT\n"
+        view_text += "     q.form, aa.data"
+        view_text += ", aa.question, unnest(aa.options)::TEXT as opt\n"
+        view_text += "     FROM answer aa\n"
+        view_text += "     LEFT JOIN question q ON q.id = aa.question) a\n"
         view_text += "   ) aw\n"
         view_text += "  WHERE"
         view_text += f" {group} = True\n"
-        view_text += "  GROUP BY data\n"
+        view_text += "  GROUP BY data, form\n"
         if union < len(categories.categories) - 1:
             view_text += "  UNION\n"
     return view_text
@@ -83,10 +101,10 @@ def generate_schema(file_config: str) -> str:
         category_name = categories.name
 
         mview += "SELECT row_number() over (partition by true) as id,"
-        mview += f"data, '{category_name}' as name, category\n"
+        mview += f"form, data, '{category_name}' as name, category\n"
         mview += "FROM (\n"
         mview += generate_query(categories=categories)
-        mview += ") d WHERE d.count = d.valid"
+        mview += ") d WHERE d.count >= d.valid"
         if main_union < len(config_dict) - 1:
             mview += "\nUNION\n"
         if main_union == len(config_dict) - 1:

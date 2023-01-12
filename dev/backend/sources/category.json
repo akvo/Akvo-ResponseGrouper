@@ -7,11 +7,7 @@
         "or": [
           {
             "question": 1,
-            "options": ["Peri-urban"]
-          },
-          {
-            "question": 1,
-            "options": ["Urban"]
+            "options": ["Peri-urban", "Urban"]
           }
         ],
         "and": [
@@ -26,15 +22,21 @@
         ]
       },
       {
-        "name": "Rural Any-Gender Head",
+        "name": "Rural Parent or Refugee",
+        "or": [
+          {
+            "question": 3,
+            "options": ["Parent"]
+          },
+          {
+            "question": 7,
+            "options": ["Refugee/IDPs"]
+          }
+        ],
         "and": [
           {
             "question": 1,
             "options": ["Rural"]
-          },
-          {
-            "question": 3,
-            "options": ["Head"]
           }
         ]
       }
