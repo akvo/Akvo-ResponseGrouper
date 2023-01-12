@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -euo pipefail
 
 find ./AkvoResponseGrouper -maxdepth 0 -empty -exec echo {} is empty. \;
 
@@ -11,7 +11,6 @@ pip check
 alembic upgrade head
 
 python -m AkvoResponseGrouper.cli.migrate -c ./sources/category.json
-
 
 echo "Running tests"
 COVERAGE_PROCESS_START=./.coveragerc \
