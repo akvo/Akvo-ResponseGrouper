@@ -34,10 +34,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8.5",
-    install_requires=["pydantic", "sqlalchemy"],
+    install_requires=["fastapi", "pydantic", "sqlalchemy"],
     extras_require={
         "dev": ["check-manifest"],
-        # 'test': ['coverage'],
+        "test": ["httpx"],
     },
     entry_points={
         "console_scripts": [

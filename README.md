@@ -27,19 +27,69 @@ optional arguments:
   -d, --drop            Drop the ar_category view table
 ```
 
-2. HTTP Router
+2. Router
 
-Soon...
+To get the new endpoint provided by AkvoResponseGrouper, import the collection route to the App by:
+
+```python
+from fastapi import FastAPI
+from AkvoResponseGrouper.routes import collection_route
+
+app = FastAPI(
+    root_path="/",
+    title="Akvo Response Grouper Demo",
+)
+
+app.include_router(collection_route)
+
+@app.get("/", tags=["Dev"])
+def read_main():
+    return "OK"
+```
+
+3. Query
+
+
 
 ## Development
 
+### Run Dev Containers
+
+The dev environment contains two containers: FastAPI backend and PostGres db, to run:
+
 ```bash
-cd dev
 docker compose up -d
 ```
-Wait until migration process is done
+Before go to the next step, wait until the service started at [http://localhost:5000](http://localhost:5000).
 
+### Seed Necessary Data
+
+In order to debug the data itself. We need to seed the example form and fake datapoints
+
+###
 ```bash
 docker compose exec backend python -m script.seeder_form
 docker compose exec backend python -m script.seeder_datapoint <number_of_datapoint>
+```
+
+### Migration
+
+Dev environment uses contents that is available in `Akvo-ResponseGrouper/src/AkvoResponseGrouper`. To create the Category Materialized View via CLI in dev environment:
+
+Upgrade:
+
+```bash
+python -m AkvoResponseGrouper.cli.migrate -c './sources/category.json'
+```
+
+After upgrade, you can see "AkvoResponseGrouper - Collection" is available in API docs, ussualy [http://locahhost:5000/docs](http://localhost:5000/docs) (Depends on the root path api).
+
+Downgrade:
+```
+python -m AkvoResponseGrouper.cli.migrate -c './sources/category.json'
+```
+
+### Teardown
+```
+docker compose down -v
 ```

@@ -18,12 +18,18 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+if not args.config and not args.drop:
+    parser.print_help()
+    exit(0)
+
+if args.config and args.drop:
+    parser.print_help()
+    exit(0)
+
 if args.config:
     print(f"Migrating new config: {args.config}")
-elif args.drop:
+if args.drop:
     print("Drop Table ar_category")
-else:
-    print(parser.print_help())
 
 
 def drop(engine) -> None:

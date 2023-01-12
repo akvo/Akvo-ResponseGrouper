@@ -5,15 +5,17 @@ from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from asgi_lifespan import LifespanManager
-from ..db import Base, get_session, get_db_url
+from AkvoResponseGrouper.db import get_session, get_db_url
+from AkvoResponseGrouper.models import Base
+from AkvoResponseGrouper.routes import collection_route
 
 environ["APP_ENV"] = "test"
 
 
 @pytest.fixture
 def app() -> FastAPI:
-    from core.config import app
-
+    app = FastAPI()
+    app.include_router(collection_route)
     engine = create_engine(get_db_url())
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(

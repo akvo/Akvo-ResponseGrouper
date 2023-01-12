@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from AkvoResponseGrouper.routes import collection_route
 
 app = FastAPI(
-    root_path="/api",
+    root_path="/",
     title="Akvo Response Grouper Demo",
     version="1.0.0",
     contact={
