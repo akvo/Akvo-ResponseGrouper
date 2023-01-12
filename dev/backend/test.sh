@@ -19,7 +19,7 @@ COVERAGE_PROCESS_START=./.coveragerc \
 
 echo "Coverage"
 coverage combine --rcfile="./.coveragerc"
-coverage report --rcfile="./.coveragerc"
+coverage report -m --rcfile="./.coveragerc"
 
 if [[ -n "${COVERALLS_REPO_TOKEN:-}" ]] ; then
   coveralls
