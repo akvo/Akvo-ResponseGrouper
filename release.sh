@@ -40,7 +40,6 @@ if [[ $# -eq 0 ]]; then
     printf "Please write description\n"
     read -r DESC
     printf "Release: %s %s\n" "$LIB_NAME" "$CURRENT_VERSION"
-    printf "Description:\n"
     git tag -a "$CURRENT_VERSION" -m "New Release $CURRENT_VERSION: $DESC"
     git push --tags
     printf "%s" "${DESC}"
