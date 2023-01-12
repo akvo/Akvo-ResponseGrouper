@@ -30,13 +30,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Container
-        run: docker compose -f "docker-compose.ci.yml" up --exit-code-from backend
-      - name: Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
-        run:|
-          pip install coveralls
-          cd dev/backend
-          coveralls
-          cd -
-          docker compose -f "docker-compose.ci.yml" down
+        run: docker compose -f "docker-compose.ci.yml" up --exit-code-from backend
