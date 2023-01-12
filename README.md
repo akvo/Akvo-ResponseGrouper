@@ -1,4 +1,13 @@
 # Akvo-ResponseGrouper
+
+![PyPI](https://img.shields.io/pypi/v/AkvoResponseGrouper)
+[![Build Status](https://akvo.semaphoreci.com/badges/Akvo-ResponseGrouper/branches/main.svg?style=shields)](https://akvo.semaphoreci.com/projects/Akvo-ResponseGrouper) [![Repo Size](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper)](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper) [![Coverage Status](https://coveralls.io/repos/github/akvo/Akvo-ResponseGrouper/badge.svg?branch=main)](https://coveralls.io/github/akvo/Akvo-ResponseGrouper?branch=main) [![Languages](https://img.shields.io/github/languages/count/akvo/Akvo-ResponseGrouper
+)](https://img.shields.io/github/languages/count/akvo/Akvo-ResponseGrouper
+) [![Issues](https://img.shields.io/github/issues/akvo/Akvo-ResponseGrouper
+)](https://img.shields.io/github/issues/akvo/Akvo-ResponseGrouper
+) [![Last Commit](https://img.shields.io/github/last-commit/akvo/Akvo-ResponseGrouper/main
+)](https://img.shields.io/github/last-commit/akvo/Akvo-ResponseGrouper/main) [![Documentation Status](https://readthedocs.org/projects/Akvo-ResponseGrouper/badge/?version=latest)](https://Akvo-ResponseGrouper.readthedocs.io/en/latest/?badge=latest) [![GitHub license](https://img.shields.io/github/license/akvo/Akvo-ResponseGrouper.svg)](https://github.com/akvo/Akvo-ResponseGrouper/blob/main/LICENSE)
+
 Fast-API Response catalog for pre-computed query
 
 ## Install

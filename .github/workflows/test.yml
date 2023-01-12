@@ -32,7 +32,6 @@ jobs:
       - name: Run Container
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
-        run: docker compose -f "docker-compose.ci.yml" up --exit-code-from backend
-      - name: Stop Containers
-        if: always()
-        run: docker compose -f "docker-compose.ci.yml" down
+        run: |
+          docker compose -f "docker-compose.ci.yml" \
+                         -p backend-test run --rm -T backend ./test.sh
