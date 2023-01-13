@@ -17,9 +17,19 @@ COVERAGE_PROCESS_START=./.coveragerc \
   coverage run --parallel-mode --concurrency=thread,gevent --rcfile=./.coveragerc \
   /usr/local/bin/pytest -vvv -rP
 
-echo "Coverage"
-coverage combine --rcfile="./.coveragerc"
-coverage report -m --rcfile="./.coveragerc"
+
+
+echo "===Coverage==="
+coverage combine --rcfile=./.coveragerc
+pwd
+ls -la
+
+
+echo "===Reporting==="
+coverage report -m --rcfile=./.coveragerc
+pwd
+ls -la
+
 
 if [[ -n "${COVERALLS_REPO_TOKEN:-}" ]] ; then
   coveralls
