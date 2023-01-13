@@ -14,7 +14,7 @@ services:
   backend:
     image: python:3.8.5
     working_dir: /app/dev/backend
-    command: ["./test.sh"]
+    command: [bash -c  "cd /app/dev/backend/ && ./test.sh"]
     volumes:
       - ./:/app:delegated
       - ./src/AkvoResponseGrouper:/app/dev/backend/AkvoResponseGrouper:delegated

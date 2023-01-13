@@ -8,6 +8,9 @@ pip -q install --upgrade pip
 pip -q install --cache-dir=.pip -r requirements.txt
 pip check
 
+pwd
+ls -la
+
 alembic upgrade head
 
 python -m AkvoResponseGrouper.cli.migrate -c ./sources/category.json
