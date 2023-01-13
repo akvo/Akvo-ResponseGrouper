@@ -28,8 +28,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Get latest GIT for checkout
+        run: |
+          apt-get update
+          apt-get install -y git
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Run Container
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
