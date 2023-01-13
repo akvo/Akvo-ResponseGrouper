@@ -1,7 +1,7 @@
 # Akvo-ResponseGrouper
 
 ![PyPI](https://img.shields.io/pypi/v/AkvoResponseGrouper)
-[![Build Status](https://akvo.semaphoreci.com/badges/Akvo-ResponseGrouper/branches/main.svg?style=shields)](https://akvo.semaphoreci.com/projects/Akvo-ResponseGrouper) [![Repo Size](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper)](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper) [![Coverage Status](https://coveralls.io/repos/github/akvo/Akvo-ResponseGrouper/badge.svg?branch=main)](https://coveralls.io/github/akvo/Akvo-ResponseGrouper?branch=main) [![Languages](https://img.shields.io/github/languages/count/akvo/Akvo-ResponseGrouper
+[![Build Status](https://github.com/akvo/Akvo-ResponseGrouper/actions/workflows/test.yml/badge.svg)](https://github.com/akvo/Akvo-ResponseGrouper/actions) [![Repo Size](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper)](https://img.shields.io/github/repo-size/akvo/Akvo-ResponseGrouper) [![Coverage Status](https://coveralls.io/repos/github/akvo/Akvo-ResponseGrouper/badge.svg?branch=main)](https://coveralls.io/github/akvo/Akvo-ResponseGrouper?branch=main) [![Languages](https://img.shields.io/github/languages/count/akvo/Akvo-ResponseGrouper
 )](https://img.shields.io/github/languages/count/akvo/Akvo-ResponseGrouper
 ) [![Issues](https://img.shields.io/github/issues/akvo/Akvo-ResponseGrouper
 )](https://img.shields.io/github/issues/akvo/Akvo-ResponseGrouper
