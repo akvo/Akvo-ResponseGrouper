@@ -17,13 +17,13 @@ class TestMigration:
     async def test_if_views_is_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        schema = generate_schema(file_config="/app/sources/category.json")
+        schema = generate_schema(file_config="./sources/category.json")
         session.execute(text(schema))
         # BEFORE
         res = get_categories(session=session)
         assert len(res) == 0
         # SEED DATA
-        seed(session=session, file_path="/app/sources/form.json", repeats=100)
+        seed(session=session, file_path="./sources/form.json", repeats=100)
         # AFTER REFRESH
         refresh_view(session=session)
         res = get_categories(session=session)
