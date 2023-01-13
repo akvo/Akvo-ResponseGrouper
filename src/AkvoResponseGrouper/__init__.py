@@ -8,4 +8,5 @@ __all__ = [
     "db",
     "routes",
     "views",
+    "utils",
 ]
