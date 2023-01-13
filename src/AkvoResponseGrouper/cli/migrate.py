@@ -50,6 +50,7 @@ def drop(engine) -> None:
 
 def check():
     DATABASE_URL = os.environ.get("DATABASE_URL")
+    DATABASE_URL = DATABASE_URL.replace("-", "_")
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
         exit(1)
