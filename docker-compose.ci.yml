@@ -16,8 +16,8 @@ services:
     working_dir: /app
     command: ["./test.sh"]
     volumes:
-      - ./dev/backend:/app:delegated
-      - ./src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
+      - ${GITHUB_WORKSPACE}/dev/backend:/app:delegated
+      - ${GITHUB_WORKSPACE}/src/AkvoResponseGrouper:/app/AkvoResponseGrouper:delegated
     environment:
       - DATABASE_URL=postgresql://akvo:password@db:5432/demo
       - COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}
