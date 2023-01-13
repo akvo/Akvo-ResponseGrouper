@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - feature*
+      - feature/10-code-coverage
   pull_request:
     branches:
       - main
