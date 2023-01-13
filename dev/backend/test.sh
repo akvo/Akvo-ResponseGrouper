@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+cd /app/dev/backend
+
 find ./AkvoResponseGrouper -maxdepth 0 -empty -exec echo {} is empty. \;
 
 pip -q install --upgrade pip
