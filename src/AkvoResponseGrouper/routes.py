@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 from .db import get_session
 from .views import get_categories, get_by_group_category
+from .models import GroupedCategory
 
 collection_route = APIRouter(
     prefix="/collection",
@@ -30,6 +31,7 @@ async def get_index_category(
 
 @collection_route.get(
     "/categories/groups",
+    response_model=List[GroupedCategory],
     name="collection:get_grouped_categories",
     summary="get grouped categories",
 )
