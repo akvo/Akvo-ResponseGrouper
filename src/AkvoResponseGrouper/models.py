@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, Text
 from typing_extensions import TypedDict
 from sqlalchemy.ext.declarative import declarative_base
+from pydantic import BaseModel
+from typing import List
 
 Base = declarative_base()
 
@@ -23,3 +25,13 @@ class CategoryDict(TypedDict):
     form: int
     name: str
     category: str
+
+
+class CountedCategory(TypedDict):
+    name: str
+    count: int
+
+
+class GroupedCategory(BaseModel):
+    category: str
+    options: List[CountedCategory]

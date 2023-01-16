@@ -44,8 +44,8 @@ def seed(session=Session, file_path=str, repeats=int) -> None:
         print(f"ADDED {repeats} datapoint to {form.name}")
 
 
-def main(session=Session, file_path=str):
-    seed(session=session, file_path=file_path)
+def main(session=Session, file_path=str, repeats=int):
+    seed(session=session, file_path=file_path, repeats=repeats)
 
 
 if __name__ == "__main__":

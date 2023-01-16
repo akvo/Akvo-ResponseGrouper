@@ -1,6 +1,7 @@
 [
   {
     "name": "Category 1",
+    "form": 1,
     "categories": [
       {
         "name": "Non-Rural Female Head",
@@ -44,6 +45,7 @@
   },
   {
     "name": "Category 2",
+    "form": 1,
     "categories": [
       {
         "name": "Male Non-Permanent Resident",
