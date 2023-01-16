@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_
 from sqlalchemy.sql.operators import ilike_op
 from .models import Category, CategoryDict
-from .utils import grouped_items
+from .utils import group_by_category_output
 
 
 def get_categories(
@@ -25,7 +25,7 @@ def get_categories(
     return session.query(Category).filter(*queries).all()
 
 
-def get_by_group_category(
+def get_group_by_category(
     session: Session,
     category_name: Optional[str] = None,
     form_id: Optional[int] = None,
@@ -53,7 +53,7 @@ def get_by_group_category(
         .group_by(Category.name)
         .all()
     )
-    result = grouped_items(result)
+    result = group_by_category_output(result)
     return result
 
 

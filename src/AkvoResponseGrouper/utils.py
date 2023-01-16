@@ -1,12 +1,12 @@
 from itertools import groupby
 
 
-def key_func(k):
+def get_category_key(k):
     return k["name"]
 
 
-def grouped_items(data):
-    g = sorted(data, key=key_func)
+def group_by_category_output(data):
+    g = sorted(data, key=get_category_key)
     return [
         {
             "category": key,
@@ -14,5 +14,5 @@ def grouped_items(data):
                 {"name": o.category, "count": o.count} for o in list(value)
             ],
         }
-        for key, value in groupby(g, key_func)
+        for key, value in groupby(g, get_category_key)
     ]

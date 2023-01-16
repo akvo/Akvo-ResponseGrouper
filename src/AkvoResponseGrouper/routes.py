@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from .db import get_session
-from .views import get_categories, get_by_group_category
+from .views import get_categories, get_group_by_category
 from .models import GroupedCategory
 
 collection_route = APIRouter(
@@ -40,7 +40,7 @@ async def get_grouped_categories(
     category_name: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
-    res = get_by_group_category(
+    res = get_group_by_category(
         session=session, form_id=form_id, category_name=category_name
     )
     return res
