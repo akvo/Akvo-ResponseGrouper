@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_
 from sqlalchemy.sql.operators import ilike_op
@@ -11,7 +11,7 @@ def get_categories(
     form: Optional[int] = None,
     name: Optional[str] = None,
     category: Optional[str] = None,
-    data: Optional[int] = None,
+    data: Optional[Union[int, List[int]]] = None,
 ) -> List[CategoryDict]:
     queries = []
     if form:
@@ -21,7 +21,10 @@ def get_categories(
     if category:
         queries.append(ilike_op(Category.category, f"%{category}%"))
     if data:
-        queries.append(Category.data == data)
+        if isinstance(data, list):
+            queries.append(Category.data.in_(data))
+        else:
+            queries.append(Category.data == data)
     return session.query(Category).filter(*queries).all()
 
 
