@@ -7,6 +7,12 @@ from typing import List
 Base = declarative_base()
 
 
+class GroupByDict(TypedDict):
+    category: str
+    name: str
+    count: int
+
+
 class Category(Base):
     __tablename__ = "ar_category"
     id = Column(Integer, primary_key=True)
@@ -17,6 +23,13 @@ class Category(Base):
 
     def __repr__(self) -> int:
         return f"<Category {self.id}>"
+
+    def group_serialize(data) -> GroupByDict:
+        return {
+            "category": data.category,
+            "name": data.name,
+            "count": data.count,
+        }
 
 
 class CategoryDict(TypedDict):

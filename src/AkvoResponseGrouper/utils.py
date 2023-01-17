@@ -11,7 +11,8 @@ def group_by_category_output(data):
         {
             "category": key,
             "options": [
-                {"name": o.category, "count": o.count} for o in list(value)
+                {"name": o["category"], "count": o["count"]}
+                for o in list(value)
             ],
         }
         for key, value in groupby(g, get_category_key)

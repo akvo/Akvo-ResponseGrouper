@@ -53,6 +53,7 @@ def get_group_by_category(
         .group_by(Category.name)
         .all()
     )
+    result = [Category.group_serialize(r) for r in result]
     result = group_by_category_output(result)
     return result
 
