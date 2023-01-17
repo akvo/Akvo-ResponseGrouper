@@ -17,3 +17,11 @@ class TestRouteCollection:
             app.url_path_for("collection:get_index_category")
         )
         assert response.status_code == 200
+
+    async def test_if_grouped_categories_route_successfully_added(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        response = await client.get(
+            app.url_path_for("collection:get_grouped_categories")
+        )
+        assert response.status_code == 200

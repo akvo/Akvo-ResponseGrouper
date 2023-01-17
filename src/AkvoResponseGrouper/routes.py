@@ -12,7 +12,7 @@ collection_route = APIRouter(
 
 
 @collection_route.get(
-    "/",
+    "/categories",
     name="collection:get_index_category",
     summary="initial index page for collection",
 )
