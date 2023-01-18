@@ -14,25 +14,34 @@ parser.add_argument(
     type=str,
 )
 parser.add_argument(
-    "-d", "--drop", help="Drop the ar_category view table", action="store_true"
+    "-d",
+    "--database",
+    help="akvo-responsegrouper -d <DATABASE_URL>",
+    type=str,
+)
+parser.add_argument(
+    "-r",
+    "--refresh",
+    help="Refresh the ar_category view table",
+    action="store_true",
 )
 args = parser.parse_args()
 
-if not args.config and not args.drop:
+if not args.config and not args.refresh:
     parser.print_help()
     exit(0)
 
-if args.config and args.drop:
+if args.config and args.refresh:
     parser.print_help()
     exit(0)
 
 if args.config:
     print(f"Migrating new config: {args.config}")
-if args.drop:
-    print("Drop Table ar_category")
+if args.refresh:
+    print("Refresh Table ar_category")
 
 
-def drop(engine) -> None:
+def refresh(engine) -> None:
     with engine.connect() as connection:
         with connection.begin():
             existing_view = connection.execute(
@@ -45,11 +54,20 @@ def drop(engine) -> None:
                 )
             ).fetchone()
             if existing_view["count"]:
-                connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
+                connection.execute(
+                    text("REFRESH MATERIALIZED VIEW ar_category")
+                )
+
+
+def get_db_url() -> str:
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    if args.database:
+        DATABASE_URL = args.database
+    return DATABASE_URL
 
 
 def check():
-    DATABASE_URL = os.environ.get("DATABASE_URL")
+    DATABASE_URL = get_db_url()
     if not DATABASE_URL:
         print("DATABASE_URL variable not found")
         exit(1)
@@ -60,9 +78,9 @@ def check():
         print(f"Error connection from {DATABASE_URL}")
         exit(1)
 
-    if args.drop or args.config:
-        drop(engine)
-    if args.drop:
+    if args.refresh or args.config:
+        refresh(engine)
+    if args.refresh:
         print("Done")
         exit(0)
     return engine
