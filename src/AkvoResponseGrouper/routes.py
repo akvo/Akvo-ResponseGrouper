@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from .db import get_session
-from .views import get_categories, get_group_by_category
+from .views import get_categories, get_group_by_category, refresh_view
 from .models import GroupedCategory
 
 collection_route = APIRouter(
@@ -47,3 +47,16 @@ async def get_grouped_categories(
         session=session, form_id=form_id, category_name=category_name
     )
     return res
+
+
+@collection_route.get(
+    "/refresh",
+    summary="refresh materialized view",
+    name="collection:refresh_materialized_view",
+    tags=["Data"],
+)
+def refresh_materialized_view(
+    session: Session = Depends(get_session),
+):
+    refresh_view(session=session)
+    return "OK"

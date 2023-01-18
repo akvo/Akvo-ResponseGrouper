@@ -63,3 +63,4 @@ def get_group_by_category(
 
 def refresh_view(session: Session):
     session.execute("REFRESH MATERIALIZED VIEW ar_category;")
+    session.commit()

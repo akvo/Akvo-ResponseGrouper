@@ -13,6 +13,14 @@ class GroupByDict(TypedDict):
     count: int
 
 
+class CategoryDict(TypedDict):
+    id: int
+    data: int
+    form: int
+    name: str
+    category: str
+
+
 class Category(Base):
     __tablename__ = "ar_category"
     id = Column(Integer, primary_key=True)
@@ -31,13 +39,15 @@ class Category(Base):
             "count": data.count,
         }
 
-
-class CategoryDict(TypedDict):
-    id: int
-    data: int
-    form: int
-    name: str
-    category: str
+    @property
+    def serialize(self) -> CategoryDict:
+        return {
+            "id": self.id,
+            "data": self.data,
+            "form": self.form,
+            "name": self.name,
+            "category": self.category,
+        }
 
 
 class CountedCategory(TypedDict):
