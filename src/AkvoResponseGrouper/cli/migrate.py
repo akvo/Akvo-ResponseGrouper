@@ -1,5 +1,6 @@
 import argparse
 import os
+import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
@@ -100,13 +101,29 @@ def check():
     return engine
 
 
+def check_if_duplicated(data: list) -> pd.DataFrame:
+    cols = ["id", "form", "data", "name", "category"]
+    df = pd.DataFrame.from_records(data=data, columns=cols)
+    return (
+        df.groupby(["data", "name"])["data"]
+        .count()
+        .reset_index(name="count")
+        .query("count > 1")
+    )
+
+
 def main() -> None:
     engine = check()
-    if args.config:
-        schema = generate_schema(file_config=args.config)
-        with engine.connect() as connection:
-            with connection.begin():
+    schema, query = generate_schema(file_config=args.config)
+    with engine.connect() as connection:
+        with connection.begin():
+            res = connection.execute(text(query)).fetchall()
+            dup = check_if_duplicated(data=res)
+            if dup.empty:
                 connection.execute(text(schema))
+            else:
+                print("POTENTIAL DUPLICATES:\n", dup)
+
     print("Done")
 
 

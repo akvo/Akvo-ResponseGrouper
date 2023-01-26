@@ -91,22 +91,24 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-def generate_schema(file_config: str) -> str:
+def generate_schema(file_config: str) -> list:
     file_config = open(file_config)
     config_dict = json.load(file_config)
     file_config.close()
-    mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
+    query = ""
     for main_union, categories in enumerate(config_dict):
         categories = CategoryConfigBase.parse_raw(json.dumps(categories))
         category_name = categories.name
 
-        mview += "SELECT row_number() over (partition by true) as id,"
-        mview += f"form, data, '{category_name}' as name, category\n"
-        mview += "FROM (\n"
-        mview += generate_query(categories=categories)
-        mview += ") d WHERE d.count >= d.valid"
+        query += "SELECT row_number() over (partition by true) as id,"
+        query += f"form, data, '{category_name}' as name, category\n"
+        query += "FROM (\n"
+        query += generate_query(categories=categories)
+        query += ") d WHERE d.count >= d.valid"
         if main_union < len(config_dict) - 1:
-            mview += "\nUNION\n"
+            query += "\nUNION\n"
         if main_union == len(config_dict) - 1:
-            mview += "\nORDER BY data;"
-    return mview
+            query += "\nORDER BY data;"
+    mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
+    mview += query
+    return (mview, query)
