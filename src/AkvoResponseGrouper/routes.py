@@ -29,13 +29,12 @@ async def get_index_category(
     data: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
-    if data:
-        data = [int(d) for d in data.split(",")]
-        res = get_category_by_data_ids(session=session, ids=data)
-        return res
     res = get_categories(
         form=form, name=name, category=category, data=data, session=session
     )
+    if data:
+        data = [int(d) for d in data.split(",")]
+        res = get_category_by_data_ids(session=session, ids=data)
     res = [Category.res_serialize(r) for r in res]
     return res
 
