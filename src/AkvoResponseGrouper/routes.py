@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from .db import get_session
 from .views import get_categories, get_group_by_category, refresh_view
-from .models import GroupedCategory
+from .models import GroupedCategory, Category, CategoryResponse
 
 collection_route = APIRouter(
     prefix="/collection",
@@ -13,6 +13,7 @@ collection_route = APIRouter(
 
 @collection_route.get(
     "/categories",
+    response_model=List[CategoryResponse],
     name="collection:get_index_category",
     summary="initial index page for collection",
 )
@@ -29,6 +30,7 @@ async def get_index_category(
     res = get_categories(
         form=form, name=name, category=category, data=data, session=session
     )
+    res = [Category.res_serialize(r) for r in res]
     return res
 
 

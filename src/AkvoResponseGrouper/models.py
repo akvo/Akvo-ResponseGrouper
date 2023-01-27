@@ -21,6 +21,13 @@ class CategoryDict(TypedDict):
     category: str
 
 
+class CategoryResponse(TypedDict):
+    form: int
+    data: int
+    name: str
+    category: str
+
+
 class Category(Base):
     __tablename__ = "ar_category"
     id = Column(Integer, primary_key=True)
@@ -37,6 +44,14 @@ class Category(Base):
             "category": data.category,
             "name": data.name,
             "count": data.count,
+        }
+
+    def res_serialize(data) -> CategoryResponse:
+        return {
+            "data": data.data,
+            "form": data.form,
+            "name": data.name,
+            "category": data.category,
         }
 
     @property
