@@ -3,7 +3,6 @@ import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
-from scripts.seeder_datapoint import seed
 from AkvoResponseGrouper.views import get_categories
 
 pytestmark = pytest.mark.asyncio
@@ -34,3 +33,10 @@ class TestViews:
         res = get_categories(session=session, category="non-rural female head")
         data = [r.serialize for r in res]
         assert data[0]["category"] == "Non-Rural Female Head"
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_data(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        res = get_categories(session=session, data=[1])
+        assert len(res) > 0
