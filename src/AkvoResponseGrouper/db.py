@@ -1,6 +1,7 @@
 from os import environ
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
 
 
 def get_db_url():
@@ -21,3 +22,19 @@ def get_session():
         yield session
     finally:
         session.close()
+
+
+def get_existing_view(connection):
+    return connection.execute(
+        text(
+            """
+                SELECT count(relkind) from pg_class
+                where relname = 'ar_category'
+                and relkind = 'm'
+                """
+        )
+    ).fetchone()
+
+
+def drop_view(connection):
+    return connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
