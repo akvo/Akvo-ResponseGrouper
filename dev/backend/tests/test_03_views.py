@@ -4,7 +4,7 @@ import random
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session, load_only
-from AkvoResponseGrouper.views import get_categories
+from AkvoResponseGrouper.views import get_categories, get_category_by_data_ids
 from AkvoResponseGrouper.models import Category
 
 pytestmark = pytest.mark.asyncio
@@ -49,3 +49,11 @@ class TestViews:
         random = get_random_data(session=session)
         res = get_categories(session=session, data=random.data)
         assert len(res) > 0
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_data_ids(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        random = get_random_data(session=session)
+        res = get_category_by_data_ids(session=session, ids=[random.data])
+        assert len(res) == 1

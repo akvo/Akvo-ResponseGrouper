@@ -1,8 +1,8 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_
 from sqlalchemy.sql.operators import ilike_op
-from .models import Category, CategoryDict
+from .models import Category, CategoryDict, CategoryResponse
 from .utils import group_by_category_output
 
 
@@ -11,7 +11,7 @@ def get_categories(
     form: Optional[int] = None,
     name: Optional[str] = None,
     category: Optional[str] = None,
-    data: Optional[Union[int, List[int]]] = None,
+    data: Optional[int] = None,
 ) -> List[CategoryDict]:
     queries = []
     if form:
@@ -21,10 +21,7 @@ def get_categories(
     if category:
         queries.append(ilike_op(Category.category, f"%{category}%"))
     if data:
-        if isinstance(data, list):
-            queries.append(Category.data.in_(data))
-        else:
-            queries.append(Category.data == data)
+        queries.append(Category.data == data)
     return session.query(Category).filter(*queries).all()
 
 
@@ -64,3 +61,15 @@ def get_group_by_category(
 def refresh_view(session: Session):
     session.execute("REFRESH MATERIALIZED VIEW ar_category;")
     session.commit()
+
+
+def get_category_by_data_ids(
+    session: Session, ids: List[int]
+) -> List[CategoryResponse]:
+    return (
+        session.query(
+            Category.data, Category.form, Category.name, Category.category
+        )
+        .filter(Category.data.in_(ids))
+        .all()
+    )

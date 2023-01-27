@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from .db import get_session
-from .views import get_categories, get_group_by_category, refresh_view
+from .views import (
+    get_categories,
+    get_group_by_category,
+    get_category_by_data_ids,
+    refresh_view,
+)
 from .models import GroupedCategory, Category, CategoryResponse
 
 collection_route = APIRouter(
@@ -26,7 +31,8 @@ async def get_index_category(
 ):
     if data:
         data = [int(d) for d in data.split(",")]
-        data = data[0] if len(data) == 1 else data
+        res = get_category_by_data_ids(session=session, ids=data)
+        return res
     res = get_categories(
         form=form, name=name, category=category, data=data, session=session
     )
