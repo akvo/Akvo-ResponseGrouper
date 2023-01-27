@@ -30,7 +30,7 @@ async def get_index_category(
     session: Session = Depends(get_session),
 ):
     res = get_categories(
-        form=form, name=name, category=category, data=data, session=session
+        form=form, name=name, category=category, session=session
     )
     if data:
         data = [int(d) for d in data.split(",")]
