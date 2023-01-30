@@ -17,7 +17,7 @@ class TestMigration:
     async def test_if_views_is_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        schema = generate_schema(file_config="./sources/category.json")
+        schema, query = generate_schema(file_config="./sources/category.json")
         session.execute(text(schema))
         # BEFORE
         res = get_categories(session=session)
