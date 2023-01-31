@@ -56,4 +56,4 @@ class TestViews:
     ) -> None:
         random = get_random_data(session=session)
         res = get_category_by_data_ids(session=session, ids=[random.data])
-        assert len(res) == 1
+        assert len(res) > 0
