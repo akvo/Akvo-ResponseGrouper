@@ -1,115 +1,187 @@
 import unittest
-import json
-from collections import defaultdict
+from AkvoResponseGrouper.cli.checker import check_config
+from AkvoResponseGrouper.utils import generate_data_as_json_file
 
 
-def intersection(lst1, lst2):
-    lst3 = [value for value in lst1 if value in lst2]
-    return lst3
-
-
-class TestExample(unittest.TestCase):
+class TestCategoryChecker(unittest.TestCase):
     def test_if_duplicate_is_available(self):
-
-        with open("./tests/category.json") as f:
-            data = f.read()
-            data = json.loads(data)
-
-        options = []
-        for categories in data[0]["categories"]:
-            duplicates_dict = defaultdict()
-            total = 1 if "or" in categories else 0
-            list_questions = []
-            if "or" in categories:
-                list_questions += categories["or"]
-            else:
-                categories["or"] = []
-            if "and" in categories:
-                list_questions += categories["and"]
-                total += len(categories["and"])
-            duplicates = []
-            for category in list_questions:
-                for category_check in data[0]["categories"]:
-                    for types in ["and", "or"]:
-                        if types in category_check:
-                            for ck in category_check[types]:
-                                if (
-                                    category_check["name"]
-                                    != categories["name"]
-                                ):
-                                    if ck["question"] == category["question"]:
-                                        intersect = intersection(
-                                            ck["options"], category["options"]
-                                        )
-                                        if len(intersect):
-                                            duplicates.append(
-                                                {
-                                                    "question": ck["question"],
-                                                    "name": category_check[
-                                                        "name"
-                                                    ],
-                                                    "option": ck["options"],
-                                                    "type": types,
-                                                }
-                                            )
-            for duplicate in duplicates:
-                for types in ["and", "or"]:
-                    dp = len(
-                        list(
-                            filter(
-                                lambda x: x["type"] == types
-                                and x["name"] == duplicate["name"]
-                                and x["question"] == duplicate["question"],
-                                duplicates,
-                            )
-                        )
-                    )
-                    if dp:
-                        if duplicate["name"] in duplicates_dict:
-                            if types in duplicates_dict[duplicate["name"]]:
-                                duplicates_dict[duplicate["name"]][types] += 1
-                            else:
-                                duplicates_dict[duplicate["name"]][types] = 1
-                            duplicates_dict[duplicate["name"]]["total"] += 1
-                        else:
-                            duplicates_dict[duplicate["name"]] = {
-                                "and": 1 if "and" == types else 0,
-                                "or": 1 if "or" == types else 0,
-                                "total": 1,
+        fake_data = [
+            {
+                "name": "Water",
+                "form": "556240162",
+                "categories": [
+                    {
+                        "name": "Unimproved D",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": ["Bottled water"],
+                            },
+                            {
+                                "question": 573340129,
+                                "options": ["Bottled water"],
+                            },
+                        ],
+                    },
+                    {
+                        "name": "Unimproved C",
+                        "or": [
+                            {
+                                "question": 573340127,
+                                "options": ["Bottled water"],
+                            },
+                            {"question": 999, "options": ["Bottled water"]},
+                        ],
+                        "and": [
+                            {
+                                "question": 573340129,
+                                "options": ["Bottled water"],
                             }
-            categories.update(
-                {
-                    "list_questions": list_questions,
-                    "total": total,
-                    "duplicates": duplicates,
-                    "total_duplicate": dict(duplicates_dict),
-                }
-            )
-            options.append(categories)
-        printed = {}
-        for opt in options:
-            if opt["name"] in printed:
-                continue
-            for td in opt["total_duplicate"]:
-                if opt["total_duplicate"][td]["total"] >= opt["total"]:
-                    if opt["total_duplicate"][td]["or"] == len(
-                        opt["or"]
-                    ) and opt["total_duplicate"][td]["and"] == len(opt["and"]):
-                        duplicate = list(
-                            filter(
-                                lambda x: x["name"] == td, opt["duplicates"]
-                            )
-                        )
-                        print(f"POTENTIAL DUPLICATE: {opt['name']} WITH {td}")
-                        for d in duplicate:
-                            print(
-                                f"""
-                            QUESTION: {d['question']}
-                            OPTIONS: {d['option']}
-                            """
-                            )
-                        printed.update({td: True})
-        self.assertEqual(len(printed), 1)
+                        ],
+                    },
+                    {
+                        "name": "Surface Water",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": ["Surface water"],
+                            }
+                        ],
+                    },
+                    {
+                        "name": "Unimproved",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": [
+                                    "Bottled water",
+                                    "Unprotected spring",
+                                    "Unprotected dug well",
+                                ],
+                            },
+                            {
+                                "question": 573340129,
+                                "options": ["Bottled water"],
+                            },
+                        ],
+                    },
+                    {
+                        "name": "Limited",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": [
+                                    "Protected dug well",
+                                    "Public tap/standpipe",
+                                    (
+                                        "Piped water into dwelling (household"
+                                        " connection)"
+                                    ),
+                                    "Piped to neighbour",
+                                    "Piped water to yard/plot",
+                                    (
+                                        "Shared Deep tube well / shallow tube"
+                                        " well"
+                                    ),
+                                    "Shallow tubewell/borehole",
+                                    "Protected spring",
+                                    "Deep tubewell/borehole",
+                                ],
+                            },
+                            {
+                                "question": 573340128,
+                                "options": ["More than 30 minutes"],
+                            },
+                        ],
+                    },
+                    {
+                        "name": "Basic",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": [
+                                    "Protected dug well",
+                                    "Public tap/standpipe",
+                                    (
+                                        "Piped water into dwelling (household"
+                                        " connection)"
+                                    ),
+                                    "Piped to neighbour",
+                                    "Piped water to yard/plot",
+                                    (
+                                        "Shared Deep tube well / shallow tube"
+                                        " well"
+                                    ),
+                                    "Shallow tubewell/borehole",
+                                    "Protected spring",
+                                    "Deep tubewell/borehole",
+                                ],
+                            },
+                            {
+                                "question": 573340128,
+                                "options": [
+                                    "Less than 30 minutes",
+                                    "Don''t know",
+                                ],
+                            },
+                            {
+                                "question": 573340129,
+                                "options": [
+                                    "Yes, at least once",
+                                    "Don''t know",
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        "name": "Safely Managed",
+                        "and": [
+                            {
+                                "question": 573340127,
+                                "options": [
+                                    "Protected dug well",
+                                    "Public tap/standpipe",
+                                    (
+                                        "Piped water into dwelling (household"
+                                        " connection)"
+                                    ),
+                                    "Piped to neighbour",
+                                    "Piped water to yard/plot",
+                                    (
+                                        "Shared Deep tube well / shallow tube"
+                                        " well"
+                                    ),
+                                    "Shallow tubewell/borehole",
+                                    "Protected spring",
+                                    "Deep tubewell/borehole",
+                                ],
+                            },
+                            {
+                                "question": 573340128,
+                                "options": [
+                                    "Less than 30 minutes",
+                                    "Don''t know",
+                                ],
+                            },
+                            {
+                                "question": 573340129,
+                                "options": ["No, always sufficient"],
+                            },
+                            {
+                                "question": 573340125,
+                                "options": [
+                                    "Free from feacal and prioirty chemical"
+                                    " contamination"
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            }
+        ]
+        file = generate_data_as_json_file(data=fake_data)
+        checker = check_config(file_config=file)
+        self.assertTrue(checker)
 
 
 if __name__ == "__main__":
