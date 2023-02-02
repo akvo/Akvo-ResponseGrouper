@@ -1,115 +1,137 @@
 import unittest
-import json
-from collections import defaultdict
+from AkvoResponseGrouper.cli.checker import check_config, get_options
+from AkvoResponseGrouper.utils import generate_data_as_json_file
 
 
-def intersection(lst1, lst2):
-    lst3 = [value for value in lst1 if value in lst2]
-    return lst3
+class TestCategoryChecker(unittest.TestCase):
+    def test_if_category_is_typo(self):
+        with self.assertRaises(SystemExit) as cm:
+            data = {"name": "Water", "categoryies": []}
+            get_options(data=data)
+        self.assertEqual(cm.exception.code, 0)
 
+    def test_name_is_not_present(self):
+        data = [
+            {
+                "form": 2,
+                "categories": [],
+            }
+        ]
+        fc = generate_data_as_json_file(data=data)
+        checker = check_config(file_config=fc, info=False)
+        self.assertFalse(checker)
 
-class TestExample(unittest.TestCase):
-    def test_if_duplicate_is_available(self):
+    def test_form_is_not_present(self):
+        data = [
+            {
+                "name": "Water",
+                "categories": [],
+            }
+        ]
+        fc = generate_data_as_json_file(data=data)
+        checker = check_config(file_config=fc, info=False)
+        self.assertFalse(checker)
 
-        with open("./tests/category.json") as f:
-            data = f.read()
-            data = json.loads(data)
+    def test_5C_duplicate_with_5CD(self):
+        data = [
+            {
+                "name": "Water",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-1A",
+                        "and": [
+                            {"question": 1, "options": ["A"]},
+                        ],
+                    },
+                ],
+            },
+            {
+                "name": "Sanitation",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-5C",
+                        "and": [
+                            {"question": 5, "options": ["C"]},
+                        ],
+                    },
+                    {
+                        "name": "Category-5CD",
+                        "and": [
+                            {"question": 5, "options": ["C", "D"]},
+                        ],
+                    },
+                ],
+            },
+        ]
+        fc = generate_data_as_json_file(data=data)
+        checker = check_config(file_config=fc, info=False)
+        self.assertEqual(checker, 1)
 
-        options = []
-        for categories in data[0]["categories"]:
-            duplicates_dict = defaultdict()
-            total = 1 if "or" in categories else 0
-            list_questions = []
-            if "or" in categories:
-                list_questions += categories["or"]
-            else:
-                categories["or"] = []
-            if "and" in categories:
-                list_questions += categories["and"]
-                total += len(categories["and"])
-            duplicates = []
-            for category in list_questions:
-                for category_check in data[0]["categories"]:
-                    for types in ["and", "or"]:
-                        if types in category_check:
-                            for ck in category_check[types]:
-                                if (
-                                    category_check["name"]
-                                    != categories["name"]
-                                ):
-                                    if ck["question"] == category["question"]:
-                                        intersect = intersection(
-                                            ck["options"], category["options"]
-                                        )
-                                        if len(intersect):
-                                            duplicates.append(
-                                                {
-                                                    "question": ck["question"],
-                                                    "name": category_check[
-                                                        "name"
-                                                    ],
-                                                    "option": ck["options"],
-                                                    "type": types,
-                                                }
-                                            )
-            for duplicate in duplicates:
-                for types in ["and", "or"]:
-                    dp = len(
-                        list(
-                            filter(
-                                lambda x: x["type"] == types
-                                and x["name"] == duplicate["name"]
-                                and x["question"] == duplicate["question"],
-                                duplicates,
-                            )
-                        )
-                    )
-                    if dp:
-                        if duplicate["name"] in duplicates_dict:
-                            if types in duplicates_dict[duplicate["name"]]:
-                                duplicates_dict[duplicate["name"]][types] += 1
-                            else:
-                                duplicates_dict[duplicate["name"]][types] = 1
-                            duplicates_dict[duplicate["name"]]["total"] += 1
-                        else:
-                            duplicates_dict[duplicate["name"]] = {
-                                "and": 1 if "and" == types else 0,
-                                "or": 1 if "or" == types else 0,
-                                "total": 1,
-                            }
-            categories.update(
-                {
-                    "list_questions": list_questions,
-                    "total": total,
-                    "duplicates": duplicates,
-                    "total_duplicate": dict(duplicates_dict),
-                }
-            )
-            options.append(categories)
-        printed = {}
-        for opt in options:
-            if opt["name"] in printed:
-                continue
-            for td in opt["total_duplicate"]:
-                if opt["total_duplicate"][td]["total"] >= opt["total"]:
-                    if opt["total_duplicate"][td]["or"] == len(
-                        opt["or"]
-                    ) and opt["total_duplicate"][td]["and"] == len(opt["and"]):
-                        duplicate = list(
-                            filter(
-                                lambda x: x["name"] == td, opt["duplicates"]
-                            )
-                        )
-                        print(f"POTENTIAL DUPLICATE: {opt['name']} WITH {td}")
-                        for d in duplicate:
-                            print(
-                                f"""
-                            QUESTION: {d['question']}
-                            OPTIONS: {d['option']}
-                            """
-                            )
-                        printed.update({td: True})
-        self.assertEqual(len(printed), 1)
+    def test_1A_duplicate_with_1AB_and_1A_with_1AB2CD(self):
+        data = [
+            {
+                "name": "Water",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-1A",
+                        "and": [
+                            {"question": 1, "options": ["A"]},
+                        ],
+                    },
+                    {
+                        "name": "Category-1AB",
+                        "and": [{"question": 1, "options": ["A", "B"]}],
+                    },
+                    {
+                        "name": "Category-1AB2CD",
+                        "and": [
+                            {"question": 1, "options": ["A", "B"]},
+                            {"question": 2, "options": ["C", "D"]},
+                        ],
+                    },
+                ],
+            }
+        ]
+        fc = generate_data_as_json_file(data=data)
+        checker = check_config(file_config=fc, info=False)
+        self.assertEqual(checker, 2)
+
+    def test_checker_config_is_passed(self):
+        data = [
+            {
+                "name": "Water",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-1A3FG",
+                        "and": [
+                            {"question": 1, "options": ["A"]},
+                            {"question": 3, "options": ["F", "G"]},
+                        ],
+                    },
+                    {
+                        "name": "Category-1AB",
+                        "and": [
+                            {"question": 1, "options": ["C"]},
+                            {"question": 3, "options": ["A"]},
+                        ],
+                    },
+                    {
+                        "name": "Category-1AB2CD",
+                        "and": [
+                            {"question": 1, "options": ["A", "B"]},
+                            {"question": 2, "options": ["C", "D"]},
+                        ],
+                    },
+                ],
+            }
+        ]
+        fc = generate_data_as_json_file(data=data)
+        checker = check_config(file_config=fc, info=False)
+        self.assertFalse(checker)
 
 
 if __name__ == "__main__":
