@@ -151,7 +151,12 @@ def get_options(data: dict) -> list:
 
 
 def loop_options(
-    opt: dict, td: dict, printed: dict, title: str = None, info: bool = True
+    opt: dict,
+    td: dict,
+    printed: dict,
+    form_id: str,
+    title: str = None,
+    info: bool = True,
 ) -> None:
     if opt["total_duplicate"][td]["total"] >= opt["total"]:
         if opt["total_duplicate"][td]["or"] == len(opt["or"]) and opt[
@@ -163,7 +168,8 @@ def loop_options(
             if info:
                 print(
                     title,
-                    f"POTENTIAL DUPLICATE: {opt['name']} WITH {td}",
+                    f"POTENTIAL DUPLICATE: {opt['name']} WITH {td}, ",
+                    f"FORM ID: {form_id}"
                 )
             for d in duplicate:
                 if info:
@@ -191,7 +197,12 @@ def check_config(file_config: str, info: bool = True) -> int:
             for td in opt["total_duplicate"]:
                 title = d["name"] if "name" in d else None
                 loop_options(
-                    opt=opt, td=td, printed=printed, title=title, info=info
+                    opt=opt,
+                    td=td,
+                    printed=printed,
+                    title=title,
+                    info=info,
+                    form_id=d["form"],
                 )
         if len(printed) > 0:
             counter += len(printed)
