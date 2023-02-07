@@ -1,0 +1,201 @@
+#+PROPERTY: header-args:sql     :exports both
+#+PROPERTY: header-args:sql+    :engine postgresql
+#+PROPERTY: header-args:sql+    :dbhost localhost
+#+PROPERTY: header-args:sql+    :dbuser akvo
+#+PROPERTY: header-args:sql+    :dbpassword password
+#+PROPERTY: header-args:sql+    :database demo
+#+PROPERTY: header-args :tangle data-model.sql
+#+STARTUP: fold
+
+* 1st Proposal
+
+** Materialized Views
+
+#+NAME: BASIC DATA
+#+begin_src sql
+  SELECT
+  q.form, a.data, json_object_agg(a.question, a.options) as opt
+  FROM answer a
+  LEFT JOIN question q ON q.id = a.question
+  WHERE a.options IS NOT NULL
+  AND a.question IN (578820194, 578820193)
+  GROUP BY form, data
+#+end_src
+
+#+RESULTS: BASIC DATA
+|      form | data | opt                                                                |
+|-----------+------+--------------------------------------------------------------------|
+| 554360198 |   42 | { "578820194" : ["No"], "578820193" : ["Neither water or soap"] }  |
+| 554360198 |   34 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   35 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |   27 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   13 | { "578820194" : ["No"], "578820193" : ["Yes, water and soap"] }    |
+| 554360198 |    7 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   21 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |    5 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |   16 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   10 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |    1 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   31 | { "578820194" : ["Yes"], "578820193" : ["Water only"] }            |
+| 554360198 |   38 | { "578820194" : ["Yes"], "578820193" : ["Soap only"] }             |
+| 554360198 |   17 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   11 | { "578820194" : ["Yes"], "578820193" : ["Soap only"] }             |
+| 554360198 |   43 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   24 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |    4 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   45 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   22 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |    8 | { "578820194" : ["Yes"], "578820193" : ["Water only"] }            |
+| 554360198 |   32 | { "578820194" : ["No"], "578820193" : ["Neither water or soap"] }  |
+| 554360198 |   36 | { "578820194" : ["Yes"], "578820193" : ["Soap only"] }             |
+| 554360198 |   28 | { "578820194" : ["No"], "578820193" : ["Neither water or soap"] }  |
+| 554360198 |   47 | { "578820194" : ["No"], "578820193" : ["Yes, water and soap"] }    |
+| 554360198 |   23 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |    2 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |   25 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   48 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |    9 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   49 | { "578820194" : ["No"], "578820193" : ["Yes, water and soap"] }    |
+| 554360198 |   33 | { "578820194" : ["Yes"], "578820193" : ["Water only"] }            |
+| 554360198 |   37 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   12 | { "578820194" : ["No"], "578820193" : ["Neither water or soap"] }  |
+| 554360198 |   39 | { "578820194" : ["Yes"], "578820193" : ["Water only"] }            |
+| 554360198 |   40 | { "578820194" : ["No"], "578820193" : ["Neither water or soap"] }  |
+| 554360198 |   14 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   41 | { "578820194" : ["Yes"], "578820193" : ["Soap only"] }             |
+| 554360198 |   44 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |   30 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   18 | { "578820194" : ["Yes"], "578820193" : ["Yes, water and soap"] }   |
+| 554360198 |   15 | { "578820194" : ["Yes"], "578820193" : ["Soap only"] }             |
+| 554360198 |   26 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   20 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |    6 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |    3 | { "578820194" : ["No"], "578820193" : ["Water only"] }             |
+| 554360198 |   29 | { "578820194" : ["Yes"], "578820193" : ["Neither water or soap"] } |
+| 554360198 |   19 | { "578820194" : ["No"], "578820193" : ["Soap only"] }              |
+| 554360198 |   46 | { "578820194" : ["No"], "578820193" : ["Yes, water and soap"] }    |
+
+** Data Query
+
+#+name: pd2org
+#+begin_src python :var df="df" :exports none
+  return f"return tabulate({df}, headers={df}.columns, tablefmt='orgtbl')"
+#+end_src
+
+#+RESULTS: pd2org
+: return tabulate(df, headers=df.columns, tablefmt='orgtbl')
+
+#+name: CHAIN RG
+#+header: :prologue from tabulate import tabulate
+#+header: :noweb strip-export
+#+begin_src python :results value raw :exports both
+  import psycopg2
+  import pandas as pd
+  from sqlalchemy import create_engine
+  config = [{
+      "name": "Basic",
+      "questions": [
+          {
+              "id": 578820194,
+              "options": ["Yes"],
+              "else": "No Service"
+          },
+          {
+              "id": 578820193,
+              "options": ["Yes, water and soap"],
+              "else": "Limited"
+          }
+      ]
+  }]
+  DATABASE_URL='postgresql+psycopg2://akvo:password@127.0.0.1/demo'
+  engine = create_engine(DATABASE_URL, pool_recycle=3600);
+  db = engine.connect();
+  query = """
+          SELECT
+          q.form, a.data, json_object_agg(a.question, a.options) as opt
+          FROM answer a
+          LEFT JOIN question q ON q.id = a.question
+          WHERE a.options IS NOT NULL
+          AND a.question IN (578820194, 578820193)
+          GROUP BY q.form, a.data
+          """
+  def get_category(x):
+      category = False
+      for c in config:
+          valid = 0
+          for q in c['questions']:
+              options = x.get(str(q['id']))
+              if len(set(q['options']).intersection(options)):
+                  valid += 1
+              else:
+                  category = category or q.get('else')
+          if valid == len(c['questions']):
+              category = c['name']
+      return category
+
+  df = pd.read_sql(query, db);
+  db.connection.close()
+
+  results = df.to_dict('records')
+  for d in results:
+      d.update({'category': get_category(d['opt'])})
+      # print(f"{d['data']}: {d['category']}")
+      # for opt in d["opt"]:
+      #     print(f"{opt}: {d['opt'][opt]}")
+      # print("======================")
+  res = pd.DataFrame(results)
+  <<pd2org("res")>>
+#+end_src
+
+#+RESULTS: CHAIN RG
+|    |      form | data | opt                                                            | category   |
+|----+-----------+------+----------------------------------------------------------------+------------|
+|  0 | 554360198 |   42 | {'578820194': ['No'], '578820193': ['Neither water or soap']}  | No Service |
+|  1 | 554360198 |   34 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+|  2 | 554360198 |   35 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+|  3 | 554360198 |   27 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+|  4 | 554360198 |   13 | {'578820194': ['No'], '578820193': ['Yes, water and soap']}    | No Service |
+|  5 | 554360198 |    7 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+|  6 | 554360198 |   21 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+|  7 | 554360198 |    5 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+|  8 | 554360198 |   16 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+|  9 | 554360198 |   10 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+| 10 | 554360198 |    1 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 11 | 554360198 |   31 | {'578820194': ['Yes'], '578820193': ['Water only']}            | Limited    |
+| 12 | 554360198 |   38 | {'578820194': ['Yes'], '578820193': ['Soap only']}             | Limited    |
+| 13 | 554360198 |   17 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 14 | 554360198 |   11 | {'578820194': ['Yes'], '578820193': ['Soap only']}             | Limited    |
+| 15 | 554360198 |   43 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 16 | 554360198 |   24 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 17 | 554360198 |    4 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+| 18 | 554360198 |   45 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 19 | 554360198 |   22 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+| 20 | 554360198 |    8 | {'578820194': ['Yes'], '578820193': ['Water only']}            | Limited    |
+| 21 | 554360198 |   32 | {'578820194': ['No'], '578820193': ['Neither water or soap']}  | No Service |
+| 22 | 554360198 |   36 | {'578820194': ['Yes'], '578820193': ['Soap only']}             | Limited    |
+| 23 | 554360198 |   28 | {'578820194': ['No'], '578820193': ['Neither water or soap']}  | No Service |
+| 24 | 554360198 |   47 | {'578820194': ['No'], '578820193': ['Yes, water and soap']}    | No Service |
+| 25 | 554360198 |   23 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 26 | 554360198 |    2 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+| 27 | 554360198 |   25 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 28 | 554360198 |   48 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 29 | 554360198 |    9 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+| 30 | 554360198 |   49 | {'578820194': ['No'], '578820193': ['Yes, water and soap']}    | No Service |
+| 31 | 554360198 |   33 | {'578820194': ['Yes'], '578820193': ['Water only']}            | Limited    |
+| 32 | 554360198 |   37 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+| 33 | 554360198 |   12 | {'578820194': ['No'], '578820193': ['Neither water or soap']}  | No Service |
+| 34 | 554360198 |   39 | {'578820194': ['Yes'], '578820193': ['Water only']}            | Limited    |
+| 35 | 554360198 |   40 | {'578820194': ['No'], '578820193': ['Neither water or soap']}  | No Service |
+| 36 | 554360198 |   14 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 37 | 554360198 |   41 | {'578820194': ['Yes'], '578820193': ['Soap only']}             | Limited    |
+| 38 | 554360198 |   44 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+| 39 | 554360198 |   30 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 40 | 554360198 |   18 | {'578820194': ['Yes'], '578820193': ['Yes, water and soap']}   | Basic      |
+| 41 | 554360198 |   15 | {'578820194': ['Yes'], '578820193': ['Soap only']}             | Limited    |
+| 42 | 554360198 |   26 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 43 | 554360198 |   20 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 44 | 554360198 |    6 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 45 | 554360198 |    3 | {'578820194': ['No'], '578820193': ['Water only']}             | No Service |
+| 46 | 554360198 |   29 | {'578820194': ['Yes'], '578820193': ['Neither water or soap']} | Limited    |
+| 47 | 554360198 |   19 | {'578820194': ['No'], '578820193': ['Soap only']}              | No Service |
+| 48 | 554360198 |   46 | {'578820194': ['No'], '578820193': ['Yes, water and soap']}    | No Service |
