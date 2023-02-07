@@ -1,3 +1,6 @@
+#+TITLE: Response Group Research
+#+Author: Deden Bangkit
+
 #+PROPERTY: header-args:sql     :exports both
 #+PROPERTY: header-args:sql+    :engine postgresql
 #+PROPERTY: header-args:sql+    :dbhost localhost
@@ -7,8 +10,92 @@
 #+PROPERTY: header-args :tangle data-model.sql
 #+STARTUP: fold
 
-* 1st Proposal
+#+name: pd2org
+#+begin_src python :var df="df" :exports none
+  return f"return tabulate({df}, headers={df}.columns, tablefmt='orgtbl')"
+#+end_src
 
+#+RESULTS: pd2org
+: return tabulate(df, headers=df.columns, tablefmt='orgtbl')
+
+
+* Cases
+Sanitation Service Level from [[https://app.excalidraw.com/s/2tVeGVHqKIQ/6Aoixp68qlt][Excalidraw Link]]
+** Questions
+
+#+name: QUESTION LIST
+#+begin_src sql
+  SELECT id, name FROM question
+  WHERE id IN (578820194, 578820193)
+#+end_src
+
+#+RESULTS: QUESTION LIST
+|        id | name                                                                       |
+|-----------+----------------------------------------------------------------------------|
+| 578820194 | Are there handwashing facilities at the school?                            |
+| 578820193 | Are both soap and water currently available at the handwashing facilities? |
+
+** Option List
+
+#+name: OPTION LIST
+#+begin_src sql
+  SELECT * FROM option
+  WHERE question IN (578820194, 578820193)
+#+end_src
+
+#+RESULTS: OPTION LIST
+| id | order | name                  |  question |
+|----+-------+-----------------------+-----------|
+| 41 |       | Yes                   | 578820194 |
+| 42 |       | No                    | 578820194 |
+| 43 |       | Yes, water and soap   | 578820193 |
+| 44 |       | Water only            | 578820193 |
+| 45 |       | Soap only             | 578820193 |
+| 46 |       | Neither water or soap | 578820193 |
+
+** Probability
+
+#+name: Probability
+#+header: :noweb strip-export
+#+begin_src python :results output table
+  import psycopg2
+  import pandas as pd
+  from sqlalchemy import create_engine
+  DATABASE_URL='postgresql+psycopg2://akvo:password@127.0.0.1/demo'
+  engine = create_engine(DATABASE_URL, pool_recycle=3600);
+  db = engine.connect();
+  query = """
+         SELECT q.id, q.name as qs, o.name as opt FROM option o
+         LEFT JOIN question q
+         ON o.question = q.id
+         WHERE q.id IN (578820194, 578820193)
+         """
+  df = pd.read_sql(query, db);
+  db.connection.close()
+  done = []
+  pairs = []
+  for i, a in df.iterrows():
+     if a.id not in done:
+         done.append(a.id)
+     filtered = df[~df.id.isin(done)]
+     for iq, aq in filtered.iterrows():
+         pairs.append([a.opt, aq.opt])
+  print([done, None] + pairs)
+#+end_src
+
+#+RESULTS: Probability
+| 578820194 | 578820193             |
+|-----------+-----------------------|
+| Yes       | Yes, water and soap   |
+| Yes       | Water only            |
+| Yes       | Soap only             |
+| Yes       | Neither water or soap |
+| No        | Yes, water and soap   |
+| No        | Water only            |
+| No        | Soap only             |
+| No        | Neither water or soap |
+
+* 1st Proposal
 ** Materialized Views
 
 #+NAME: BASIC DATA
@@ -76,14 +163,6 @@
 | 554360198 |   46 | { "578820194" : ["No"], "578820193" : ["Yes, water and soap"] }    |
 
 ** Data Query
-
-#+name: pd2org
-#+begin_src python :var df="df" :exports none
-  return f"return tabulate({df}, headers={df}.columns, tablefmt='orgtbl')"
-#+end_src
-
-#+RESULTS: pd2org
-: return tabulate(df, headers=df.columns, tablefmt='orgtbl')
 
 #+name: CHAIN RG
 #+header: :prologue from tabulate import tabulate
