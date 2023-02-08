@@ -84,7 +84,7 @@ Sanitation Service Level from [[https://app.excalidraw.com/s/2tVeGVHqKIQ/6Aoixp6
 | 567800081 | Are the toilets/latrines separate for girls and boys?                                       | option | No                                                 |
 
 ** Environment
-#+begin_src python :results output :exports none :session with_question_ids
+#+begin_src python :results output :exports both :session with_question_ids
 import psycopg2
 import pandas as pd
 import itertools as it
@@ -317,7 +317,6 @@ def get_category(x):
                     if len(set(q['options']).intersection(answer)):
                         valid.append(q["id"])
                 if q.get("number"):
-                    print(answer)
                     is_valid = validate_number(q, answer)
                     if is_valid:
                         valid.append(q["id"])
