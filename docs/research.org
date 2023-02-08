@@ -136,9 +136,11 @@ config = [{
             "value": "Limited"
         }
     },{
-        "id": 567820008,
+        "id": 567800080,
         "name": "Usable Toilet",
-        "options": ["Yes"],
+        "number": {
+            "greater_than": 0
+        },
         "else": {
             "value": "Limited"
         }
@@ -276,14 +278,32 @@ res.shape
 #+name: CHAIN RG
 #+begin_src python :results output :exports both :session with_question_ids
 query = f"""
-    SELECT
-    q.form, a.data, json_object_agg(a.question, a.options) as opt
+    SELECT q.form, a.data, jsonb_object_agg(a.question, COALESCE(a.options, array[a.value::text])) as opt
     FROM answer a
     LEFT JOIN question q ON q.id = a.question
-    WHERE a.options IS NOT NULL
+    WHERE (a.value IS NOT NULL OR a.options IS NOT NULL)
     AND a.question IN ({question_lists})
     GROUP BY q.form, a.data
 """
+df = pd.read_sql(query, db);
+# db.connection.close()
+
+def validate_number(q, answer):
+    aw = float(answer[0])
+    op = q.get("number")
+    ok = False
+    if "greater_than" in op:
+        ok = aw > op.get("greater_than")
+    if "less_than" in op:
+        ok = aw < op.get("less_than")
+    if "equal" in op:
+        ok = aw == op.get("equal")
+    if "greater_than_equal" in op:
+        ok = aw >= op.get("greater_than_equal")
+    if "less_than_equal" in op:
+        ok = aw <= op.get("less_than_equal")
+    return ok
+
 def get_category(x):
     category = False
     for c in config:
@@ -292,9 +312,15 @@ def get_category(x):
         exit = False
         if not exit:
             for q in c['questions']:
-                options = x.get(str(q['id']))
-                if len(set(q['options']).intersection(options)):
-                    valid.append(q["id"])
+                answer = x.get(str(q['id']))
+                if q.get("options"):
+                    if len(set(q['options']).intersection(answer)):
+                        valid.append(q["id"])
+                if q.get("number"):
+                    print(answer)
+                    is_valid = validate_number(q, answer)
+                    if is_valid:
+                        valid.append(q["id"])
                 else:
                     if q.get("else"):
                         elses = q.get("else")
@@ -306,7 +332,7 @@ def get_category(x):
                             valid.append(q["id"])
             if len(valid) > len(validator):
                 conditions = [v if v in valid else False for v in validator]
-                conditions = list(filter(lambda x: x))
+                conditions = list(filter(lambda x: x != False, conditions))
                 if sorted(conditions) == sorted(validator):
                     category = c['name']
             if sorted(valid) == sorted(validator):
@@ -315,22 +341,17 @@ def get_category(x):
                 pass
                 #print(sorted(valid), sorted(validator))
     return category
-df = pd.read_sql(query, db);
-# db.connection.close()
 
 results = df.to_dict('records')
 for d in results:
     d.update({'category': get_category(d['opt'])})
-    # print(f"{d['data']}: {d['category']}")
-    # for opt in d["opt"]:
-    #     print(f"{opt}: {d['opt'][opt]}")
-    # print("======================")
 res = pd.DataFrame(results)
 res = pd.concat([res.drop('opt', axis=1), pd.DataFrame(df['opt'].tolist())], axis=1)
-res = res[["data","category","567800083","567800082","578820191","567820002","567800081","567820008"]]
+res = res[["data","category","567800083","567800082","578820191","567820002","567800081","567800080"]]
 res = res.rename(columns={
+    "567820002": "Scholl Type",
     "578820191": "Co-ed",
-    "567820008": "Usable Toilets",
+    "567800080": "Usable Toilets",
     "567800081": "Separate Toilets",
     "567800083": "Has Toilet",
     "567800082": "Toilet Improved",
@@ -338,8 +359,10 @@ res = res.rename(columns={
 res.to_csv('./research.csv',index=None)
 tabulate(res, headers=res.columns, tablefmt='orgtbl')
 # Debug
+print("SUCCESS")
 #qname = pd.read_sql("SELECT name FROM question WHERE question = 567820002", db)
 #qname
 #+end_src
 
 #+RESULTS: CHAIN RG
+: SUCCESS
