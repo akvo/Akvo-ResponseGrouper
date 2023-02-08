@@ -83,7 +83,6 @@ Sanitation Service Level from [[https://app.excalidraw.com/s/2tVeGVHqKIQ/6Aoixp6
 | 567800081 | Are the toilets/latrines separate for girls and boys?                                       | option | Yes                                                |
 | 567800081 | Are the toilets/latrines separate for girls and boys?                                       | option | No                                                 |
 
-
 ** Environment
 #+begin_src python :results output :exports none :session with_question_ids
 import psycopg2
@@ -95,12 +94,14 @@ config = [{
     "name": "Basic",
     "questions": [{
         "id": 567800083,
+        "name": "School Has Toilet",
         "options": ["Yes"],
         "else": {
             "value": "No Service"
         }
     },{
         "id": 567800082,
+        "name": "Toilet Type",
         "options": [
             "Toilet that flush/poor flush to piped sewer system",
             "Toilet that flush/poor flush to septic tank",
@@ -114,25 +115,29 @@ config = [{
             "value": "Limited"
         }
     },{
-        "id": 567820002,
+        "id":567820002,
+        "name": "School Type",
         "options": ["Primary", "Kindergarten/Child Care Centre"],
         "else": {
-            "ignore": [567820008,578820191,567800081]
-        }
-    },{
-        "id": 567820008,
-        "options": ["Yes"],
-        "else": {
-            "value": "Limited"
+            "ignore": [578820191,567800081]
         }
     },{
         "id": 578820191,
-        "options": ["Co-edication"],
+        "name": "Is the school co-ed",
+        "options": ["Co-education"],
         "else": {
             "ignore": [567800081]
         }
     },{
         "id": 567800081,
+        "name": "Saperate Toilet",
+        "options": ["Yes"],
+        "else": {
+            "value": "Limited"
+        }
+    },{
+        "id": 567820008,
+        "name": "Usable Toilet",
         "options": ["Yes"],
         "else": {
             "value": "Limited"
@@ -269,7 +274,7 @@ res.shape
 ** Data Query
 
 #+name: CHAIN RG
-#+begin_src python :results value raw :exports both :session with_question_ids
+#+begin_src python :results output :exports both :session with_question_ids
 query = f"""
     SELECT
     q.form, a.data, json_object_agg(a.question, a.options) as opt
@@ -284,21 +289,31 @@ def get_category(x):
     for c in config:
         validator = [q["id"] for q in  c['questions']]
         valid = []
-        for q in c['questions']:
-            options = x.get(str(q['id']))
-            if len(set(q['options']).intersection(options)):
-                valid.append(q["id"])
-            else:
-                if q.get("else"):
-                    elses = q.get("else")
-                    if elses.get("value"):
-                        category = category or elses.get("value")
-                    if elses.get("ignore"):
-                        validator = list(filter(lambda x: x in elses.get("ignore"), validator))
-        if sorted(valid) == sorted(validator):
-            category = c['name']
-        if not category:
-            print(sorted(valid), sorted(validator))
+        exit = False
+        if not exit:
+            for q in c['questions']:
+                options = x.get(str(q['id']))
+                if len(set(q['options']).intersection(options)):
+                    valid.append(q["id"])
+                else:
+                    if q.get("else"):
+                        elses = q.get("else")
+                        if elses.get("value"):
+                            category = category or elses.get("value")
+                            exit = True
+                        if elses.get("ignore"):
+                            validator = list(filter(lambda x: x not in elses.get("ignore"), validator))
+                            valid.append(q["id"])
+            if len(valid) > len(validator):
+                conditions = [v if v in valid else False for v in validator]
+                conditions = list(filter(lambda x: x))
+                if sorted(conditions) == sorted(validator):
+                    category = c['name']
+            if sorted(valid) == sorted(validator):
+                category = c['name']
+            if not category:
+                pass
+                #print(sorted(valid), sorted(validator))
     return category
 df = pd.read_sql(query, db);
 # db.connection.close()
@@ -310,60 +325,21 @@ for d in results:
     # for opt in d["opt"]:
     #     print(f"{opt}: {d['opt'][opt]}")
     # print("======================")
-#res = pd.DataFrame(temp)
 res = pd.DataFrame(results)
+res = pd.concat([res.drop('opt', axis=1), pd.DataFrame(df['opt'].tolist())], axis=1)
+res = res[["data","category","567800083","567800082","578820191","567820002","567800081","567820008"]]
+res = res.rename(columns={
+    "578820191": "Co-ed",
+    "567820008": "Usable Toilets",
+    "567800081": "Separate Toilets",
+    "567800083": "Has Toilet",
+    "567800082": "Toilet Improved",
+})
+res.to_csv('./research.csv',index=None)
 tabulate(res, headers=res.columns, tablefmt='orgtbl')
+# Debug
+#qname = pd.read_sql("SELECT name FROM question WHERE question = 567820002", db)
+#qname
 #+end_src
 
 #+RESULTS: CHAIN RG
-|    |      form | data | opt                                                                                                                                                                                                                  | category   |
-|----+-----------+------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------|
-|  0 | 554360198 |   42 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                    | No Service |
-|  1 | 554360198 |   34 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['No']}                                                         | Limited    |
-|  2 | 554360198 |   35 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['No']} | Limited    |
-|  3 | 554360198 |    7 | {'567820002': ['Primary'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['No']}                                         | No Service |
-|  4 | 554360198 |   21 | {'567820002': ['Higher Secondary/10+2'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['Yes']}            | Limited    |
-|  5 | 554360198 |   16 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['No']}                                  | Limited    |
-|  6 | 554360198 |   10 | {'567820002': ['Other'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['No']}                                    | Limited    |
-|  7 | 554360198 |   17 | {'567820002': ['Higher Secondary/10+2'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Pit latrine with slab'], '567800081': ['No']}                                         | Limited    |
-|  8 | 554360198 |   11 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['Yes']}            | No Service |
-|  9 | 554360198 |   43 | {'567820002': ['Higher Secondary/10+2'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Twinpit offset latrine'], '567800081': ['Yes']}                                    | Limited    |
-| 10 | 554360198 |   24 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                  | Limited    |
-| 11 | 554360198 |   45 | {'567820002': ['Primary'], '578820191': ['Co-education'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['No']}                                | No Service |
-| 12 | 554360198 |   32 | {'567820002': ['Other'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                                         | Limited    |
-| 13 | 554360198 |   36 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                                         | Limited    |
-| 14 | 554360198 |   47 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['No'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['No']}  | No Service |
-| 15 | 554360198 |    2 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to septic tank'], '567800081': ['Yes']}          | No Service |
-| 16 | 554360198 |   25 | {'567820002': ['Secondary'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to piped sewer system'], '567800081': ['Yes']}                      | No Service |
-| 17 | 554360198 |    9 | {'567820002': ['Other'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                                           | Limited    |
-| 18 | 554360198 |   12 | {'567820002': ['Secondary'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to piped sewer system'], '567800081': ['No']}                        | No Service |
-| 19 | 554360198 |   14 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['No']}                    | No Service |
-| 20 | 554360198 |   30 | {'567820002': ['Higher Secondary/10+2'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Composting toilet'], '567800081': ['No']}                                             | No Service |
-| 21 | 554360198 |   18 | {'567820002': ['Other'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to piped sewer system'], '567800081': ['No']}                          | No Service |
-| 22 | 554360198 |   15 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                                         | Limited    |
-| 23 | 554360198 |    6 | {'567820002': ['Secondary'], '578820191': ['Co-education'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['No']}                              | No Service |
-| 24 | 554360198 |   46 | {'567820002': ['Other'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['No']}                          | Limited    |
-| 25 | 554360198 |   27 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Composting toilet'], '567800081': ['No']}                                                           | No Service |
-| 26 | 554360198 |   13 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['No']}                                  | Limited    |
-| 27 | 554360198 |    5 | {'567820002': ['Other'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['Yes']}                             | No Service |
-| 28 | 554360198 |    1 | {'567820002': ['Secondary'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                                         | Basic      |
-| 29 | 554360198 |   31 | {'567820002': ['Secondary'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Twinpit offset latrine'], '567800081': ['No']}                                                  | Limited    |
-| 30 | 554360198 |   38 | {'567820002': ['Secondary'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                                     | Limited    |
-| 31 | 554360198 |    4 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Pit latrine with slab'], '567800081': ['Yes']}                                                     | Limited    |
-| 32 | 554360198 |   22 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to septic tank'], '567800081': ['Yes']}                                | No Service |
-| 33 | 554360198 |    8 | {'567820002': ['Secondary'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                                     | Limited    |
-| 34 | 554360198 |   28 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Composting toilet'], '567800081': ['Yes']}                                    | No Service |
-| 35 | 554360198 |   23 | {'567820002': ['Other'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                                           | Limited    |
-| 36 | 554360198 |   48 | {'567820002': ['Other'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['Yes']}                            | Limited    |
-| 37 | 554360198 |   49 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to septic tank'], '567800081': ['No']}           | No Service |
-| 38 | 554360198 |   33 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['Yes']}          | False      |
-| 39 | 554360198 |   37 | {'567820002': ['Other'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Twinpit offset latrine'], '567800081': ['Yes']}                                                       | No Service |
-| 40 | 554360198 |   39 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Toilet that flush/poor flush to piped sewer system'], '567800081': ['No']}  | Limited    |
-| 41 | 554360198 |   40 | {'567820002': ['Kindergarten/Child Care Centre'], '578820191': ['Boys Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Toilet that flush/poor flush to septic tank'], '567800081': ['Yes']}        | False      |
-| 42 | 554360198 |   41 | {'567820002': ['Primary'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Twinpit offset latrine'], '567800081': ['Yes']}                                                   | False      |
-| 43 | 554360198 |   44 | {'567820002': ['Other'], '578820191': ['Boys Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ["Toilet that flush/poor flush but don't know where"], '567800081': ['No']}                             | Limited    |
-| 44 | 554360198 |   26 | {'567820002': ['Primary'], '578820191': ['Co-education'], '567820008': ['No'], '567800083': ['No'], '567800082': ['Pit latrine without slab/open pit'], '567800081': ['Yes']}                                        | No Service |
-| 45 | 554360198 |   20 | {'567820002': ['Secondary'], '578820191': ['Girls Only'], '567820008': ['No'], '567800083': ['Yes'], '567800082': ['Twinpit offset latrine'], '567800081': ['No']}                                                   | Limited    |
-| 46 | 554360198 |    3 | {'567820002': ['Secondary'], '578820191': ['Co-education'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to piped sewer system'], '567800081': ['Yes']}                    | No Service |
-| 47 | 554360198 |   29 | {'567820002': ['Other'], '578820191': ['Girls Only'], '567820008': ['Yes'], '567800083': ['Yes'], '567800082': ['Toilet that flush/poor flush to elsewhere'], '567800081': ['No']}                                   | Limited    |
-| 48 | 554360198 |   19 | {'567820002': ['Other'], '578820191': ['Co-education'], '567820008': ['Yes'], '567800083': ['No'], '567800082': ['Toilet that flush/poor flush to septic tank'], '567800081': ['No']}                                | No Service |
