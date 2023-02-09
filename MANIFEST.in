@@ -4,5 +4,6 @@ include LICENSE
 exclude *.sh
 exclude *.yml
 exclude docs
+exclude pgadmin4
 recursive-include src *.py
 recursive-include tests test*.py
