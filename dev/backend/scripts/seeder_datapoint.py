@@ -15,10 +15,44 @@ Base.metadata.create_all(bind=engine)
 session = SessionLocal()
 
 
+def generate_answer(data, form, fake) -> None:
+    answered_data = []
+    for qg in form.question_group:
+        for q in qg.question:
+            answer = Answer(question=q.id, data=data.id)
+            if q.dependency:
+                valid = 0
+                for d in q.dependency:
+                    answered = list(
+                        filter(lambda x: x["id"] == d["id"], answered_data)
+                    )
+                    if len(answered):
+                        if len(
+                            set(answered[0]["options"]).intersection(
+                                d["options"]
+                            )
+                        ):
+                            valid += 1
+                if valid != len(q.dependency):
+                    continue
+            if len(q.option):
+                ox = random.randint(0, len(q.option) - 1)
+                opt = q.option[ox]
+                answer.options = [opt.name]
+            if q.type == QuestionType.number:
+                answer.value = random.randint(1, 5)
+            if q.type == QuestionType.text:
+                answer.text = fake.name()
+            aw = answer.options or answer.value or answer.text
+            if aw:
+                answered_data.append({"id": q.id, "options": aw})
+                data.answer.append(answer)
+
+
 def seed(session=Session, file_path=str, repeats=int) -> None:
-    for table in ["answer", "data"]:
-        action = truncate(session=session, table=table)
-        print(action)
+    # for table in ["answer", "data"]:
+    #     action = truncate(session=session, table=table)
+    #     print(action)
 
     forms = session.query(Form).all()
     fake = Faker()
@@ -26,18 +60,7 @@ def seed(session=Session, file_path=str, repeats=int) -> None:
     for form in forms:
         for i in range(1, int(repeats)):
             data = Data(form=form.id, name=fake.name(), created=datetime.now())
-            for qg in form.question_group:
-                for q in qg.question:
-                    answer = Answer(question=q.id, data=data.id)
-                    if len(q.option):
-                        ox = random.randint(0, len(q.option) - 1)
-                        opt = q.option[ox]
-                        answer.options = [opt.name]
-                    if q.type == QuestionType.number:
-                        answer.value = random.randint(1, 5)
-                    if q.type == QuestionType.text:
-                        answer.text = fake.name()
-                    data.answer.append(answer)
+            generate_answer(data, form, fake)
             session.add(data)
             session.commit()
             session.refresh(data)
@@ -51,6 +74,6 @@ def main(session=Session, file_path=str, repeats=int):
 if __name__ == "__main__":
     repeats = 10
     if len(sys.argv) > 1:
-        print("Seed 10 Datapoints")
         repeats = sys.argv[1]
+        print(f"Seed {repeats} Datapoints")
     main(session=session, file_path="./sources/form.json", repeats=repeats)
