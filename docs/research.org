@@ -1,3 +1,9 @@
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: file:///home/dedenbangkit/.doom.d/custom/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_THEME: akvo
+:END:
+
 #+TITLE: Response Group Research
 #+Author: Deden Bangkit
 
@@ -161,7 +167,6 @@ print("SESSION CREATED")
 #+RESULTS:
 : SESSION CREATED
 
-
 #+name: Config
 #+begin_src python :results output :exports both :session with_question_ids
 print(question_lists)
@@ -312,6 +317,9 @@ def get_category(x):
             if exit:
                 continue
             answer = x.get(str(q['id']))
+            if not answer:
+                x.update({str(q['id']): None})
+                continue
             if q.get("number"):
                 is_valid = validate_number(q, answer)
                 if is_valid:
