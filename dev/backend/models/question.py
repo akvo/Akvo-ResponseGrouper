@@ -8,19 +8,20 @@ from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer, String, Enum
 from sqlalchemy.orm import relationship
+import sqlalchemy.dialects.postgresql as pg
 from core.db import Base
 from models.option import OptionBase, OptionBaseWithId
 
 
 class QuestionType(enum.Enum):
-    text = 'text'
-    number = 'number'
-    option = 'option'
-    multiple_option = 'multiple_option'
-    photo = 'photo'
-    date = 'date'
-    geo = 'geo'
-    administration = 'administration'
+    text = "text"
+    number = "number"
+    option = "option"
+    multiple_option = "multiple_option"
+    photo = "photo"
+    date = "date"
+    geo = "geo"
+    administration = "administration"
 
 
 class DependencyDict(TypedDict):
@@ -35,30 +36,40 @@ class QuestionDict(TypedDict):
     order: Optional[int] = None
     name: str
     type: QuestionType
+    dependency: Optional[List[dict]] = None
     option: Optional[List[OptionBase]] = None
 
 
 class Question(Base):
     __tablename__ = "question"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
-    form = Column(Integer, ForeignKey('form.id'))
-    question_group = Column(Integer, ForeignKey('question_group.id'))
+    form = Column(Integer, ForeignKey("form.id"))
+    question_group = Column(Integer, ForeignKey("question_group.id"))
     name = Column(String)
     order = Column(Integer, nullable=True)
     type = Column(Enum(QuestionType), default=QuestionType.text)
-    option = relationship("Option",
-                          cascade="all, delete",
-                          passive_deletes=True,
-                          backref="option")
+    option = relationship(
+        "Option", cascade="all, delete", passive_deletes=True, backref="option"
+    )
+    dependency = Column(pg.ARRAY(pg.JSONB), nullable=True)
 
-    def __init__(self, id: Optional[int], name: str, order: int, form: int,
-                 question_group: int, type: QuestionType):
+    def __init__(
+        self,
+        id: Optional[int],
+        name: str,
+        order: int,
+        form: int,
+        question_group: int,
+        type: QuestionType,
+        dependency: Optional[List[dict]],
+    ):
         self.id = id
         self.form = form
         self.order = order
         self.question_group = question_group
         self.name = name
         self.type = type
+        self.dependency = dependency
 
     def __repr__(self) -> int:
         return f"<Question {self.id}>"
@@ -73,6 +84,7 @@ class Question(Base):
             "order": self.order,
             "type": self.type,
             "option": self.option,
+            "dependency": self.dependency,
         }
 
 
@@ -84,6 +96,7 @@ class QuestionBase(BaseModel):
     order: Optional[int] = None
     type: QuestionType
     option: List[OptionBaseWithId]
+    dependency: Optional[List[dict]]
 
     class Config:
         orm_mode = True

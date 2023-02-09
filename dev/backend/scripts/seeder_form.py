@@ -44,6 +44,7 @@ def seed(session: Session, file_path: str) -> None:
                 form=form.id,
                 question_group=question_group.id,
                 type=q["type"],
+                dependency=q["dependency"] if "dependency" in q else None
             )
             if q.get("options"):
                 for o in q["options"]:
@@ -68,4 +69,4 @@ def main(session: Session, file_path: str) -> None:
 if __name__ == "__main__":
     session = SessionLocal()
 
-    main(session=session, file_path="./sources/form.json")
+    main(session=session, file_path="./sources/real-form.json")
