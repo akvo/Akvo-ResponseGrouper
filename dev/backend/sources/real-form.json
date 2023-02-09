@@ -1,0 +1,330 @@
+{
+  "id": 554360198,
+  "name": "JMP Core Questions for Monitoring WASH in Schools",
+  "question_groups": [
+    {
+      "question_group": "Location Demographics",
+      "questions": [
+        {
+          "name": "location",
+          "order": 1,
+          "required": true,
+          "type": "administration"
+        },
+        {
+          "id": 567820011,
+          "name": "School name",
+          "order": 2,
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": 567820002,
+          "name": "School type",
+          "order": 3,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Kindergarten/Child Care Centre"
+            },
+            {
+              "name": "Primary"
+            },
+            {
+              "name": "Secondary"
+            },
+            {
+              "name": "Higher Secondary/10+2"
+            },
+            {
+              "name": "Other"
+            }
+          ]
+        },
+        {
+          "id": 578820191,
+          "name": "Is this school Girls Only/Boys Only/Co-Education?",
+          "order": 4,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Girls Only"
+            },
+            {
+              "name": "Boys Only"
+            },
+            {
+              "name": "Co-education"
+            }
+          ]
+        },
+        {
+          "id": 567820003,
+          "name": "Number of male pupils",
+          "order": 5,
+          "type": "number",
+          "required": true,
+          "dependency": [
+            {
+              "id": 578820191,
+              "options": ["Boys Only", "Co-education"]
+            }
+          ]
+        },
+        {
+          "id": 567820006,
+          "name": "Number of female pupils",
+          "order": 6,
+          "type": "number",
+          "required": true,
+          "dependency": [
+            {
+              "id": 578820191,
+              "options": ["Girls Only", "Co-education"]
+            }
+          ]
+        },
+        {
+          "id": 637730002,
+          "name": "Total number of students",
+          "order": 7,
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": 567820009,
+          "name": "Number of teaching staffs",
+          "order": 8,
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": 567820008,
+          "name": "Are there any students or staff members with a disability?",
+          "order": 9,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Drinking Water Questions",
+      "questions": [
+        {
+          "id": 580800138,
+          "name": "What is the main source of drinking water provided by the school? (select one - most frequently used)",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Pipeline connection"
+            },
+            {
+              "name": "Protected well/spring"
+            },
+            {
+              "name": "Deep tubewell/borehole"
+            },
+            {
+              "name": "Shallow tubewell/borehole"
+            },
+            {
+              "name": "Rainwater collection"
+            },
+            {
+              "name": "Packaged bottled water"
+            },
+            {
+              "name": "Tanker-truck or cart"
+            },
+            {
+              "name": "Unprotected well/spring"
+            },
+            {
+              "name": "Surface water (lake, river, stream)"
+            },
+            {
+              "name": "Bottled water"
+            },
+            {
+              "name": "Student bring their own water"
+            },
+            {
+              "name": "Public Water Point"
+            },
+            {
+              "name": "No water source"
+            }
+          ]
+        },
+        {
+          "id": 580800137,
+          "name": "Is drinking water from the main source currently available at the school at the time of the survey?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Sanitation Questions",
+      "questions": [
+        {
+          "id": 567800083,
+          "name": "Does your school have toilet for students?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 567800082,
+          "name": "What type of student toilets are at the school? (Select the one that is most commonly used)",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Toilet that flush/poor flush to piped sewer system"
+            },
+            {
+              "name": "Toilet that flush/poor flush to septic tank"
+            },
+            {
+              "name": "Toilet that flush/poor flush to elsewhere"
+            },
+            {
+              "name": "Toilet that flush/poor flush but don't know where"
+            },
+            {
+              "name": "Pit latrine with slab"
+            },
+            {
+              "name": "Ventilated Improved Pit latrine (VIP)"
+            },
+            {
+              "name": "Twinpit offset latrine"
+            },
+            {
+              "name": "Composting toilet"
+            },
+            {
+              "name": "Pit latrine without slab/open pit"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 567800083,
+              "options": ["Yes"]
+            }
+          ]
+        },
+        {
+          "id": 567800080,
+          "name": "How many student toilets are currently usable (accessible and functional and private)?",
+          "order": 3,
+          "type": "number",
+          "required": true,
+          "dependency": [
+            {
+              "id": 567800083,
+              "options": ["Yes"]
+            }
+          ]
+        },
+        {
+          "id": 567800081,
+          "name": "Are the toilets/latrines separate for girls and boys?",
+          "order": 4,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 578820191,
+              "options": ["Co-education"]
+            },
+            {
+              "id": 567800083,
+              "options": ["Yes"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Hygiene Questions",
+      "questions": [
+        {
+          "id": 578820194,
+          "name": "Are there handwashing facilities at the school?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 578820193,
+          "name": "Are both soap and water currently available at the handwashing facilities?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes, water and soap"
+            },
+            {
+              "name": "Water only"
+            },
+            {
+              "name": "Soap only"
+            },
+            {
+              "name": "Neither water or soap"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
