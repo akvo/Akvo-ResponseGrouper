@@ -114,6 +114,18 @@
           "name": "Name",
           "order": 8,
           "type": "text"
+        },
+        {
+          "id": 9,
+          "name": "ID Number",
+          "order": 9,
+          "type": "number",
+          "dependency": [
+            {
+              "id": 7,
+              "options": ["Refugee/IDPs", "Permanent"]
+            }
+          ]
         }
       ]
     }
