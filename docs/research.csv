@@ -1,50 +1,50 @@
-data,category,Has Toilet,Toilet Improved,Co-ed,Scholl Type,Separate Toilets,Usable Toilets
-32,Basic,['Yes'],['Toilet that flush/poor flush to elsewhere'],['Girls Only'],['Primary'],,['5']
-19,No Service,['No'],,['Girls Only'],['Higher Secondary/10+2'],,
-28,No Service,['No'],,['Co-education'],['Higher Secondary/10+2'],,
-36,No Service,['No'],,['Girls Only'],['Other'],,
-23,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Co-education'],['Other'],['Yes'],['2']
-46,No Service,['No'],,['Girls Only'],['Kindergarten/Child Care Centre'],,
-47,Limited,['Yes'],['Twinpit offset latrine'],['Co-education'],['Primary'],['Yes'],['1']
-2,No Service,['No'],,['Co-education'],['Secondary'],,
-25,Limited,['Yes'],['Composting toilet'],['Boys Only'],['Secondary'],,['1']
-34,Limited,['Yes'],['Ventilated Improved Pit latrine (VIP)'],['Girls Only'],['Other'],,['1']
-42,No Service,['No'],,['Girls Only'],['Kindergarten/Child Care Centre'],,
-9,Limited,['Yes'],['Toilet that flush/poor flush to elsewhere'],['Co-education'],['Higher Secondary/10+2'],['Yes'],['3']
-48,No Service,['No'],,['Co-education'],['Higher Secondary/10+2'],,
-33,No Service,['No'],,['Girls Only'],['Secondary'],,
-49,No Service,['No'],,['Girls Only'],['Primary'],,
-37,Limited,['Yes'],['Composting toilet'],['Boys Only'],['Higher Secondary/10+2'],,['5']
-13,Limited,['Yes'],"[""Toilet that flush/poor flush but don't know where""]",['Girls Only'],['Higher Secondary/10+2'],,['3']
-27,No Service,['No'],,['Co-education'],['Primary'],,
-35,No Service,['No'],,['Boys Only'],['Primary'],,
-12,No Service,['No'],,['Girls Only'],['Higher Secondary/10+2'],,
-7,No Service,['No'],,['Girls Only'],['Higher Secondary/10+2'],,
-5,Limited,['Yes'],['Composting toilet'],['Girls Only'],['Other'],,['2']
-21,Limited,['Yes'],['Composting toilet'],['Girls Only'],['Other'],,['1']
-39,Limited,['Yes'],['Twinpit offset latrine'],['Boys Only'],['Higher Secondary/10+2'],,['1']
-16,Basic,['Yes'],"[""Toilet that flush/poor flush but don't know where""]",['Boys Only'],['Secondary'],,['4']
-40,No Service,['No'],,['Girls Only'],['Secondary'],,
-14,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Boys Only'],['Kindergarten/Child Care Centre'],,['2']
-41,No Service,['No'],,['Co-education'],['Other'],,
-1,Basic,['Yes'],['Twinpit offset latrine'],['Boys Only'],['Primary'],,['4']
-10,No Service,['No'],,['Co-education'],['Higher Secondary/10+2'],,
-44,Limited,['Yes'],['Composting toilet'],['Co-education'],['Other'],['No'],['2']
-18,Basic,['Yes'],"[""Toilet that flush/poor flush but don't know where""]",['Co-education'],['Other'],['Yes'],['4']
-30,Limited,['Yes'],['Pit latrine with slab'],['Co-education'],['Kindergarten/Child Care Centre'],['No'],['5']
-31,No Service,['No'],,['Co-education'],['Other'],,
-15,No Service,['No'],,['Girls Only'],['Other'],,
-38,No Service,['No'],,['Girls Only'],['Primary'],,
-17,No Service,['No'],,['Boys Only'],['Secondary'],,
-26,No Service,['No'],,['Co-education'],['Primary'],,
-11,No Service,['No'],,['Boys Only'],['Kindergarten/Child Care Centre'],,
-20,Limited,['Yes'],['Pit latrine without slab/open pit'],['Boys Only'],['Secondary'],,['5']
-6,No Service,['No'],,['Boys Only'],['Kindergarten/Child Care Centre'],,
-3,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Co-education'],['Kindergarten/Child Care Centre'],['No'],['4']
-24,No Service,['No'],,['Boys Only'],['Secondary'],,
-29,No Service,['No'],,['Co-education'],['Primary'],,
-43,No Service,['No'],,['Boys Only'],['Secondary'],,
-4,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Co-education'],['Other'],['No'],['3']
-45,Limited,['Yes'],['Pit latrine without slab/open pit'],['Co-education'],['Other'],['No'],['3']
-8,No Service,['No'],,['Boys Only'],['Other'],,
-22,Limited,['Yes'],['Ventilated Improved Pit latrine (VIP)'],['Co-education'],['Primary'],['Yes'],['3']
+data,category,Has Toilet,Toilet Improved,Co-ed,Scholl Type,Separate Toilets,Usable Toilets,Usable Toilets Before
+32,Was Limited,['Underconstruction'],,['Co-education'],['Higher Secondary/10+2'],,,['4']
+36,No Service,['No'],,['Girls Only'],['Higher Secondary/10+2'],,,
+28,No Service,['No'],,['Boys Only'],['Primary'],,,
+19,No Service,['Underconstruction'],,['Boys Only'],['Other'],,,
+47,Was Limited,['Underconstruction'],,['Boys Only'],['Kindergarten/Child Care Centre'],,,['3']
+46,Limited,['Yes'],['Toilet that flush/poor flush to piped sewer system'],['Boys Only'],['Other'],,['1'],
+23,No Service,['No'],,['Co-education'],['Higher Secondary/10+2'],,,
+2,No Service,['No'],,['Girls Only'],['Primary'],,,
+42,No Service,['No'],,['Boys Only'],['Secondary'],,,
+34,Was Limited,['Underconstruction'],,['Girls Only'],['Kindergarten/Child Care Centre'],,,['2']
+25,Was Limited,['Underconstruction'],,['Boys Only'],['Secondary'],,,['1']
+48,No Service,['No'],,['Boys Only'],['Kindergarten/Child Care Centre'],,,
+9,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Boys Only'],['Primary'],,['1'],
+49,Was Limited,['Underconstruction'],,['Boys Only'],['Kindergarten/Child Care Centre'],,,['3']
+33,Limited,['Yes'],['Composting toilet'],['Co-education'],['Primary'],['No'],['1'],
+37,Was Limited,['Underconstruction'],,['Boys Only'],['Higher Secondary/10+2'],,,['4']
+35,No Service,['No'],,['Boys Only'],['Other'],,,
+27,Limited,['Yes'],['Composting toilet'],['Boys Only'],['Kindergarten/Child Care Centre'],,['5'],
+13,Limited,['Yes'],['Toilet that flush/poor flush to septic tank'],['Boys Only'],['Secondary'],,['2'],
+12,Basic,['Yes'],['Toilet that flush/poor flush to elsewhere'],['Boys Only'],['Kindergarten/Child Care Centre'],,['4'],
+7,No Service,['No'],,['Girls Only'],['Kindergarten/Child Care Centre'],,,
+21,Limited,['Yes'],"[""Toilet that flush/poor flush but don't know where""]",['Co-education'],['Kindergarten/Child Care Centre'],['No'],['5'],
+5,Limited,['Yes'],['Composting toilet'],['Co-education'],['Other'],['Yes'],['2'],
+39,Was Limited,['Underconstruction'],,['Boys Only'],['Higher Secondary/10+2'],,,['3']
+16,No Service,['No'],,['Boys Only'],['Secondary'],,,
+40,Limited,['Yes'],['Ventilated Improved Pit latrine (VIP)'],['Co-education'],['Kindergarten/Child Care Centre'],['No'],['5'],
+14,Limited,['Yes'],"[""Toilet that flush/poor flush but don't know where""]",['Boys Only'],['Primary'],,['2'],
+41,Basic,['Yes'],['Ventilated Improved Pit latrine (VIP)'],['Boys Only'],['Higher Secondary/10+2'],,['5'],
+44,No Service,['No'],,['Co-education'],['Higher Secondary/10+2'],,,
+10,Limited,['Yes'],['Pit latrine without slab/open pit'],['Girls Only'],['Kindergarten/Child Care Centre'],,['1'],
+1,No Service,['No'],,['Co-education'],['Other'],,,
+30,Basic,['Yes'],['Twinpit offset latrine'],['Boys Only'],['Higher Secondary/10+2'],,['4'],
+18,Was Limited,['Underconstruction'],,['Co-education'],['Kindergarten/Child Care Centre'],,,['4']
+31,No Service,['No'],,['Girls Only'],['Secondary'],,,
+38,Was Limited,['Underconstruction'],,['Co-education'],['Primary'],,,['1']
+15,No Service,['No'],,['Girls Only'],['Primary'],,,
+26,No Service,['No'],,['Boys Only'],['Other'],,,
+17,Was Limited,['Underconstruction'],,['Girls Only'],['Secondary'],,,['1']
+20,Was Limited,['Underconstruction'],,['Co-education'],['Kindergarten/Child Care Centre'],,,['2']
+11,Was Limited,['Underconstruction'],,['Boys Only'],['Primary'],,,['3']
+6,Limited,['Yes'],['Pit latrine without slab/open pit'],['Co-education'],['Secondary'],['No'],['4'],
+3,Was Limited,['Underconstruction'],,['Co-education'],['Primary'],,,['1']
+43,No Service,['No'],,['Girls Only'],['Primary'],,,
+29,Limited,['Yes'],['Composting toilet'],['Boys Only'],['Kindergarten/Child Care Centre'],,['1'],
+24,Limited,['Yes'],['Ventilated Improved Pit latrine (VIP)'],['Girls Only'],['Other'],,['3'],
+4,Limited,['Yes'],['Composting toilet'],['Girls Only'],['Secondary'],,['3'],
+45,Was Limited,['Underconstruction'],,['Girls Only'],['Primary'],,,['4']
+22,Limited,['Yes'],['Twinpit offset latrine'],['Co-education'],['Other'],['No'],['5'],
+8,Was Limited,['Underconstruction'],,['Co-education'],['Primary'],,,['1']
