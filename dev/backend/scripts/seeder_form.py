@@ -16,7 +16,8 @@ Base.metadata.create_all(bind=engine)
 
 def seed(session: Session, file_path: str) -> None:
     start_time = time.process_time()
-    for table in ["form", "question_group", "question", "option"]:
+    for table in ["form", "question_group", "question",
+                  "option", "data", "answer"]:
         action = truncate(session=session, table=table)
         print(action)
 

@@ -40,7 +40,8 @@ def generate_answer(data, form, fake) -> None:
                 opt = q.option[ox]
                 answer.options = [opt.name]
             if q.type == QuestionType.number:
-                answer.value = random.randint(1, 5)
+                # 0 For No Service Test
+                answer.value = random.randint(0 if q.id == 999 else 1, 5)
             if q.type == QuestionType.text:
                 answer.text = fake.name()
             aw = answer.options or answer.value or answer.text
@@ -50,9 +51,9 @@ def generate_answer(data, form, fake) -> None:
 
 
 def seed(session=Session, file_path=str, repeats=int) -> None:
-    # for table in ["answer", "data"]:
-    #     action = truncate(session=session, table=table)
-    #     print(action)
+    for table in ["answer", "data"]:
+        action = truncate(session=session, table=table)
+        print(action)
 
     forms = session.query(Form).all()
     fake = Faker()

@@ -200,6 +200,9 @@
             },
             {
               "name": "No"
+            },
+            {
+              "name": "Underconstruction"
             }
           ]
         },
@@ -259,9 +262,22 @@
           ]
         },
         {
+          "id": 999,
+          "name": "How many student toilets were usable?",
+          "order": 4,
+          "type": "number",
+          "required": true,
+          "dependency": [
+            {
+              "id": 567800083,
+              "options": ["Underconstruction"]
+            }
+          ]
+        },
+        {
           "id": 567800081,
           "name": "Are the toilets/latrines separate for girls and boys?",
-          "order": 4,
+          "order": 5,
           "type": "option",
           "required": true,
           "options": [
