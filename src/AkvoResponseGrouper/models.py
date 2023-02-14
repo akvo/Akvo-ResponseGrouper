@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy import Column, Integer, Text, JSON
 from typing_extensions import TypedDict
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
@@ -28,6 +28,12 @@ class CategoryResponse(TypedDict):
     category: str
 
 
+class CategoryModelDict:
+    form: int
+    data: int
+    opt: dict
+
+
 class Category(Base):
     __tablename__ = "ar_category"
     id = Column(Integer, primary_key=True)
@@ -35,6 +41,7 @@ class Category(Base):
     data = Column(Integer)
     name = Column(Text)
     category = Column(Text)
+    opt = Column(JSON)
 
     def __repr__(self) -> int:
         return f"<Category {self.id}>"
@@ -62,6 +69,14 @@ class Category(Base):
             "form": self.form,
             "name": self.name,
             "category": self.category,
+        }
+
+    @property
+    def to_serialize(self) -> CategoryModelDict:
+        return {
+            "form": self.form,
+            "data": self.data,
+            "opt": self.opt,
         }
 
 
