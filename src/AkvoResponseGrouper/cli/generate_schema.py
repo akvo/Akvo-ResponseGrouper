@@ -91,22 +91,30 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
+def get_question_config(n, current_list):
+    for q in n.get("questions"):
+        current_list.append(str(q["id"]))
+        if q.get("other"):
+            for o in q.get("other"):
+                current_list = get_question_config(o, current_list)
+    return current_list
+
+
 def generate_schema(file_config: str) -> str:
     file_config = open(file_config)
     config_dict = json.load(file_config)
     file_config.close()
+    question_config = []
+    for c in config_dict:
+        question_config = get_question_config(c, question_config)
+    ql = ",".join(question_config)
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
-    for main_union, categories in enumerate(config_dict):
-        categories = CategoryConfigBase.parse_raw(json.dumps(categories))
-        category_name = categories.name
-
-        mview += "SELECT row_number() over (partition by true) as id,"
-        mview += f"form, data, '{category_name}' as name, category\n"
-        mview += "FROM (\n"
-        mview += generate_query(categories=categories)
-        mview += ") d WHERE d.count >= d.valid"
-        if main_union < len(config_dict) - 1:
-            mview += "\nUNION\n"
-        if main_union == len(config_dict) - 1:
-            mview += "\nORDER BY data;"
+    mview += (
+        "SELECT q.form, a.data, jsonb_object_agg(a.question,"
+        " COALESCE(a.options, array[a.value::text])) as opt \n"
+    )
+    mview += "FROM answer a \n"
+    mview += "LEFT JOIN question q ON q.id = a.question \n"
+    mview += "WHERE (a.value IS NOT NULL OR a.options IS NOT NULL) \n"
+    mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data;"
     return mview
