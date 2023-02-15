@@ -50,7 +50,7 @@ def generate_answer(data, form, fake) -> None:
                 data.answer.append(answer)
 
 
-def seed(session=Session, file_path=str, repeats=int) -> None:
+def seed(session=Session, repeats=int) -> None:
     for table in ["answer", "data"]:
         action = truncate(session=session, table=table)
         print(action)
@@ -68,8 +68,8 @@ def seed(session=Session, file_path=str, repeats=int) -> None:
         print(f"ADDED {repeats} datapoint to {form.name}")
 
 
-def main(session=Session, file_path=str, repeats=int):
-    seed(session=session, file_path=file_path, repeats=repeats)
+def main(session=Session, repeats=int):
+    seed(session=session, repeats=repeats)
 
 
 if __name__ == "__main__":
@@ -77,4 +77,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         repeats = sys.argv[1]
         print(f"Seed {repeats} Datapoints")
-    main(session=session, file_path="./sources/form.json", repeats=repeats)
+    main(session=session, repeats=repeats)
