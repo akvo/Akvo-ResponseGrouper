@@ -1,5 +1,6 @@
 import argparse
 import os
+import shutil
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
@@ -110,6 +111,10 @@ def main() -> None:
         with engine.connect() as connection:
             with connection.begin():
                 connection.execute(text(schema))
+        try:
+            shutil.copy(args.config, '.category.json')
+        except PermissionError:
+            print("Permission denied.")
     print("Done")
 
 

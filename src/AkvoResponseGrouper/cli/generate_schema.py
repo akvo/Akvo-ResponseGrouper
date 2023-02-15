@@ -110,8 +110,9 @@ def generate_schema(file_config: str) -> str:
     ql = ",".join(question_config)
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
     mview += (
-        "SELECT q.form, a.data, jsonb_object_agg(a.question,"
-        " COALESCE(a.options, array[a.value::text])) as opt \n"
+        "SELECT row_number() over (partition by true) as id,"
+        "q.form, a.data, jsonb_object_agg(a.question,"
+        "COALESCE(a.options, array[a.value::text])) as opt \n"
     )
     mview += "FROM answer a \n"
     mview += "LEFT JOIN question q ON q.id = a.question \n"
