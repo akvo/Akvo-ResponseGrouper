@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, Text, JSON
+from sqlalchemy import Column, Integer, JSON
 from typing_extensions import TypedDict
 from sqlalchemy.ext.declarative import declarative_base
-from pydantic import BaseModel
 from typing import List
 
 Base = declarative_base()
@@ -17,20 +16,13 @@ class CategoryDict(TypedDict):
     id: int
     data: int
     form: int
-    name: str
     category: str
 
 
-class CategoryResponse(TypedDict):
-    form: int
+class CategoryModelDict(TypedDict):
+    id: int
     data: int
-    name: str
-    category: str
-
-
-class CategoryModelDict:
     form: int
-    data: int
     opt: dict
 
 
@@ -39,8 +31,6 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     form = Column(Integer)
     data = Column(Integer)
-    name = Column(Text)
-    category = Column(Text)
     opt = Column(JSON)
 
     def __repr__(self) -> int:
@@ -53,27 +43,10 @@ class Category(Base):
             "count": data.count,
         }
 
-    def res_serialize(data) -> CategoryResponse:
-        return {
-            "data": data.data,
-            "form": data.form,
-            "name": data.name,
-            "category": data.category,
-        }
-
     @property
-    def serialize(self) -> CategoryDict:
+    def serialize(self) -> CategoryModelDict:
         return {
             "id": self.id,
-            "data": self.data,
-            "form": self.form,
-            "name": self.name,
-            "category": self.category,
-        }
-
-    @property
-    def to_serialize(self) -> CategoryModelDict:
-        return {
             "form": self.form,
             "data": self.data,
             "opt": self.opt,
@@ -85,6 +58,6 @@ class CountedCategory(TypedDict):
     count: int
 
 
-class GroupedCategory(BaseModel):
-    category: str
-    options: List[CountedCategory]
+class GroupedCategory(TypedDict):
+    form: int
+    categories: List[CountedCategory]

@@ -2,16 +2,16 @@ import json
 from itertools import groupby
 
 
-def get_category_key(k):
-    return k["name"]
+def get_category_key(k: dict):
+    return k["form"]
 
 
 def group_by_category_output(data):
     g = sorted(data, key=get_category_key)
     return [
         {
-            "category": key,
-            "options": [
+            "form": key,
+            "categories": [
                 {"name": o["category"], "count": o["count"]}
                 for o in list(value)
             ],
