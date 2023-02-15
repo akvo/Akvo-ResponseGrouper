@@ -4,7 +4,7 @@ import random
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session, load_only
-from AkvoResponseGrouper.views import get_categories, get_category_by_data_ids
+from AkvoResponseGrouper.views import get_categories
 from AkvoResponseGrouper.models import Category
 
 pytestmark = pytest.mark.asyncio
@@ -19,41 +19,16 @@ def get_random_data(session: Session):
 
 class TestViews:
     @pytest.mark.asyncio
-    async def test_views_filtering_by_form(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        res = get_categories(session=session, form=1)
-        data = [r.serialize for r in res]
-        assert data[0]["form"] == 1
-
-    @pytest.mark.asyncio
-    async def test_views_filtering_by_name(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        res = get_categories(session=session, name="category 1")
-        data = [r.serialize for r in res]
-        assert data[0]["name"] == "Category 1"
-
-    @pytest.mark.asyncio
     async def test_views_filtering_by_category(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        res = get_categories(session=session, category="non-rural female head")
-        data = [r.serialize for r in res]
-        assert data[0]["category"] == "Non-Rural Female Head"
+        res = get_categories(session=session, category="limited")
+        assert res[0]["category"] == "Limited"
 
     @pytest.mark.asyncio
     async def test_views_filtering_by_data(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         random = get_random_data(session=session)
-        res = get_categories(session=session, data=random.data)
-        assert len(res) > 0
-
-    @pytest.mark.asyncio
-    async def test_views_filtering_by_data_ids(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        random = get_random_data(session=session)
-        res = get_category_by_data_ids(session=session, ids=[random.data])
+        res = get_categories(session=session, data=str(random.data))
         assert len(res) > 0
