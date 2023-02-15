@@ -28,10 +28,13 @@ async def get_index_category(
     data: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
-    res = get_categories(
-        form=form, category=category, data=data, session=session
-    )
-    return res
+    try:
+        res = get_categories(
+            form=form, category=category, data=data, session=session
+        )
+        return res
+    except Exception:
+        return []
 
 
 @collection_route.get(
