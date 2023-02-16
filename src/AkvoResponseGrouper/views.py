@@ -29,10 +29,26 @@ def get_results(session: Session):
     for d in results:
         d.update({"category": get_category(d["opt"])})
     res = pd.DataFrame(results)
+    if list(res) != ["id", "form", "data", "opt", "category"]:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "data",
+                "form",
+                "category",
+            ]
+        )
     res = pd.concat(
         [res.drop("opt", axis=1), pd.DataFrame(df["opt"].tolist())], axis=1
     )
-    return res
+    return res[
+        [
+            "id",
+            "data",
+            "form",
+            "category",
+        ]
+    ]
 
 
 def get_categories(
@@ -42,14 +58,6 @@ def get_categories(
     data: Optional[str] = None,
 ) -> List[CategoryDict]:
     res = get_results(session=session)
-    res = res[
-        [
-            "id",
-            "data",
-            "form",
-            "category",
-        ]
-    ]
     queries = []
     if form:
         queries.append(f"form == {form}")
@@ -57,7 +65,6 @@ def get_categories(
         queries.append(f"category.str.lower() == '{category.lower()}'")
     if data:
         data = [int(d) for d in data.split(",")]
-        print(data)
         queries.append("data.isin(@data).values")
     if len(queries):
         queries = " & ".join(queries)
@@ -71,14 +78,6 @@ def get_group_by_category(
     form: Optional[int] = None,
 ):
     res = get_results(session=session)
-    res = res[
-        [
-            "id",
-            "data",
-            "form",
-            "category",
-        ]
-    ]
     queries = []
     if form:
         queries.append(f"form == {form}")
