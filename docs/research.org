@@ -608,3 +608,9 @@ print("SUCCESS")
 
 #+RESULTS: CHAIN RG
 : SUCCESS
+
+* Todo
+** Numbers Handler
+**** Math function form multiple number type of question
+**** If calculated number is NaN return 0
+**** Implementation Plan.
