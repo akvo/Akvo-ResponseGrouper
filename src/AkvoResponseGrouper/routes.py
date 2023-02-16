@@ -24,13 +24,14 @@ collection_route = APIRouter(
 )
 async def get_index_category(
     form: Optional[int] = Query(default=None),
+    name: Optional[str] = Query(default=None),
     category: Optional[str] = Query(default=None),
     data: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
     try:
         res = get_categories(
-            form=form, category=category, data=data, session=session
+            form=form, name=name, category=category, data=data, session=session
         )
         return res
     except Exception:

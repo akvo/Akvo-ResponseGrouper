@@ -3,7 +3,6 @@ import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
-from AkvoResponseGrouper.views import get_categories
 
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
@@ -25,8 +24,7 @@ class TestRouteCollection:
         response = await client.get(
             app.url_path_for("collection:get_grouped_categories")
         )
-        res = get_categories(session=session)
-        assert response.status_code == 200 if len(res) > 0 else 500
+        assert response.status_code == 200
 
     async def test_if_refresh_route_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient

@@ -9,10 +9,11 @@ from .utils import get_valid_list
 def get_category(opt: dict):
     file_path = "./.category.json"
     with open(f"{file_path}") as config_file:
-        config = json.load(config_file)
+        configs = json.load(config_file)
     category = False
-    for c in config:
-        category = get_valid_list(opt, c, category)
+    for config in configs:
+        for c in config["categories"]:
+            category = get_valid_list(opt, c, category)
     return category
 
 
@@ -29,12 +30,13 @@ def get_results(session: Session):
     for d in results:
         d.update({"category": get_category(d["opt"])})
     res = pd.DataFrame(results)
-    if list(res) != ["id", "form", "data", "opt", "category"]:
+    if list(res) != ["id", "data", "form", "name", "opt", "category"]:
         return pd.DataFrame(
             columns=[
                 "id",
                 "data",
                 "form",
+                "name",
                 "category",
             ]
         )
@@ -46,6 +48,7 @@ def get_results(session: Session):
             "id",
             "data",
             "form",
+            "name",
             "category",
         ]
     ]
@@ -54,6 +57,7 @@ def get_results(session: Session):
 def get_categories(
     session: Session,
     form: Optional[int] = None,
+    name: Optional[str] = None,
     category: Optional[str] = None,
     data: Optional[str] = None,
 ) -> List[CategoryDict]:
@@ -61,6 +65,8 @@ def get_categories(
     queries = []
     if form:
         queries.append(f"form == {form}")
+    if name:
+        queries.append(f"name.str.lower() == '{name.lower()}'")
     if category:
         queries.append(f"category.str.lower() == '{category.lower()}'")
     if data:
@@ -87,7 +93,7 @@ def get_group_by_category(
         queries = " & ".join(queries)
         res = res.query(queries)
     res = (
-        res.groupby(["form", "category"])["category"]
+        res.groupby(["name", "category"])["category"]
         .agg("count")
         .reset_index(name="count")
     )

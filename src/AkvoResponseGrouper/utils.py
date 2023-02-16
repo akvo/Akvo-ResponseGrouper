@@ -3,15 +3,15 @@ from itertools import groupby
 
 
 def get_category_key(k: dict):
-    return k["form"]
+    return k["name"]
 
 
 def group_by_category_output(data):
     g = sorted(data, key=get_category_key)
     return [
         {
-            "form": key,
-            "categories": [
+            "category": key,
+            "options": [
                 {"name": o["category"], "count": o["count"]}
                 for o in list(value)
             ],

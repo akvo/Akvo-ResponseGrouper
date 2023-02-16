@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, JSON
+from sqlalchemy import Column, Integer, Text, JSON
 from typing_extensions import TypedDict
 from sqlalchemy.ext.declarative import declarative_base
 from typing import List
@@ -16,6 +16,7 @@ class CategoryDict(TypedDict):
     id: int
     data: int
     form: int
+    name: str
     category: str
 
 
@@ -23,6 +24,7 @@ class CategoryModelDict(TypedDict):
     id: int
     data: int
     form: int
+    name: str
     opt: dict
 
 
@@ -31,24 +33,19 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     form = Column(Integer)
     data = Column(Integer)
+    name = Column(Text)
     opt = Column(JSON)
 
     def __repr__(self) -> int:
         return f"<Category {self.id}>"
 
-    def group_serialize(data) -> GroupByDict:
-        return {
-            "category": data.category,
-            "name": data.name,
-            "count": data.count,
-        }
-
     @property
     def serialize(self) -> CategoryModelDict:
         return {
             "id": self.id,
-            "form": self.form,
             "data": self.data,
+            "form": self.form,
+            "name": self.name,
             "opt": self.opt,
         }
 
@@ -59,5 +56,5 @@ class CountedCategory(TypedDict):
 
 
 class GroupedCategory(TypedDict):
-    form: int
-    categories: List[CountedCategory]
+    category: str
+    options: List[CountedCategory]

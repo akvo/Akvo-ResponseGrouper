@@ -91,31 +91,35 @@ def generate_query(categories: CategoryConfigBase) -> str:
     return view_text
 
 
-def get_question_config(n, current_list):
-    for q in n.get("questions"):
-        current_list.append(str(q["id"]))
+def get_question_config(config: dict, cl: list):
+    for q in config.get("questions"):
+        cl.append(str(q["id"]))
         if q.get("other"):
             for o in q.get("other"):
-                current_list = get_question_config(o, current_list)
-    return current_list
+                cl = get_question_config(config=o, cl=cl)
+    return cl
 
 
 def generate_schema(file_config: str) -> str:
     file_config = open(file_config)
-    config_dict = json.load(file_config)
+    configs = json.load(file_config)
     file_config.close()
     question_config = []
-    for c in config_dict:
-        question_config = get_question_config(c, question_config)
-    ql = ",".join(question_config)
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
-    mview += (
-        "SELECT row_number() over (partition by true) as id,"
-        "q.form, a.data, jsonb_object_agg(a.question,"
-        "COALESCE(a.options, array[a.value::text])) as opt \n"
-    )
-    mview += "FROM answer a \n"
-    mview += "LEFT JOIN question q ON q.id = a.question \n"
-    mview += "WHERE (a.value IS NOT NULL OR a.options IS NOT NULL) \n"
-    mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data;"
+    for main_union, config in enumerate(configs):
+        for c in config["categories"]:
+            question_config = get_question_config(config=c, cl=question_config)
+        ql = ",".join(question_config)
+        mview += (
+            "SELECT row_number() over (partition by true) as id,q.form,"
+            f" a.data, '{config['name']}' as name,"
+            " jsonb_object_agg(a.question,COALESCE(a.options,"
+            " array[a.value::text])) as opt \n"
+        )
+        mview += "FROM answer a \n"
+        mview += "LEFT JOIN question q ON q.id = a.question \n"
+        mview += "WHERE (a.value IS NOT NULL OR a.options IS NOT NULL) \n"
+        mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data;\n"
+        if main_union < len(configs) - 1:
+            mview += "UNION"
     return mview

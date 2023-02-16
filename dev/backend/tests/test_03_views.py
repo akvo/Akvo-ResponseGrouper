@@ -19,11 +19,25 @@ def get_random_data(session: Session):
 
 class TestViews:
     @pytest.mark.asyncio
+    async def test_views_filtering_by_form(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(session=session, form=554360198)
+        assert data[0]["form"] == 554360198
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_name(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(session=session, name="water")
+        assert data[0]["name"] == "Water"
+
+    @pytest.mark.asyncio
     async def test_views_filtering_by_category(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        res = get_categories(session=session, category="limited")
-        assert res[0]["category"] == "Limited"
+        data = get_categories(session=session, category="limited")
+        assert data[0]["category"] == "Limited"
 
     @pytest.mark.asyncio
     async def test_views_filtering_by_data(
