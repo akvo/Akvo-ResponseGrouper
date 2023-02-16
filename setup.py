@@ -39,7 +39,6 @@ setuptools.setup(
         "pydantic",
         "sqlalchemy",
         "pandas",
-        "numpy",
     ],
     extras_require={
         "dev": ["check-manifest"],
