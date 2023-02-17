@@ -93,7 +93,7 @@ def get_group_by_category(
         queries = " & ".join(queries)
         res = res.query(queries)
     res = (
-        res.groupby(["name", "category"])["category"]
+        res.groupby(["name", "category", "form"])["category"]
         .agg("count")
         .reset_index(name="count")
     )

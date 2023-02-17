@@ -57,4 +57,5 @@ class CountedCategory(TypedDict):
 
 class GroupedCategory(TypedDict):
     category: str
+    form: int
     options: List[CountedCategory]

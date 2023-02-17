@@ -8,16 +8,18 @@ def get_category_key(k: dict):
 
 def group_by_category_output(data):
     g = sorted(data, key=get_category_key)
-    return [
+    res = [
         {
-            "category": key,
+            "category": key[0],
+            "form": key[1],
             "options": [
                 {"name": o["category"], "count": o["count"]}
                 for o in list(value)
             ],
         }
-        for key, value in groupby(g, get_category_key)
+        for key, value in groupby(g, key=lambda x:(x['name'], x['form']))
     ]
+    return res
 
 
 def flatten_list(ld: list) -> list:
