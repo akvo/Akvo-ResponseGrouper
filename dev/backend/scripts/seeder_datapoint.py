@@ -9,6 +9,8 @@ from models.question import QuestionType
 from models.answer import Answer
 from core.db import Base, SessionLocal, engine, truncate
 from sqlalchemy.orm import Session
+from sqlalchemy import inspect
+from AkvoResponseGrouper.views import refresh_view
 
 start_time = time.process_time()
 Base.metadata.create_all(bind=engine)
@@ -66,6 +68,9 @@ def seed(session=Session, repeats=int) -> None:
             session.commit()
             session.refresh(data)
         print(f"ADDED {repeats} datapoint to {form.name}")
+
+    if inspect(engine).has_table('ar_category'):
+        refresh_view(session)
 
 
 def main(session=Session, repeats=int):
