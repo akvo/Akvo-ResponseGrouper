@@ -62,35 +62,6 @@ def generate_case(category: CategoryBase, operator: Operator) -> str:
     return view_text
 
 
-def generate_query(categories: CategoryConfigBase) -> str:
-    view_text = ""
-    for union, category in enumerate(categories.categories):
-        name = category.name
-        group = re.sub("[^A-Za-z0-9]+", "_", name).lower()
-        valid = len(category.and_) if category.and_ else 0
-        valid += 1 if category.or_ else 0
-        view_text += "  SELECT form, data"
-        view_text += f", COUNT({group}), {valid} as valid,"
-        view_text += f" '{name}' as category\n"
-        view_text += "  FROM (SELECT form, data, CASE\n"
-        view_text += generate_case(category.and_, Operator._and)
-        view_text += generate_case(category.or_, Operator._or)
-        view_text += f"    END AS {group}\n"
-        view_text += "    FROM\n"
-        view_text += "    (SELECT\n"
-        view_text += "     q.form, aa.data"
-        view_text += ", aa.question, unnest(aa.options)::TEXT as opt\n"
-        view_text += "     FROM answer aa\n"
-        view_text += "     LEFT JOIN question q ON q.id = aa.question) a\n"
-        view_text += "   ) aw\n"
-        view_text += "  WHERE"
-        view_text += f" {group} = True\n"
-        view_text += "  GROUP BY data, form\n"
-        if union < len(categories.categories) - 1:
-            view_text += "  UNION\n"
-    return view_text
-
-
 def get_question_config(config: dict, cl: list):
     for q in config.get("questions"):
         cl.append(str(q["id"]))
