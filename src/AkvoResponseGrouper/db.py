@@ -2,6 +2,7 @@ from os import environ
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
+from sqlalchemy import inspect
 
 
 def get_db_url():
@@ -23,16 +24,8 @@ def get_session():
         session.close()
 
 
-def get_existing_view(connection):
-    return connection.execute(
-        text(
-            """
-                SELECT count(relkind) from pg_class
-                where relname = 'ar_category'
-                and relkind = 'm'
-                """
-        )
-    ).fetchone()
+def view_exist():
+    return inspect(engine).has_table("ar_category")
 
 
 def drop_view(connection):
