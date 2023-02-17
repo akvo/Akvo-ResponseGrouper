@@ -1,9 +1,57 @@
+import json
+import pandas as pd
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, or_
-from sqlalchemy.sql.operators import ilike_op
-from .models import Category, CategoryDict, CategoryResponse
-from .utils import group_by_category_output
+from .models import Category, CategoryDict
+from .utils import get_valid_list
+
+
+def get_category(opt: dict):
+    file_path = "./.category.json"
+    with open(f"{file_path}") as config_file:
+        configs = json.load(config_file)
+    category = False
+    for config in configs:
+        for c in config["categories"]:
+            category = get_valid_list(opt, c, category)
+    return category
+
+
+def get_data_categories(session: Session):
+    categories = session.query(Category).all()
+    categories = [c.serialize for c in categories]
+    return categories
+
+
+def get_results(session: Session):
+    categories = get_data_categories(session=session)
+    df = pd.DataFrame(categories)
+    results = df.to_dict("records")
+    for d in results:
+        d.update({"category": get_category(d["opt"])})
+    res = pd.DataFrame(results)
+    if list(res) != ["id", "data", "form", "name", "opt", "category"]:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "data",
+                "form",
+                "name",
+                "category",
+            ]
+        )
+    res = pd.concat(
+        [res.drop("opt", axis=1), pd.DataFrame(df["opt"].tolist())], axis=1
+    )
+    return res[
+        [
+            "id",
+            "data",
+            "form",
+            "name",
+            "category",
+        ]
+    ]
 
 
 def get_categories(
@@ -11,65 +59,47 @@ def get_categories(
     form: Optional[int] = None,
     name: Optional[str] = None,
     category: Optional[str] = None,
-    data: Optional[int] = None,
+    data: Optional[str] = None,
 ) -> List[CategoryDict]:
+    res = get_results(session=session)
     queries = []
     if form:
-        queries.append(Category.form == form)
+        queries.append(f"form == {form}")
     if name:
-        queries.append(func.lower(Category.name) == func.lower(name))
+        queries.append(f"name.str.lower() == '{name.lower()}'")
     if category:
-        queries.append(ilike_op(Category.category, f"%{category}%"))
+        queries.append(f"category.str.lower() == '{category.lower()}'")
     if data:
-        queries.append(Category.data == data)
-    return session.query(Category).filter(*queries).all()
+        data = [int(d) for d in data.split(",")]
+        queries.append("data.isin(@data).values")
+    if len(queries):
+        queries = " & ".join(queries)
+        res = res.query(queries)
+    return res.to_dict("records")
 
 
 def get_group_by_category(
     session: Session,
-    category_name: Optional[str] = None,
-    form_id: Optional[int] = None,
+    category: Optional[str] = None,
+    form: Optional[int] = None,
 ):
-    result = (
-        session.query(
-            Category.category,
-            Category.name,
-            func.count(Category.data).label("count"),
-        )
-        .filter(
-            or_(
-                category_name is None,
-                and_(
-                    category_name is not None,
-                    ilike_op(Category.name, f"%{category_name}%"),
-                ),
-            ),
-            or_(
-                form_id is None,
-                and_(form_id is not None, Category.form == form_id),
-            ),
-        )
-        .group_by(Category.category)
-        .group_by(Category.name)
-        .all()
+    res = get_results(session=session)
+    queries = []
+    if form:
+        queries.append(f"form == {form}")
+    if category:
+        queries.append(f"category.str.lower() == '{category.lower()}'")
+    if len(queries):
+        queries = " & ".join(queries)
+        res = res.query(queries)
+    res = (
+        res.groupby(["name", "category", "form"])["category"]
+        .agg("count")
+        .reset_index(name="count")
     )
-    result = [Category.group_serialize(r) for r in result]
-    result = group_by_category_output(result)
-    return result
+    return res.to_dict("records")
 
 
 def refresh_view(session: Session):
     session.execute("REFRESH MATERIALIZED VIEW ar_category;")
     session.commit()
-
-
-def get_category_by_data_ids(
-    session: Session, ids: List[int]
-) -> List[CategoryResponse]:
-    return (
-        session.query(
-            Category.data, Category.form, Category.name, Category.category
-        )
-        .filter(Category.data.in_(ids))
-        .all()
-    )

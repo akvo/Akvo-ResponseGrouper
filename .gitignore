@@ -146,3 +146,4 @@ cython_debug/
 
 # test.json created by generate_data_as_json_file function
 test.json
+.category.json

@@ -1,75 +1,101 @@
 [
   {
-    "name": "Category 1",
-    "form": 1,
+    "name": "Water",
+    "form": 554360198,
     "categories": [
       {
-        "name": "Non-Rural Female Head",
-        "or": [
+        "name": "Basic",
+        "questions": [
           {
-            "question": 1,
-            "options": ["Peri-urban", "Urban"]
-          }
-        ],
-        "and": [
-          {
-            "question": 2,
-            "options": ["Female"]
+            "id": 567800083,
+            "name": "School Has Toilet",
+            "options": [
+              "Yes"
+            ],
+            "other": [
+              {
+                "name": "Was Limited",
+                "options": [
+                  "Underconstruction"
+                ],
+                "questions": [
+                  {
+                    "id": 999,
+                    "number": {
+                      "greater_than": 0
+                    },
+                    "else": {
+                      "value": "No Service"
+                    }
+                  }
+                ]
+              }
+            ],
+            "else": {
+              "value": "No Service"
+            }
           },
           {
-            "question": 3,
-            "options": ["Head"]
-          }
-        ]
-      },
-      {
-        "name": "Rural Parent or Refugee",
-        "or": [
-          {
-            "question": 3,
-            "options": ["Parent"]
+            "id": 567800082,
+            "name": "Toilet Type",
+            "options": [
+              "Toilet that flush/poor flush to piped sewer system",
+              "Toilet that flush/poor flush to septic tank",
+              "Toilet that flush/poor flush to elsewhere",
+              "Toilet that flush/poor flush but don't know where",
+              "Pit latrine with slab",
+              "Ventilated Improved Pit latrine (VIP)",
+              "Twinpit offset latrine"
+            ],
+            "else": {
+              "value": "Limited"
+            }
           },
           {
-            "question": 7,
-            "options": ["Refugee/IDPs"]
-          }
-        ],
-        "and": [
-          {
-            "question": 1,
-            "options": ["Rural"]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Category 2",
-    "form": 1,
-    "categories": [
-      {
-        "name": "Male Non-Permanent Resident",
-        "and": [
-          {
-            "question": 2,
-            "options": ["Male"]
+            "id": 567820002,
+            "name": "School Type",
+            "options": [
+              "Primary",
+              "Kindergarten/Child Care Centre"
+            ],
+            "else": {
+              "ignore": [
+                578820191,
+                567800081
+              ]
+            }
           },
           {
-            "question": 7,
-            "options": ["Nomadic"]
-          }
-        ]
-      },
-      {
-        "name": "Female Permanent Resident",
-        "and": [
-          {
-            "question": 7,
-            "options": ["Permanent"]
+            "id": 578820191,
+            "name": "Is the school co-ed",
+            "options": [
+              "Co-education"
+            ],
+            "else": {
+              "ignore": [
+                567800081
+              ]
+            }
           },
           {
-            "question": 4,
-            "options": ["Female"]
+            "id": 567800081,
+            "name": "Saperate Toilet",
+            "options": [
+              "Yes"
+            ],
+            "else": {
+              "value": "Limited"
+            }
+          },
+          {
+            "id": 567800080,
+            "name": "Usable Toilet",
+            "number": {
+              "greater_than": 3
+            },
+            "else": {
+              "value": "Limited"
+            }
           }
         ]
       }

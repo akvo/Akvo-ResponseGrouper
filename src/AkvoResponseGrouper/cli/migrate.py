@@ -1,11 +1,13 @@
 import argparse
 import os
+import shutil
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 from .generate_schema import generate_schema
-from ..db import get_existing_view, drop_view
-from .checker import check_config
+from ..db import view_exist, drop_view
+
+# from .checker import check_config
 
 parser = argparse.ArgumentParser("akvo-responsegrouper")
 parser.add_argument(
@@ -58,8 +60,7 @@ if args.drop:
 def refresh(engine) -> None:
     with engine.connect() as connection:
         with connection.begin():
-            existing_view = get_existing_view(connection)
-            if existing_view["count"]:
+            if view_exist():
                 connection.execute(
                     text("REFRESH MATERIALIZED VIEW ar_category")
                 )
@@ -68,8 +69,7 @@ def refresh(engine) -> None:
 def drop(engine) -> None:
     with engine.connect() as connection:
         with connection.begin():
-            existing_view = get_existing_view(connection)
-            if existing_view["count"]:
+            if view_exist():
                 drop_view(connection)
 
 
@@ -104,12 +104,16 @@ def check():
 def main() -> None:
     engine = check()
     if args.config:
-        if check_config(file_config=args.config):
-            exit(0)
+        # if check_config(file_config=args.config):
+        #     exit(0)
         schema = generate_schema(file_config=args.config)
         with engine.connect() as connection:
             with connection.begin():
                 connection.execute(text(schema))
+        try:
+            shutil.copy(args.config, ".category.json")
+        except PermissionError:
+            print("Permission denied.")
     print("Done")
 
 

@@ -15,7 +15,7 @@ class TestForm:
     async def test_if_form_seeder_is_working(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        seed(session=session, file_path="./sources/form.json", )
+        seed(session=session, file_path="./sources/real-form.json", )
         forms = session.query(Form).all()
         assert len(forms) == 1
         for form in forms:
