@@ -1,0 +1,638 @@
+{
+  "name": "JMP Core Questions for Monitoring WASH in Households",
+  "id": "556240162",
+  "question_groups": [
+    {
+      "question_group": "Location Demographics",
+      "questions": [
+        {
+          "id": 573330119,
+          "name": "Name of respondent",
+          "order": 2,
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": 573330127,
+          "name": "Gender of the respondent",
+          "order": 3,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Male"
+            },
+            {
+              "name": "Female"
+            },
+            {
+              "name": "Other"
+            }
+          ]
+        },
+        {
+          "id": 573330121,
+          "name": "Total number of household members, including the respondent",
+          "order": 4,
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": 573330126,
+          "name": "Do you have children under the age of 5 years in your family?",
+          "order": 5,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 573330123,
+          "name": "Do you have differently abled member in your family?",
+          "order": 6,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 573330124,
+          "name": "Who is head of the household in your family?",
+          "order": 7,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Male Member"
+            },
+            {
+              "name": "Female Member"
+            },
+            {
+              "name": "Male Child Member"
+            },
+            {
+              "name": "Female Chid Member"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Drinking Water Questions",
+      "questions": [
+        {
+          "id": 573340127,
+          "name": "What is the main source of drinking water in the household?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Piped water into dwelling (household connection)"
+            },
+            {
+              "name": "Piped water to yard/plot"
+            },
+            {
+              "name": "Piped to neighbour"
+            },
+            {
+              "name": "Deep tubewell/borehole"
+            },
+            {
+              "name": "Shallow tubewell/borehole"
+            },
+            {
+              "name": "Public tap/standpipe"
+            },
+            {
+              "name": "Protected spring"
+            },
+            {
+              "name": "Rainwater collection"
+            },
+            {
+              "name": "Tanker-truck"
+            },
+            {
+              "name": "Cart with small tank/drum"
+            },
+            {
+              "name": "Bottled water"
+            },
+            {
+              "name": "Unprotected dug well"
+            },
+            {
+              "name": "Unprotected spring"
+            },
+            {
+              "name": "Surface water"
+            }
+          ]
+        },
+        {
+          "id": 573340124,
+          "name": "What is the main source of water by members of your household for other purposes, such as cooking and handwashing?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Piped water into dwelling (household connection)"
+            },
+            {
+              "name": "Piped water to yard/plot"
+            },
+            {
+              "name": "Piped to neighbour"
+            },
+            {
+              "name": "Deep tubewell/borehole"
+            },
+            {
+              "name": "Shallow tubewell/borehole"
+            },
+            {
+              "name": "Public tap/standpipe"
+            },
+            {
+              "name": "Pond sand filter (PSF)"
+            },
+            {
+              "name": "AIRP (Arsenic Iron Removal Plant)"
+            },
+            {
+              "name": "Protected spring"
+            },
+            {
+              "name": "Rainwater collection"
+            },
+            {
+              "name": "Tanker-truck"
+            },
+            {
+              "name": "Cart with small tank/drum"
+            },
+            {
+              "name": "Bottled water"
+            },
+            {
+              "name": "Unprotected dug well"
+            },
+            {
+              "name": "Unprotected spring"
+            },
+            {
+              "name": "Surface water"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 573340127,
+              "options": ["Bottled water"]
+            }
+          ]
+        },
+        {
+          "id": 573340126,
+          "name": "Where is the water collected from?",
+          "order": 3,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "In own dwelling"
+            },
+            {
+              "name": "In own yard / plot"
+            },
+            {
+              "name": "Elsewhere"
+            }
+          ]
+        },
+        {
+          "id": 573340128,
+          "name": "How long does it take to go there, get water, and come back?",
+          "order": 4,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Less than 30 minutes"
+            },
+            {
+              "name": "More than 30 minutes"
+            },
+            {
+              "name": "Don't know"
+            }
+          ]
+        },
+        {
+          "id": 573340129,
+          "name": "In the last month, has there been any time when your household did not have sufficient quantities of drinking water when needed?",
+          "order": 5,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes, at least once"
+            },
+            {
+              "name": "No, always sufficient"
+            },
+            {
+              "name": "Don't know"
+            }
+          ]
+        },
+        {
+          "id": 573340125,
+          "name": "Drinking water quality from main source",
+          "order": 6,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Free from feacal and prioirty chemical contamination"
+            },
+            {
+              "name": "Contaminated"
+            },
+            {
+              "name": "Don't know"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Sanitation Questions",
+      "questions": [
+        {
+          "id": 557970124,
+          "name": "What type of toilet do members of your household usually use?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Flush/pour flush to piped sewer system"
+            },
+            {
+              "name": "Flush/pour flush to septic tank"
+            },
+            {
+              "name": "Flush/pour flush to pit latrine"
+            },
+            {
+              "name": "Ventilated improved pit latrine (VIP) with slab"
+            },
+            {
+              "name": "Pit latrine with slab"
+            },
+            {
+              "name": "Twin pit offset latrine"
+            },
+            {
+              "name": "Twin pit with latrine slab"
+            },
+            {
+              "name": "Other composting latrine"
+            },
+            {
+              "name": "Flush/pour flush to open drain"
+            },
+            {
+              "name": "Flush/pour flush to don't know where"
+            },
+            {
+              "name": "Pit latrine without slab/open pit"
+            },
+            {
+              "name": "Twin pit without slab"
+            },
+            {
+              "name": "No facility"
+            }
+          ]
+        },
+        {
+          "id": 557970123,
+          "name": "Is the toilet facility shared with members outside of the household?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 557970124,
+              "options": [
+                "Flush/pour flush to piped sewer system",
+                "Flush/pour flush to septic tank",
+                "Flush/pour flush to pit latrine",
+                "Ventilated improved pit latrine (VIP) with slab",
+                "Pit latrine with slab",
+                "Twin pit offset latrine",
+                "Twin pit with latrine slab",
+                "Other composting latrine",
+                "Flush/pour flush to open drain",
+                "Flush/pour flush to don't know where",
+                "Pit latrine without slab/open pit",
+                "Twin pit without slab"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 557970121,
+          "name": "Where is the toilet facility located?",
+          "order": 3,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "In own dwelling"
+            },
+            {
+              "name": "In own plot/yard"
+            },
+            {
+              "name": "Elsewhere"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 557970124,
+              "options": [
+                "Flush/pour flush to piped sewer system",
+                "Flush/pour flush to septic tank",
+                "Flush/pour flush to pit latrine",
+                "Ventilated improved pit latrine (VIP) with slab",
+                "Pit latrine with slab",
+                "Twin pit offset latrine",
+                "Twin pit with latrine slab",
+                "Other composting latrine",
+                "Flush/pour flush to open drain",
+                "Flush/pour flush to don't know where",
+                "Pit latrine without slab/open pit",
+                "Twin pit without slab"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 557970122,
+          "name": "Has your pit toilet or septic tank ever been emptied?",
+          "order": 4,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes emptied"
+            },
+            {
+              "name": "Never emptied"
+            },
+            {
+              "name": "Don't know"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 557970124,
+              "options": [
+                "Flush/pour flush to septic tank",
+                "Flush/pour flush to pit latrine",
+                "Ventilated improved pit latrine (VIP) with slab",
+                "Pit latrine with slab",
+                "Twin pit offset latrine",
+                "Twin pit with latrine slab",
+                "Other composting latrine",
+                "Pit latrine without slab/open pit",
+                "Twin pit without slab"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 557970125,
+          "name": "How was the content of pit toilet or septic tank emptied or removed?",
+          "order": 5,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Removed by service provider to a treatment plant"
+            },
+            {
+              "name": "Removed by service provider and buried in a covered pit"
+            },
+            {
+              "name": "Removed by service provider to don't know where"
+            },
+            {
+              "name": "Emptied by household and buried in a covered pit"
+            },
+            {
+              "name": "Disposed by household to uncovered pit, open ground, waterbody or elsewhere"
+            },
+            {
+              "name": "Don't Know"
+            },
+            {
+              "name": "Other"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 557970122,
+              "options": ["Yes emptied"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Hygiene Questions",
+      "questions": [
+        {
+          "id": 563480061,
+          "name": "What type of hand washing facility used by the household most often?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Fixed facility observed in dwelling"
+            },
+            {
+              "name": "Fixed facility observed in plot/yard"
+            },
+            {
+              "name": "Mobile object observed (bucket, jug, kettle)"
+            },
+            {
+              "name": "No hand washing place available in dwelling/plot/yard"
+            },
+            {
+              "name": "No permission to see"
+            }
+          ]
+        },
+        {
+          "id": 563480059,
+          "name": "Is water available at the hand washing facility?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Water is available"
+            },
+            {
+              "name": "Water is not available"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 563480061,
+              "options": [
+                "Fixed facility observed in dwelling",
+                "Fixed facility observed in plot/yard",
+                "Mobile object observed (bucket, jug, kettle)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 563480060,
+          "name": "Is soap or detergent available at the hand washing facility?",
+          "order": 3,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Soap or detergent is available"
+            },
+            {
+              "name": "Soap or detergent is not available"
+            }
+          ],
+          "dependency": [
+            {
+              "id": 563480061,
+              "options": [
+                "Fixed facility observed in dwelling",
+                "Fixed facility observed in plot/yard",
+                "Mobile object observed (bucket, jug, kettle)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Core Menstrual Hygiene Questions",
+      "questions": [
+        {
+          "id": 560160138,
+          "name": "During your last menstrual period were you able to wash and change in privacy while at home?",
+          "order": 1,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 560160136,
+          "name": "During your last menstrual period, what hygiene materials did you use?",
+          "order": 2,
+          "type": "option",
+          "required": true,
+          "options": [
+            {
+              "name": "Cloth/reusable sanitary pads"
+            },
+            {
+              "name": "Disposable sanitary pads"
+            },
+            {
+              "name": "Tampons"
+            },
+            {
+              "name": "Menstrual cup"
+            },
+            {
+              "name": "Toilet paper"
+            },
+            {
+              "name": "Underwear alone"
+            },
+            {
+              "name": "Other"
+            }
+          ]
+        },
+        {
+          "id": 560160137,
+          "name": "During your last menstrual period, did you miss any of the following activities due to your period? Ask one by one:",
+          "order": 3,
+          "type": "multiple_option",
+          "required": true,
+          "options": [
+            {
+              "name": "Attending to school"
+            },
+            {
+              "name": "Paid work"
+            },
+            {
+              "name": "Participating in social activities"
+            },
+            {
+              "name": "Cooking food"
+            },
+            {
+              "name": "Eating with others"
+            },
+            {
+              "name": "Bathing in regular place"
+            },
+            {
+              "name": "Did not miss any of the activities listed above"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

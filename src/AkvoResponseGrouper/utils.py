@@ -93,7 +93,7 @@ def get_valid_list(opt, c, category):
                 valid.append(q["id"])
             else:
                 elses = q.get("else")
-                category = elses.get("value")
+                category = elses.get("name")
                 exit = True
         if q.get("options"):
             if len(set(q["options"]).intersection(answer)):
@@ -102,8 +102,8 @@ def get_valid_list(opt, c, category):
             else:
                 if q.get("else"):
                     elses = q.get("else")
-                    if elses.get("value"):
-                        category = elses.get("value")
+                    if elses.get("name"):
+                        category = elses.get("name")
                         exit = True
                     if elses.get("ignore"):
                         validator = list(

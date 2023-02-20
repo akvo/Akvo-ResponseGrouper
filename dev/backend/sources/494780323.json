@@ -1,0 +1,586 @@
+{
+  "name": "JMP Core Questions for Monitoring WASH in Healthcare Facilities",
+  "id": 494780323,
+  "question_groups": [
+    {
+      "question_group": "Health Care Facility Information",
+      "questions": [
+        {
+          "id": 555940315,
+          "name": "Health Care Facility Name",
+          "order": 1,
+          "meta": true,
+          "type": "text",
+          "required": true,
+          "options": null
+        },
+        {
+          "id": 555940316,
+          "name": "Health Care Facility Type",
+          "order": 3,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Health Post"
+            },
+            {
+              "name": "Other"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Water",
+      "questions": [
+        {
+          "id": 500740319,
+          "name": "Drinking Water Source",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Piped supply inside the building"
+            },
+            {
+              "name": "Piped supply outside the building"
+            },
+            {
+              "name": "Tube well / Borehole"
+            },
+            {
+              "name": "Protected dug well"
+            },
+            {
+              "name": "Unprotected dug well"
+            },
+            {
+              "name": "Protected spring"
+            },
+            {
+              "name": "Unprotected spring"
+            },
+            {
+              "name": "Rain water"
+            },
+            {
+              "name": "Tanker truck"
+            },
+            {
+              "name": "Surface water (river/dam/lake/pond)"
+            },
+            {
+              "name": "Don’t know"
+            },
+            {
+              "name": "No water source"
+            }
+          ]
+        },
+        {
+          "id": 500740317,
+          "name": "Location of Water Supply",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "On premises"
+            },
+            {
+              "name": "Up to 500 m"
+            },
+            {
+              "name": "500 m or further"
+            },
+            {
+              "name": "No water supply"
+            }
+          ]
+        },
+        {
+          "id": 500740318,
+          "name": "Functionality Status of Water Supply",
+          "order": 3,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Functional"
+            },
+            {
+              "name": "Not functional"
+            },
+            {
+              "name": "No water supply"
+            }
+          ]
+        },
+        {
+          "id": 500740316,
+          "name": "Water Yield (lpd)",
+          "order": 4,
+          "meta": false,
+          "type": "number",
+          "required": false,
+          "options": null
+        }
+      ]
+    },
+    {
+      "question_group": "Sanitation",
+      "questions": [
+        {
+          "id": 559830324,
+          "name": "Type of Toilets",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Flush / Pour-flush toilet to sewer connection"
+            },
+            {
+              "name": "Flush / Pour-flush toilet to tank or pit"
+            },
+            {
+              "name": "Pit latrine with slab"
+            },
+            {
+              "name": "Composting toilet"
+            },
+            {
+              "name": "Flush / Pour-flush toilet to open drain"
+            },
+            {
+              "name": "Pit latrine without slab/open pit"
+            },
+            {
+              "name": "Bucket"
+            },
+            {
+              "name": "Hanging toilet/latrine"
+            },
+            {
+              "name": "No toilet/latrine"
+            }
+          ]
+        },
+        {
+          "id": 559830321,
+          "name": "At Least One Toilet was Usable",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        },
+        {
+          "id": 559830320,
+          "name": "Toilets are Sex-Separated",
+          "order": 3,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        },
+        {
+          "id": 559830322,
+          "name": "Dedicated Toilets Available for Staff",
+          "order": 4,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        },
+        {
+          "id": 559830318,
+          "name": "Toilets have Menstrual Hygiene Facilities",
+          "order": 5,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        },
+        {
+          "id": 559830319,
+          "name": "Toilets Accessible for People with Limited Mobility",
+          "order": 6,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        },
+        {
+          "id": 559830323,
+          "name": "General Conditions of the Toilets",
+          "order": 7,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Clean"
+            },
+            {
+              "name": "Dirty but being used"
+            },
+            {
+              "name": "Filthy and not used"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Hygiene",
+      "questions": [
+        {
+          "id": 555940319,
+          "name": "Functioning Hand Hygiene Facility is Available at Points of Care",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No, hand hygienes present but not functional"
+            },
+            {
+              "name": "No hand hygiene facilities at points of care"
+            },
+            {
+              "name": "No hand hygiene facilities at the health facility"
+            }
+          ]
+        },
+        {
+          "id": 561220158,
+          "name": "Functioning Hand Hygiene Facility is Available at One or More Toilets",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No, handwashing facilities are near the toilets but lacking soap and/or water"
+            },
+            {
+              "name": "No, no handwashing facilities near toilets (within 5 m)"
+            },
+            {
+              "name": "No toilet facilities"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Health Care Waste Management",
+      "questions": [
+        {
+          "id": 569090293,
+          "name": "Waste Correctly Segregated into at Least 3 Labelled Bins in Consultation Area",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No, bins did not meet all requirements"
+            },
+            {
+              "name": "No bins were present"
+            }
+          ]
+        },
+        {
+          "id": 569090295,
+          "name": "Method for Disposing Infectious Waste",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Autoclaved"
+            },
+            {
+              "name": "Incinerated (two chamber, 850-1000 °C incinerator)"
+            },
+            {
+              "name": "Incinerated (other)"
+            },
+            {
+              "name": "Burning in a protected pit"
+            },
+            {
+              "name": "Not treated, but buried in lined, protected pit"
+            },
+            {
+              "name": "Not treated, but collected for medical waste disposal off-site"
+            },
+            {
+              "name": "Open dumping without treatment"
+            },
+            {
+              "name": "Open burning"
+            },
+            {
+              "name": "Not treated and added to general waste"
+            }
+          ]
+        },
+        {
+          "id": 569090294,
+          "name": "Method for Disposing Sharps Waste",
+          "order": 3,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Autoclaved"
+            },
+            {
+              "name": "Incinerated (two chamber, 850-1000 °C incinerator)"
+            },
+            {
+              "name": "Incinerated (other)"
+            },
+            {
+              "name": "Burning in a protected pit"
+            },
+            {
+              "name": "Not treated, but buried in lined, protected pit"
+            },
+            {
+              "name": "Not treated, but collected for medical waste disposal off-site"
+            },
+            {
+              "name": "Open dumping without treatment"
+            },
+            {
+              "name": "Open burning"
+            },
+            {
+              "name": "Not treated and added to general waste"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "Environmental Cleaning",
+      "questions": [
+        {
+          "id": 571050236,
+          "name": "Cleaning Protocols Available",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No"
+            }
+          ]
+        },
+        {
+          "id": 571050237,
+          "name": "Staff Responsible for Cleaning Received Training",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Yes"
+            },
+            {
+              "name": "No, some but not all have been trained"
+            },
+            {
+              "name": "No, none have been trained"
+            },
+            {
+              "name": "No staff were responsible for cleaning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "WASH Service Levels",
+      "questions": [
+        {
+          "id": 569080377,
+          "name": "Water service level",
+          "order": 1,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Basic"
+            },
+            {
+              "name": "Limited"
+            },
+            {
+              "name": "No service"
+            }
+          ]
+        },
+        {
+          "id": 569080376,
+          "name": "Sanitation service level",
+          "order": 2,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Basic"
+            },
+            {
+              "name": "Limited"
+            },
+            {
+              "name": "No service"
+            }
+          ]
+        },
+        {
+          "id": 569080380,
+          "name": "Hygiene service level",
+          "order": 3,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Basic"
+            },
+            {
+              "name": "Limited"
+            },
+            {
+              "name": "No Service"
+            }
+          ]
+        },
+        {
+          "id": 569080378,
+          "name": "Waste Management Service Level",
+          "order": 4,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Basic"
+            },
+            {
+              "name": "Limited"
+            },
+            {
+              "name": "No Service"
+            }
+          ]
+        },
+        {
+          "id": 569080379,
+          "name": "Environmental Cleaning service level",
+          "order": 5,
+          "meta": false,
+          "type": "option",
+          "required": false,
+          "options": [
+            {
+              "name": "Basic"
+            },
+            {
+              "name": "Limited"
+            },
+            {
+              "name": "No Service"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

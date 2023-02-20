@@ -9,15 +9,11 @@
           {
             "id": 567800083,
             "name": "School Has Toilet",
-            "options": [
-              "Yes"
-            ],
+            "options": ["Yes"],
             "other": [
               {
                 "name": "Was Limited",
-                "options": [
-                  "Underconstruction"
-                ],
+                "options": ["Underconstruction"],
                 "questions": [
                   {
                     "id": 999,
@@ -25,14 +21,14 @@
                       "greater_than": 0
                     },
                     "else": {
-                      "value": "No Service"
+                      "name": "No Service"
                     }
                   }
                 ]
               }
             ],
             "else": {
-              "value": "No Service"
+              "name": "No Service"
             }
           },
           {
@@ -48,43 +44,31 @@
               "Twinpit offset latrine"
             ],
             "else": {
-              "value": "Limited"
+              "name": "Limited"
             }
           },
           {
             "id": 567820002,
             "name": "School Type",
-            "options": [
-              "Primary",
-              "Kindergarten/Child Care Centre"
-            ],
+            "options": ["Primary", "Kindergarten/Child Care Centre"],
             "else": {
-              "ignore": [
-                578820191,
-                567800081
-              ]
+              "ignore": [578820191, 567800081]
             }
           },
           {
             "id": 578820191,
             "name": "Is the school co-ed",
-            "options": [
-              "Co-education"
-            ],
+            "options": ["Co-education"],
             "else": {
-              "ignore": [
-                567800081
-              ]
+              "ignore": [567800081]
             }
           },
           {
             "id": 567800081,
             "name": "Saperate Toilet",
-            "options": [
-              "Yes"
-            ],
+            "options": ["Yes"],
             "else": {
-              "value": "Limited"
+              "name": "Limited"
             }
           },
           {
@@ -94,7 +78,7 @@
               "greater_than": 3
             },
             "else": {
-              "value": "Limited"
+              "name": "Limited"
             }
           }
         ]
