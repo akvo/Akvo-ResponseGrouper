@@ -75,10 +75,10 @@ def generate_schema(file_config: str) -> str:
     file_config = open(file_config)
     configs = json.load(file_config)
     file_config.close()
-    question_config = []
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
     mview += "SELECT *, row_number() over (partition by true) as id FROM ("
     for main_union, config in enumerate(configs):
+        question_config = []
         for c in config["categories"]:
             question_config = get_question_config(config=c, cl=question_config)
         ql = ",".join(question_config)
