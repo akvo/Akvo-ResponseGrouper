@@ -25,7 +25,11 @@ def get_session():
 
 
 def view_exist():
-    return inspect(engine).has_table("ar_category")
+    try:
+        return inspect(engine).has_table("ar_category")
+    except Exception:
+        # to support legacy version 1.3
+        return engine.has_table(table_name="ar_category")
 
 
 def drop_view(connection):
