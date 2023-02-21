@@ -48,6 +48,16 @@ class TestViews:
         assert len(res) > 0
 
     @pytest.mark.asyncio
+    async def test_views_filtering_by_category_n_form(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(
+            session=session, category="basic", form=554360198
+        )
+        assert data[0]["category"] == "Basic"
+        assert data[0]["form"] == 554360198
+
+    @pytest.mark.asyncio
     async def test_views_get_result_keys(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:

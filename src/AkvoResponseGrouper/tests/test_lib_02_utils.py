@@ -5,6 +5,7 @@ from ..utils import (
     get_intersection,
     generate_data_as_json_file,
     get_total_criteria_per_category,
+    get_valid_list,
 )
 
 """
@@ -80,3 +81,37 @@ def test_get_total_criteria_per_category():
 
     total = get_total_criteria_per_category(category=category)
     assert total == 3
+
+
+def test_get_valid_list():
+    opt = {
+        "567820002": ["Yes"],
+        "567800083": ["No"],
+        "578820191": ["Girls Only"],
+    }
+    c = {
+        "name": "Basic",
+        "questions": [
+            {
+                "id": 567820002,
+                "name": "Toilet Available?",
+                "options": ["Yes"],
+                "else": {"name": "No Service"},
+            },
+            {
+                "id": 567800083,
+                "name": "Share with outside member?",
+                "options": ["No"],
+                "else": {"name": "Limited"},
+            },
+            {
+                "id": 567800083,
+                "name": "A",
+                "options": ["Boys n Girls"],
+                "else": {"name": "Limited"},
+            },
+        ],
+    }
+    category = False
+    _category = get_valid_list(opt, c, category)
+    assert _category == "Limited"
