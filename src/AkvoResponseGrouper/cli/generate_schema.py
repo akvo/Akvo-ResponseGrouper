@@ -77,20 +77,21 @@ def generate_schema(file_config: str) -> str:
     file_config.close()
     question_config = []
     mview = "CREATE MATERIALIZED VIEW ar_category AS \n"
+    mview += "SELECT *, row_number() over (partition by true) as id FROM ("
     for main_union, config in enumerate(configs):
         for c in config["categories"]:
             question_config = get_question_config(config=c, cl=question_config)
         ql = ",".join(question_config)
         mview += (
-            "SELECT row_number() over (partition by true) as id,q.form,"
-            f" a.data, '{config['name']}' as name,"
+            f"SELECT q.form, a.data, '{config['name']}' as name,"
             " jsonb_object_agg(a.question,COALESCE(a.options,"
             " array[a.value::text])) as opt \n"
         )
         mview += "FROM answer a \n"
         mview += "LEFT JOIN question q ON q.id = a.question \n"
         mview += "WHERE (a.value IS NOT NULL OR a.options IS NOT NULL) \n"
-        mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data;\n"
+        mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data\n"
         if main_union < len(configs) - 1:
-            mview += "UNION"
+            mview += " UNION "
+    mview += ") as categories;"
     return mview
