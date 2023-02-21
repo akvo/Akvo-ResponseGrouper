@@ -3,6 +3,7 @@ import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
+from AkvoResponseGrouper.db import view_exist
 
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
@@ -33,3 +34,8 @@ class TestRouteCollection:
             app.url_path_for("collection:refresh_materialized_view")
         )
         assert response.status_code == 200
+
+    async def test_if_view_is_exists(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        assert view_exist() is True
