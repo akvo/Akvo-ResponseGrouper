@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Query
+from os import environ
+from fastapi import APIRouter, Depends, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from .db import get_session
@@ -57,7 +58,10 @@ async def get_grouped_categories(
     name="collection:refresh_materialized_view",
 )
 def refresh_materialized_view(
+    background_tasks: BackgroundTasks,
     session: Session = Depends(get_session),
 ):
-    refresh_view(session=session)
+    TESTING = environ.get("TESTING")
+    if not TESTING:
+        background_tasks.add_task(refresh_view, session=session)
     return "OK"
