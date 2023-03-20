@@ -6,7 +6,8 @@ from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 from .generate_schema import generate_schema
 from ..db import view_exist, drop_view
-from .checker import check_config, check_questions
+from .checker import check_config
+from .checker_db import check_questions
 from ..utils import flatten_list
 
 parser = argparse.ArgumentParser("akvo-responsegrouper")
