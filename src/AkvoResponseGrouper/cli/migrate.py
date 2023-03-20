@@ -6,8 +6,8 @@ from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 from .generate_schema import generate_schema
 from ..db import view_exist, drop_view
-
-# from .checker import check_config
+from .checker import check_config, check_questions
+from ..utils import flatten_list
 
 parser = argparse.ArgumentParser("akvo-responsegrouper")
 parser.add_argument(
@@ -104,12 +104,16 @@ def check():
 def main() -> None:
     engine = check()
     if args.config:
-        # if check_config(file_config=args.config):
-        #     exit(0)
+        errors, questions = check_config(file_config=args.config)
+        qls = flatten_list(ld=questions)
+        if len(errors):
+            exit(0)
         schema = generate_schema(file_config=args.config)
         with engine.connect() as connection:
             with connection.begin():
-                connection.execute(text(schema))
+                cq = check_questions(connection=connection, questions=qls)
+                if cq:
+                    connection.execute(text(schema))
         try:
             shutil.copy(args.config, ".category.json")
         except PermissionError:
