@@ -34,3 +34,18 @@ def view_exist():
 
 def drop_view(connection):
     return connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
+
+
+def get_option_by_questions(connection, questions: list):
+    try:
+        query = text(
+            "select option.*, question.id as qid from option "
+            + "right join question on option.question = question.id "
+            + "where question.id in :questions"
+        )
+        return connection.execute(
+            query,
+            questions=tuple(questions),
+        ).fetchall()
+    except Exception:
+        return None
