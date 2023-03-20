@@ -1,137 +1,58 @@
 import unittest
-from AkvoResponseGrouper.cli.checker import check_config, get_options
+from AkvoResponseGrouper.cli.checker import check_config
 from AkvoResponseGrouper.utils import generate_data_as_json_file
 
 
 class TestCategoryChecker(unittest.TestCase):
-    def test_if_category_is_typo(self):
-        with self.assertRaises(SystemExit) as cm:
-            data = {"name": "Water", "categoryies": []}
-            get_options(data=data)
-        self.assertEqual(cm.exception.code, 0)
-
-    def test_name_is_not_present(self):
+    def test_category_name_is_not_present_in_specified_keys(self):
+        # a list of key that required to have `name` field
+        # > namely: category, other, and else
         data = [
             {
                 "form": 2,
-                "categories": [],
+                "categories": [
+                    {
+                        "questions": [
+                            {
+                                "id": 1,
+                                "options": ["A", "B"],
+                                "other": [{"questions": []}],
+                                "else": {},
+                            }
+                        ],
+                    }
+                ],
             }
         ]
         fc = generate_data_as_json_file(data=data)
-        checker = check_config(file_config=fc, info=False)
-        self.assertFalse(checker)
+        errors, questions = check_config(file_config=fc, info=False)
+        self.assertEqual(len(errors), 3)
 
-    def test_form_is_not_present(self):
+    def test_duplicate_question_11CD_with_11FG(self):
+        # Different form ids have the same question id.
         data = [
             {
-                "name": "Water",
-                "categories": [],
-            }
-        ]
-        fc = generate_data_as_json_file(data=data)
-        checker = check_config(file_config=fc, info=False)
-        self.assertFalse(checker)
-
-    def test_5C_duplicate_with_5CD(self):
-        data = [
-            {
-                "name": "Water",
                 "form": 1,
                 "categories": [
                     {
-                        "name": "Category-1A",
-                        "and": [
-                            {"question": 1, "options": ["A"]},
-                        ],
-                    },
+                        "name": "Category-11CD",
+                        "questions": [{"id": 11, "options": ["C", "D"]}],
+                    }
                 ],
             },
             {
-                "name": "Sanitation",
-                "form": 1,
+                "form": 4,
                 "categories": [
                     {
-                        "name": "Category-5C",
-                        "and": [
-                            {"question": 5, "options": ["C"]},
-                        ],
-                    },
-                    {
-                        "name": "Category-5CD",
-                        "and": [
-                            {"question": 5, "options": ["C", "D"]},
-                        ],
-                    },
+                        "name": "Category-11FG",
+                        "questions": [{"id": 11, "options": ["F", "G"]}],
+                    }
                 ],
             },
         ]
         fc = generate_data_as_json_file(data=data)
-        checker = check_config(file_config=fc, info=False)
-        self.assertEqual(checker, 1)
-
-    def test_1A_duplicate_with_1AB_and_1A_with_1AB2CD(self):
-        data = [
-            {
-                "name": "Water",
-                "form": 1,
-                "categories": [
-                    {
-                        "name": "Category-1A",
-                        "and": [
-                            {"question": 1, "options": ["A"]},
-                        ],
-                    },
-                    {
-                        "name": "Category-1AB",
-                        "and": [{"question": 1, "options": ["A", "B"]}],
-                    },
-                    {
-                        "name": "Category-1AB2CD",
-                        "and": [
-                            {"question": 1, "options": ["A", "B"]},
-                            {"question": 2, "options": ["C", "D"]},
-                        ],
-                    },
-                ],
-            }
-        ]
-        fc = generate_data_as_json_file(data=data)
-        checker = check_config(file_config=fc, info=False)
-        self.assertEqual(checker, 2)
-
-    def test_checker_config_is_passed(self):
-        data = [
-            {
-                "name": "Water",
-                "form": 1,
-                "categories": [
-                    {
-                        "name": "Category-1A3FG",
-                        "and": [
-                            {"question": 1, "options": ["A"]},
-                            {"question": 3, "options": ["F", "G"]},
-                        ],
-                    },
-                    {
-                        "name": "Category-1AB",
-                        "and": [
-                            {"question": 1, "options": ["C"]},
-                            {"question": 3, "options": ["A"]},
-                        ],
-                    },
-                    {
-                        "name": "Category-1AB2CD",
-                        "and": [
-                            {"question": 1, "options": ["A", "B"]},
-                            {"question": 2, "options": ["C", "D"]},
-                        ],
-                    },
-                ],
-            }
-        ]
-        fc = generate_data_as_json_file(data=data)
-        checker = check_config(file_config=fc, info=False)
-        self.assertFalse(checker)
+        errors, questions = check_config(file_config=fc, info=False)
+        self.assertEqual(len(errors), 1)
 
 
 if __name__ == "__main__":
