@@ -55,17 +55,10 @@ def print_errors_no_category(errors: list):
         )
 
 
-def print_dup_questions(form_questions: dict, same_questions: set):
-    if len(same_questions) and len(form_questions) > 1:
-        dq = ", ".join(str(q) for q in same_questions)
-        print(f"POTENTIAL DUPLICATE: have more than one question id: {dq}")
-
-
 def check_config(file_config: str, info: bool = True):
     with open(file_config) as f:
         data = f.read()
         data = json.loads(data)
-    form_questions = {}
     errors = []
     questions = []
     for config in data:
@@ -77,19 +70,6 @@ def check_config(file_config: str, info: bool = True):
             )
             qs = get_all_questions(config=c, qs=qs)
             questions.append(qs)
-        form = config["form"]
-        ql = [q["id"] for q in qs]
-        if form not in form_questions:
-            form_questions[form] = set(ql)
-        else:
-            form_questions[form].update(ql)
-    same_questions = set.intersection(*form_questions.values())
     if info:
         print_errors_no_category(errors=errors)
-        print_dup_questions(
-            form_questions=form_questions, same_questions=same_questions
-        )
-
-    if len(same_questions) and len(form_questions) > 1:
-        errors.append(same_questions)
     return errors, questions
