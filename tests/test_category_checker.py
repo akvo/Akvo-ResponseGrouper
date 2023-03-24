@@ -13,7 +13,7 @@ class TestCategoryChecker(unittest.TestCase):
             }
         ]
         fc = generate_data_as_json_file(data=data)
-        errors, questions = check_config(file_config=fc, info=False)
+        errors, q, d = check_config(file_config=fc, info=False)
         if len(errors):
             self.assertEqual(
                 errors[0], "NAME: Water | `categories` is typo or not present"
@@ -38,7 +38,7 @@ class TestCategoryChecker(unittest.TestCase):
             }
         ]
         fc = generate_data_as_json_file(data=data)
-        errors, questions = check_config(file_config=fc, info=False)
+        errors, q, d = check_config(file_config=fc, info=False)
         if len(errors):
             self.assertEqual(
                 errors[0],
@@ -61,10 +61,55 @@ class TestCategoryChecker(unittest.TestCase):
             }
         ]
         fc = generate_data_as_json_file(data=data)
-        errors, questions = check_config(file_config=fc, info=False)
+        errors, q, d = check_config(file_config=fc, info=False)
         self.assertEqual(len(errors), 1)
         if len(errors):
             self.assertEqual(errors[0], "NAME: Water | FORM is required")
+
+    def test_5C_duplicate_with_1CD5CD(self):
+        data = [
+            {
+                "name": "Water",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-5C",
+                        "questions": [{"id": 5, "options": ["C"]}],
+                    }
+                ],
+            },
+            {
+                "name": "Water",
+                "form": 1,
+                "categories": [
+                    {
+                        "name": "Category-1AB",
+                        "questions": [
+                            {
+                                "id": 1,
+                                "options": ["A", "B"],
+                                "other": [
+                                    {
+                                        "name": "Category-1CD5CD",
+                                        "options": ["C", "D"],
+                                        "questions": [
+                                            {"id": 5, "options": ["C", "D"]}
+                                        ],
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ],
+            },
+        ]
+        fc = generate_data_as_json_file(data=data)
+        e, q, duplicates = check_config(file_config=fc, info=False)
+        if len(duplicates):
+            self.assertTrue(
+                "Category-1CD5CD" in duplicates[0]
+                and "Category-5C" in duplicates[0]
+            )
 
     def test_checker_config_is_passed(self):
         data = [
@@ -94,7 +139,7 @@ class TestCategoryChecker(unittest.TestCase):
             }
         ]
         fc = generate_data_as_json_file(data=data)
-        errors, questions = check_config(file_config=fc, info=False)
+        errors, q, d = check_config(file_config=fc, info=False)
         self.assertCountEqual(errors, [])  # no errors
 
 
