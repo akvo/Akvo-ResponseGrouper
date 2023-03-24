@@ -2,16 +2,29 @@ import json
 
 
 def find_errors_in_questions(
-    config: dict, errors: list, name: str, question=None, other=False
+    config: dict,
+    errors: list,
+    name: str,
+    form: int,
+    question=None,
+    other=False,
 ) -> list:
     if "name" not in config:
-        errors.append({"name": name, "q": question, "o": other})
+        err1 = (
+            f"{name}FORM: {form} | QUESTION: {question} | "
+            "CATEGORY NAME is required"
+            if question
+            else f"{name}FORM: {form} | CATEGORY NAME is required"
+        )
+        err1 += " in `other`" if other else " in `categories`"
+        errors.append(err1)
     for q in config.get("questions"):
         for o in q.get("other") if "other" in q else []:
             find_errors_in_questions(
                 config=o,
                 errors=errors,
                 name=name,
+                form=form,
                 question=q.get("id"),
                 other=True,
             )
@@ -22,7 +35,16 @@ def find_errors_in_questions(
                 )
             ):
                 else_key = False if "ignore" in q["else"] else True
-                errors.append({"name": name, "q": q.get("id"), "e": else_key})
+                qid = q.get("id")
+                err2 = (
+                    f"{name}FORM: {form} | QUESTION: {qid} | CATEGORY NAME is"
+                )
+                err2 += (
+                    " required in `else`"
+                    if else_key
+                    else " required in `categories`"
+                )
+                errors.append(err2)
 
 
 def get_all_questions(config: dict, qs: list) -> list:
@@ -37,22 +59,11 @@ def get_all_questions(config: dict, qs: list) -> list:
     return qs
 
 
-def print_errors_no_category(errors: list):
-    for error in errors:
-        en = error["name"]
-        eq = error["q"]
-        eo = error.get("o")
-        ek = error.get("e")
-        print(
-            f"{en} |",
-            f"QUESTION ID: {eq}|" if eq else "",
-            "NAME is required",
-            "in `other` key."
-            if eo
-            else "in `else` key"
-            if ek
-            else "before `questions` key",
-        )
+def print_errors_no_category(errors: list, info: bool = True):
+    if info:
+        for error in errors:
+            print(error)
+            print("=============================")
 
 
 def check_config(file_config: str, info: bool = True):
@@ -63,13 +74,18 @@ def check_config(file_config: str, info: bool = True):
     questions = []
     for config in data:
         qs = []
-        for c in config["categories"]:
-            cname = config.get("name")
-            find_errors_in_questions(
-                config=c, errors=errors, name=cname
-            )
-            qs = get_all_questions(config=c, qs=qs)
-            questions.append(qs)
-    if info:
-        print_errors_no_category(errors=errors)
+        cname = config.get("name")
+        pname = f"NAME: {cname} | " if cname else ""
+        if "form" not in config:
+            errors.append(f"{pname}FORM is required")
+        if "categories" not in config:
+            errors.append(f"{pname}`categories` is typo or not present")
+        if "form" in config and "categories" in config:
+            for c in config["categories"]:
+                find_errors_in_questions(
+                    config=c, errors=errors, name=pname, form=config["form"]
+                )
+                qs = get_all_questions(config=c, qs=qs)
+                questions.append(qs)
+    print_errors_no_category(errors=errors, info=info)
     return errors, questions
