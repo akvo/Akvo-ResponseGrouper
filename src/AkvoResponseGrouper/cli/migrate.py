@@ -7,7 +7,7 @@ from sqlalchemy.exc import ArgumentError
 from .generate_schema import generate_schema
 from ..db import view_exist, drop_view
 from .checker import check_config
-from .checker_db import check_questions
+from .checker_db import check_questions, print_error_questions
 from ..utils import flatten_list
 
 parser = argparse.ArgumentParser("akvo-responsegrouper")
@@ -105,21 +105,27 @@ def check():
 def main() -> None:
     engine = check()
     if args.config:
-        errors, questions = check_config(file_config=args.config)
+        errors, questions, duplicates = check_config(file_config=args.config)
         qls = flatten_list(ld=questions)
-        if len(errors):
-            exit(0)
         schema = generate_schema(file_config=args.config)
         with engine.connect() as connection:
             with connection.begin():
-                cq = check_questions(connection=connection, questions=qls)
-                if cq:
+                error_qs = check_questions(
+                    connection=connection, questions=qls
+                )
+                if len(error_qs):
+                    print_error_questions(errors=error_qs)
+                if len(errors) or len(duplicates) and not len(error_qs):
+                    for dup in duplicates:
+                        print(dup, "\n=======================")
+                    exit(0)
+                if not len(error_qs) and not len(errors):
                     connection.execute(text(schema))
+                    print("Done")
         try:
             shutil.copy(args.config, ".category.json")
         except PermissionError:
             print("Permission denied.")
-    print("Done")
 
 
 if __name__ == "__main__":
