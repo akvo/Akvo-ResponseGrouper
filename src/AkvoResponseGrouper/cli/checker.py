@@ -1,4 +1,5 @@
 import json
+from ..utils import flatten_list
 
 
 def find_errors_in_questions(
@@ -61,7 +62,12 @@ def find_errors_in_config(config: dict, name: str) -> list:
 def get_all_questions(config: dict, form: str, qs: list) -> list:
     for q in config.get("questions"):
         qs.append(
-            {"form": form, "id": q.get("id"), "options": q.get("options")}
+            {
+                "category": config.get("name"),
+                "form": form,
+                "id": q.get("id"),
+                "options": q.get("options"),
+            }
         )
         if q.get("other"):
             for o in q.get("other"):
@@ -97,12 +103,47 @@ def get_error_messages(errors: list) -> list:
     return messages
 
 
+def get_potential_duplicates(items: list) -> list:
+    duplicates = []
+    counts = {}
+    for item in items:
+        form = item["form"]
+        for question in item["questions"]:
+            key = (form, question["id"])
+            counts[key] = counts.get(key, 0) + 1
+    unique = set(counts.values())
+    qs = flatten_list(ld=[i["questions"] for i in items])
+    if len(unique) > 1:
+        mv = max(unique)
+        cl = list(counts.values())
+        for ix, obj in enumerate(list(counts)):
+            f, q = obj
+            if cl[ix] == mv:
+                a, b = set(
+                    [
+                        lt["category"]
+                        for lt in list(
+                            filter(
+                                lambda x: x["form"] == f and x["id"] == q,
+                                qs,
+                            )
+                        )
+                    ]
+                )
+                msg = (
+                    f"POTENTIAL DUPLICATE: {a} with {b} by\n"
+                    f"FORM ID: {f} | QUESTION: {q}"
+                )
+                duplicates.append(msg)
+    return duplicates
+
+
 def check_config(file_config: str, info: bool = True):
     with open(file_config) as f:
         data = f.read()
         data = json.loads(data)
     errors = []
-    questions = []
+    items = []
     for config in data:
         qs = []
         cname = config.get("name")
@@ -114,10 +155,16 @@ def check_config(file_config: str, info: bool = True):
                     config=c, errors=errors, name=cname, form=config["form"]
                 )
                 qs = get_all_questions(config=c, form=config["form"], qs=qs)
-                questions.append(qs)
+                items.append(
+                    {
+                        "form": config["form"],
+                        "questions": qs,
+                    }
+                )
+    duplicates = get_potential_duplicates(items=items)
+    questions = [i["questions"] for i in items]
     errors = get_error_messages(errors=errors)
     if info:
         for error in errors:
-            print(error)
-            print("=============================")
-    return errors, questions
+            print(error, "\n=============================")
+    return errors, questions, duplicates
