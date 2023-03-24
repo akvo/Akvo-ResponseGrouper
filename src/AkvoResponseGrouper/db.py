@@ -39,7 +39,8 @@ def drop_view(connection):
 def get_option_by_questions(connection, questions: list):
     try:
         query = text(
-            "select option.*, question.id as qid from option "
+            "select option.*, question.id as qid, question.form as form"
+            " from option "
             + "right join question on option.question = question.id "
             + "where question.id in :questions"
         )
