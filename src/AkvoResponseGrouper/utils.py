@@ -31,13 +31,6 @@ def get_intersection(lst1, lst2) -> list:
     return lst3
 
 
-def get_total_criteria_per_category(category: dict) -> int:
-    total = 1 if "or" in category else 0
-    if "and" in category:
-        total += len(category["and"])
-    return total
-
-
 def generate_data_as_json_file(data: list):
     # Serializing json
     json_object = json.dumps(data, indent=4)
