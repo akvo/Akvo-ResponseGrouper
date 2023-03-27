@@ -119,7 +119,7 @@ def get_potential_duplicates(items: list) -> list:
         for ix, obj in enumerate(list(counts)):
             f, q = obj
             if cl[ix] == mv:
-                a, b = set(
+                categories = set(
                     [
                         lt["category"]
                         for lt in list(
@@ -130,11 +130,13 @@ def get_potential_duplicates(items: list) -> list:
                         )
                     ]
                 )
-                msg = (
-                    f"POTENTIAL DUPLICATE: {a} with {b} by\n"
-                    f"FORM ID: {f} | QUESTION: {q}"
-                )
-                duplicates.append(msg)
+                if len(categories) == 2:
+                    a, b = categories
+                    msg = (
+                        f"POTENTIAL DUPLICATE: {a} with {b} by\n"
+                        f"FORM ID: {f} | QUESTION: {q}"
+                    )
+                    duplicates.append(msg)
     return duplicates
 
 
