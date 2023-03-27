@@ -4,6 +4,8 @@ from ..utils import (
     get_intersection,
     generate_data_as_json_file,
     get_valid_list,
+    flatten_list,
+    validate_number,
 )
 
 """
@@ -79,3 +81,32 @@ def test_get_valid_list():
     category = False
     _category = get_valid_list(opt, c, category)
     assert _category == "Limited"
+
+
+def test_get_flatten_list():
+    list = [[1, 2, 3], [4, 5, 6]]
+    results = flatten_list(ld=list)
+    assert results == [1, 2, 3, 4, 5, 6]
+
+
+def test_valid_number():
+    answer = [10]
+    opt1 = {"number": {"greater_than": 0}}
+    res1 = validate_number(q=opt1, answer=answer)
+    assert res1 is True
+
+    opt2 = {"number": {"less_than": 11}}
+    res2 = validate_number(q=opt2, answer=answer)
+    assert res2 is True
+
+    opt3 = {"number": {"equal": 10}}
+    res3 = validate_number(q=opt3, answer=answer)
+    assert res3 is True
+
+    opt4 = {"number": {"greater_than_equal": 10}}
+    res4 = validate_number(q=opt4, answer=answer)
+    assert res4 is True
+
+    opt5 = {"number": {"less_than_equal": 10}}
+    res5 = validate_number(q=opt5, answer=answer)
+    assert res5 is True
