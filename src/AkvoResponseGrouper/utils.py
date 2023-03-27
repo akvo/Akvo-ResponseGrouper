@@ -31,18 +31,6 @@ def get_intersection(lst1, lst2) -> list:
     return lst3
 
 
-def get_list_questions(data: list) -> list:
-    categories = [d["categories"] for d in data]
-    categories = flatten_list(ld=categories)
-    lq = []
-    for c in categories:
-        if "or" in c:
-            lq += c["or"]
-        if "and" in c:
-            lq += c["and"]
-    return lq
-
-
 def get_total_criteria_per_category(category: dict) -> int:
     total = 1 if "or" in category else 0
     if "and" in category:

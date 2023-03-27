@@ -1,7 +1,6 @@
 import os
 from ..utils import (
     group_by_category_output,
-    get_list_questions,
     get_intersection,
     generate_data_as_json_file,
     get_total_criteria_per_category,
@@ -33,27 +32,6 @@ def test_transform_array():
                 },
             ],
         }
-    ]
-
-
-def test_get_list_questions():
-    data = [
-        {
-            "name": "Sanitation",
-            "categories": [
-                {
-                    "name": "Basic",
-                    "and": [{"question": 1, "options": ["Yes", "No"]}],
-                    "or": [{"question": 2, "options": ["Clean", "Dirty"]}],
-                }
-            ],
-        }
-    ]
-
-    lq = get_list_questions(data=data)
-    assert lq == [
-        {"question": 2, "options": ["Clean", "Dirty"]},
-        {"question": 1, "options": ["Yes", "No"]},
     ]
 
 
