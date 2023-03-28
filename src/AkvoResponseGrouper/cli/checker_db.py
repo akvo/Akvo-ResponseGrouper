@@ -27,28 +27,16 @@ def check_options(rows, questions: list) -> list:
 
 def check_questions(connection, questions: list) -> list:
     errors = []
-    ids = [q["id"] for q in questions]
-    fms = set([q["form"] for q in questions])
-    res = get_option_by_questions(connection=connection, questions=ids)
-    if res:
-        for fk, vq in itertools.groupby(res, key=lambda x: x["form"]):
-            if fk in fms:
-                config_items = list(
-                    filter(lambda q: q["form"] == fk, questions)
-                )
-                valid_questions = [q["qid"] for q in list(vq)]
-                setup_questions = [q["id"] for q in config_items]
-                diff_invalid_qs = set(setup_questions) - set(valid_questions)
-                if len(diff_invalid_qs):
-                    errors.append(
-                        {"error": "form", "form": fk, "diff": diff_invalid_qs}
-                    )
-
-        rows = set([row["qid"] for row in res])
-        diff = list(set(ids) - rows)
-        if len(diff):
-            errors.append({"error": "question", "diff": diff})
-        errors += check_options(rows=res, questions=questions)
+    for frm, qs in itertools.groupby(questions, key=lambda x: x["form"]):
+        lqs = list(qs)
+        ids = [q["id"] for q in lqs]
+        res = get_option_by_questions(connection=connection, questions=ids)
+        if res:
+            dbqs = list(set([lt["qid"] for lt in list(res)]))
+            diff = list(set(ids) - set(dbqs))
+            if len(diff):
+                errors.append({"error": "question", "diff": diff})
+            errors += check_options(rows=res, questions=lqs)
     return errors
 
 
