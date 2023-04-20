@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from ..utils import (
     group_by_category_output,
     get_intersection,
@@ -6,6 +7,7 @@ from ..utils import (
     get_valid_list,
     flatten_list,
     validate_number,
+    get_counted_category,
 )
 
 """
@@ -110,3 +112,28 @@ def test_valid_number():
     opt5 = {"number": {"less_than_equal": 10}}
     res5 = validate_number(q=opt5, answer=answer)
     assert res5 is True
+
+
+def test_get_counted_category():
+    categories = [
+        {
+            "id": 1,
+            "data": 1,
+            "form": 1,
+            "name": "Water",
+            "category": "Limited",
+        },
+        {
+            "id": 1,
+            "data": 2,
+            "form": 1,
+            "name": "Water",
+            "category": "Basic",
+        },
+    ]
+    df = pd.DataFrame(categories)
+    grouped = get_counted_category(df=df)
+    assert grouped == [
+        {"category": "Basic", "count": 1, "form": 1, "name": "Water"},
+        {"category": "Limited", "count": 1, "form": 1, "name": "Water"},
+    ]
