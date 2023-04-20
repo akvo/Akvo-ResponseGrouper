@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from itertools import groupby
 
 
@@ -17,7 +18,7 @@ def group_by_category_output(data):
                 for o in list(value)
             ],
         }
-        for key, value in groupby(g, key=lambda x:(x['name'], x['form']))
+        for key, value in groupby(g, key=lambda x: (x["name"], x["form"]))
     ]
     return res
 
@@ -110,3 +111,53 @@ def get_valid_list(opt, c, category):
     if sorted(valid) == sorted(validator):
         category = c["name"]
     return category
+
+
+def get_category(opt: dict, file_path: str = "./.category.json"):
+    with open(f"{file_path}") as config_file:
+        configs = json.load(config_file)
+    category = False
+    for config in configs:
+        for c in config["categories"]:
+            category = get_valid_list(opt, c, category)
+    return category
+
+
+def transform_categories_to_df(
+    categories: list, file_path: str = "./.category.json"
+):
+    df = pd.DataFrame(categories)
+    results = df.to_dict("records")
+    for d in results:
+        d.update({"category": get_category(opt=d["opt"], file_path=file_path)})
+    res = pd.DataFrame(results)
+    if list(res) != ["id", "data", "form", "name", "opt", "category"]:
+        return pd.DataFrame(
+            columns=[
+                "id",
+                "data",
+                "form",
+                "name",
+                "category",
+            ]
+        )
+    res = pd.concat(
+        [res.drop("opt", axis=1), pd.DataFrame(df["opt"].tolist())], axis=1
+    )
+    return res[
+        [
+            "id",
+            "data",
+            "form",
+            "name",
+            "category",
+        ]
+    ]
+
+
+def get_counted_category(df):
+    return (
+        df.groupby(["name", "category", "form"])["category"]
+        .agg("count")
+        .reset_index(name="count")
+    ).to_dict("records")
