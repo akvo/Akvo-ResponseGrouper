@@ -64,7 +64,10 @@ def test_get_valid_list():
                 "id": 567820002,
                 "name": "Toilet Available?",
                 "options": ["Yes"],
-                "else": {"name": "No Service"},
+                "else": {
+                    "name": "No Service",
+                    "ignore": [567800083, 578820191],
+                },
             },
             {
                 "id": 567800083,
@@ -73,16 +76,28 @@ def test_get_valid_list():
                 "else": {"name": "Limited"},
             },
             {
-                "id": 567800083,
+                "id": 578820191,
                 "name": "A",
                 "options": ["Boys n Girls"],
-                "else": {"name": "Limited"},
+                "other": [
+                    {
+                        "name": "Limited",
+                        "options": ["Girls Only", "Boys Only"],
+                        "questions": [],
+                    }
+                ],
+                "else": {"name": "No facility"},
             },
         ],
     }
     category = False
     _category = get_valid_list(opt, c, category)
     assert _category == "Limited"
+    opt2 = {
+        "567820002": ["No"],
+    }
+    _category2 = get_valid_list(opt2, c, category)
+    assert _category2 == "Basic"
 
 
 def test_get_flatten_list():
