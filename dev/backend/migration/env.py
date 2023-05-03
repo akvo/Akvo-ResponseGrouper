@@ -8,7 +8,6 @@ from psycopg2 import DatabaseError
 
 from alembic import context
 import logging
-from core.db import Base
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -30,6 +29,7 @@ if config.config_file_name is not None:
 
 from models.form import Form
 from models.question_group import QuestionGroup
+
 target_metadata = [Form.metadata, QuestionGroup.metadata]
 logger = logging.getLogger("alembic.env")
 
@@ -45,7 +45,9 @@ def run_migrations_offline() -> None:
     """
     if os.environ.get("TESTING"):
         raise DatabaseError("Test migrations offline is not permitted.")
-    context.configure(url=str(DATABASE_URL), )
+    context.configure(
+        url=str(DATABASE_URL),
+    )
 
     with context.begin_transaction():
         context.run_migrations()
@@ -59,8 +61,9 @@ def run_migrations_online() -> None:
     DB_URL = f"{DATABASE_URL}_test" if TESTING else DATABASE_URL
     if TESTING:
         # connect to primary db
-        default_engine = create_engine(DATABASE_URL,
-                                       isolation_level="AUTOCOMMIT")
+        default_engine = create_engine(
+            DATABASE_URL, isolation_level="AUTOCOMMIT"
+        )
         # drop testing db if it exists and create a fresh one
         with default_engine.connect() as default_conn:
             default_conn.execute("DROP DATABASE IF EXISTS demo_test")
