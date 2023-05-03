@@ -34,12 +34,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8.5",
-    install_requires=[
-        "fastapi",
-        "pydantic",
-        "sqlalchemy",
-        "pandas",
-    ],
+    install_requires=["fastapi", "pydantic", "sqlalchemy", "pandas"],
     extras_require={
         "dev": ["check-manifest"],
         "test": ["httpx"],
