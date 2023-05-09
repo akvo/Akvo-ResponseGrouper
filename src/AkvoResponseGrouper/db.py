@@ -36,17 +36,30 @@ def drop_view(connection):
     return connection.execute(text("DROP MATERIALIZED VIEW ar_category"))
 
 
-def get_option_by_questions(connection, questions: list):
+def validate_question_options(
+    connection, question, form, options: list = None
+):
     try:
         query = text(
-            "select option.*, question.id as qid, question.form as form"
-            " from option "
-            + "right join question on option.question = question.id "
-            + "where question.id in :questions"
+            "SELECT COUNT(*) as count FROM question "
+            + "where id = :question AND "
+            + "form = :form"
         )
-        return connection.execute(
+        if options:
+            query = text(
+                "SELECT option.name FROM option "
+                "JOIN question ON option.question = question.id "
+                + "where option.name IN :options AND "
+                + "option.question = :question AND "
+                + "question.form = :form"
+            )
+
+        res = connection.execute(
             query,
-            questions=tuple(questions),
-        ).fetchall()
+            options=tuple(options) if options else [],
+            question=question,
+            form=form,
+        )
+        return [d[0] for d in res.fetchall()]
     except Exception:
-        return None
+        return False
