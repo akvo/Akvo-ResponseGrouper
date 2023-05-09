@@ -16,7 +16,7 @@ from AkvoResponseGrouper.views import (
     refresh_view,
 )
 from scripts.seeder_datapoint import seed
-from AkvoResponseGrouper.db import validate_question_options
+from AkvoResponseGrouper.db import validate_question_options, get_questions
 
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
@@ -47,6 +47,8 @@ class TestMigration:
     ) -> None:
         engine = create_engine(get_db_url())
         with engine.connect() as connection:
+            gq = get_questions(connection=connection)
+            assert len(gq) > 0
             ce = validate_question_options(
                 connection=connection, question=1, form=1, options=["Yes"]
             )
