@@ -63,3 +63,7 @@ def validate_question_options(
         return [d[0] for d in res.fetchall()]
     except Exception:
         return False
+
+
+def get_questions(connection):
+    return connection.execute(text("SELECT * FROM question")).fetchall()
