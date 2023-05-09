@@ -28,8 +28,7 @@ def check_questions(connection, questions: list) -> list:
                     {
                         "error": "question",
                         "form": frm,
-                        "question": qs["id"],
-                        "diff": [qs["id"]],
+                        "question": qs["id"]
                     }
                 )
     return errors
