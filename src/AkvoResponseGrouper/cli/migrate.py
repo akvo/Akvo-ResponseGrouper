@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from sqlalchemy.exc import ArgumentError
 from .generate_schema import generate_schema
-from ..db import view_exist, drop_view
+from ..db import view_exist, drop_view, get_questions
 from .checker import check_config
 from .checker_db import check_questions, print_error_questions
 from ..utils import flatten_list
@@ -110,9 +110,14 @@ def main() -> None:
         schema = generate_schema(file_config=args.config)
         with engine.connect() as connection:
             with connection.begin():
-                error_qs = check_questions(
-                    connection=connection, questions=qls
-                )
+                error_qs = []
+                # make sure questions are available before checking
+                # the questions and options from category.json
+                gq = get_questions(connection=connection)
+                if len(gq):
+                    error_qs = check_questions(
+                        connection=connection, questions=qls
+                    )
                 if len(error_qs):
                     print_error_questions(errors=error_qs)
                 if len(errors) or len(duplicates) and not len(error_qs):
