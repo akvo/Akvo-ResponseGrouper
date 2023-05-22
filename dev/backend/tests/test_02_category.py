@@ -67,3 +67,51 @@ class TestMigration:
                 options=None,
             )
             assert cn == [1]
+
+    @pytest.mark.asyncio
+    async def test_get_grouped_categories_route(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        res = await client.get(
+            app.url_path_for("collection:get_grouped_categories")
+        )
+        assert res.status_code == 200
+        assert res.json() == [
+            {
+                "category": "Water",
+                "form": 554360198,
+                "options": [
+                    {"name": "Basic", "count": 14},
+                    {"name": "Limited", "count": 17},
+                    {"name": "No Service", "count": 40},
+                    {"name": "Was Limited", "count": 28},
+                ],
+            }
+        ]
+        res = await client.get(
+            app.url_path_for("collection:get_grouped_categories"),
+            params={
+                "form": 554360198,
+                "category": "limited",
+            },
+        )
+        assert res.status_code == 200
+        assert res.json() == [
+            {
+                "category": "Water",
+                "form": 554360198,
+                "options": [
+                    {"name": "Limited", "count": 17},
+                ],
+            }
+        ]
+        res = await client.get(
+            app.url_path_for(
+                "collection:get_grouped_categories",
+            ),
+            params={
+                "form": 1,
+            },
+        )
+        assert res.status_code == 200
+        assert res.json() == []
