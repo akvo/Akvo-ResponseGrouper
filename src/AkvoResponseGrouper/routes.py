@@ -30,6 +30,7 @@ async def get_index_category(
     data: Optional[str] = Query(default=None),
     session: Session = Depends(get_session),
 ):
+    data = data.split(",") if data else None
     res = get_categories(
         form=form, name=name, category=category, data=data, session=session
     )

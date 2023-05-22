@@ -19,6 +19,7 @@ class TestRouteCollection:
         )
         assert response.status_code == 200
 
+    @pytest.mark.asyncio
     async def test_if_grouped_categories_route_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
@@ -27,6 +28,7 @@ class TestRouteCollection:
         )
         assert response.status_code == 200
 
+    @pytest.mark.asyncio
     async def test_if_refresh_route_successfully_added(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
@@ -35,6 +37,7 @@ class TestRouteCollection:
         )
         assert response.status_code == 200
 
+    @pytest.mark.asyncio
     async def test_if_view_is_exists(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
