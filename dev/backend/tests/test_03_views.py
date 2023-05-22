@@ -44,7 +44,7 @@ class TestViews:
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         random = get_random_data(session=session)
-        res = get_categories(session=session, data=str(random.data))
+        res = get_categories(session=session, data=random.data)
         assert len(res) > 0
 
     @pytest.mark.asyncio
