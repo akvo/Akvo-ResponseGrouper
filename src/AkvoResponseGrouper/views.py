@@ -17,7 +17,7 @@ def get_data_categories(
     if name:
         queries.append(func.lower(Category.name) == name.lower())
     if data:
-        queries.append(Category.data == data)
+        queries.append(Category.data.in_(data))
     categories = session.query(Category).filter(*queries).all()
     categories = [c.serialize for c in categories]
     return categories
