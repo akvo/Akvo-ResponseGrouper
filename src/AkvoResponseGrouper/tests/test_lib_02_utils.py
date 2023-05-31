@@ -8,6 +8,7 @@ from ..utils import (
     flatten_list,
     validate_number,
     get_counted_category,
+    transform_categories_to_df,
 )
 
 """
@@ -152,3 +153,19 @@ def test_get_counted_category():
         {"category": "Basic", "count": 1, "form": 1, "name": "Water"},
         {"category": "Limited", "count": 1, "form": 1, "name": "Water"},
     ]
+
+
+def test_empty_transform_categories_to_df():
+    categories = [
+        {
+            "form": 1,
+            "data": 6,
+            "name": "Water",
+            "opt": {"567800083": ["Underconstruction"]},
+        }
+    ]
+    df = transform_categories_to_df(categories=categories)
+
+    # Assert that the column is empty
+    column = ["id", "data", "form", "name", "category"]
+    assert df[column].empty
