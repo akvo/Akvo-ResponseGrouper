@@ -84,5 +84,24 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Toilet Category",
+    "form": 554360198,
+    "categories": [
+      {
+        "name": "Improved",
+        "questions": [
+          {
+            "id": 567800083,
+            "name": "School Has Toilet",
+            "options": ["Yes"],
+            "else": {
+              "name": "Unimproved"
+            }
+          }
+        ]
+      }
+    ]
   }
 ]

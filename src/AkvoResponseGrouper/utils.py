@@ -113,10 +113,16 @@ def get_valid_list(opt, c, category):
     return category
 
 
-def get_category(opt: dict, file_path: str = "./.category.json"):
+def get_category(data: dict, file_path: str = "./.category.json"):
+    name = data["name"]
+    opt = data["opt"]
     with open(f"{file_path}") as config_file:
         configs = json.load(config_file)
     category = False
+    # filter config with data name (e.g. water == water)
+    configs = list(filter(
+        lambda x: x["name"].lower() == name.lower(), configs
+    ))
     for config in configs:
         for c in config["categories"]:
             category = get_valid_list(opt, c, category)
@@ -129,7 +135,7 @@ def transform_categories_to_df(
     df = pd.DataFrame(categories)
     results = df.to_dict("records")
     for d in results:
-        d.update({"category": get_category(opt=d["opt"], file_path=file_path)})
+        d.update({"category": get_category(data=d, file_path=file_path)})
     res = pd.DataFrame(results)
     if list(res) != ["id", "data", "form", "name", "opt", "category"]:
         return pd.DataFrame(

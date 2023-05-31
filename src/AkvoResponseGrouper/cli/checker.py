@@ -145,8 +145,9 @@ def check_config(file_config: str, info: bool = True):
         data = f.read()
         data = json.loads(data)
     errors = []
-    items = []
+    duplicates = []
     for config in data:
+        items = []
         qs = []
         cname = config.get("name")
         errors += find_errors_in_config(config=config, name=cname)
@@ -163,7 +164,8 @@ def check_config(file_config: str, info: bool = True):
                         "questions": qs,
                     }
                 )
-    duplicates = get_potential_duplicates(items=items)
+        # move duplicates check inside each config
+        duplicates += get_potential_duplicates(items=items)
     questions = [i["questions"] for i in items]
     errors = get_error_messages(errors=errors)
     if info:

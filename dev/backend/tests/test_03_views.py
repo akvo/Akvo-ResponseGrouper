@@ -26,14 +26,14 @@ class TestViews:
         assert data[0]["form"] == 554360198
 
     @pytest.mark.asyncio
-    async def test_views_filtering_by_name(
+    async def test_views_filtering_by_name_water(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         data = get_categories(session=session, name="water")
         assert data[0]["name"] == "Water"
 
     @pytest.mark.asyncio
-    async def test_views_filtering_by_category(
+    async def test_views_filtering_by_category_water_limited(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         data = get_categories(session=session, category="limited")
@@ -56,6 +56,35 @@ class TestViews:
         )
         assert data[0]["category"] == "Basic"
         assert data[0]["form"] == 554360198
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_name_toilet_category(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(session=session, name="Toilet Category")
+        assert data[0]["name"] == "Toilet Category"
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_category_toilet_category_improved(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(
+            session=session,
+            name="Toilet Category",
+            category="Improved"
+        )
+        assert data[0]["category"] == "Improved"
+
+    @pytest.mark.asyncio
+    async def test_views_filtering_by_category_toilet_category_limited(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        data = get_categories(
+            session=session,
+            name="Toilet Category",
+            category="Limited"
+        )
+        assert data == []
 
     @pytest.mark.asyncio
     async def test_views_get_result_keys(
