@@ -6,5 +6,6 @@ exclude *.yml
 exclude docs
 exclude pgadmin4
 exclude scripts
+exclude **/*.ipynb
 recursive-include src *.py
 recursive-include tests test*.py
