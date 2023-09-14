@@ -31,7 +31,10 @@ def seed(session: Session, file_path: str) -> None:
 
     for qgi, qg in enumerate(json_form["question_groups"]):
         question_group = QuestionGroup(
-            name=qg["question_group"], order=qgi, form=form.id
+            name=qg["question_group"],
+            order=qgi,
+            form=form.id,
+            repeatable=qg.get("repeatable", False)
         )
         session.add(question_group)
         session.commit()

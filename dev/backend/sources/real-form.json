@@ -303,6 +303,7 @@
     },
     {
       "question_group": "Core Hygiene Questions",
+      "repeatable": true,
       "questions": [
         {
           "id": 578820194,
