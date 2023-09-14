@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8cd69d641604'
-down_revision = '19c05e6b7198'
+revision = "8cd69d641604"
+down_revision = "19c05e6b7198"
 branch_labels = None
 depends_on = None
 
@@ -19,11 +19,11 @@ depends_on = None
 def upgrade() -> None:
     op.add_column(
         "question_group",
-        sa.Column("repeatable", sa.Boolean(), nullable=False, default=False)
+        sa.Column("repeatable", sa.Boolean(), nullable=False, default=False),
     )
     op.add_column(
         "answer",
-        sa.Column("repeat", sa.Integer(), nullable=True, default=None)
+        sa.Column("repeat", sa.Integer(), nullable=True, default=0),
     )
 
 

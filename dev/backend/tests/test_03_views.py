@@ -69,9 +69,7 @@ class TestViews:
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         data = get_categories(
-            session=session,
-            name="Toilet Category",
-            category="Improved"
+            session=session, name="Toilet Category", category="Improved"
         )
         assert data[0]["category"] == "Improved"
 
@@ -80,9 +78,7 @@ class TestViews:
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         data = get_categories(
-            session=session,
-            name="Toilet Category",
-            category="Limited"
+            session=session, name="Toilet Category", category="Limited"
         )
         assert data == []
 

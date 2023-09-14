@@ -24,9 +24,7 @@ def generate_answer(data, form, fake) -> None:
         for repeat_index in range(repeats):
             for q in qg.question:
                 answer = Answer(
-                    question=q.id,
-                    data=data.id,
-                    repeat=repeat_index if qg.repeatable else None
+                    question=q.id, data=data.id, repeat=repeat_index
                 )
                 if q.dependency:
                     valid = 0
@@ -75,7 +73,7 @@ def seed(session=Session, repeats=int) -> None:
             session.refresh(data)
         print(f"ADDED {repeats} datapoint to {form.name}")
 
-    if inspect(engine).has_table('ar_category'):
+    if inspect(engine).has_table("ar_category"):
         refresh_view(session)
 
 

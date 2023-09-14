@@ -13,34 +13,38 @@ from core.db import Base
 
 class AnswerDict(TypedDict):
     question: int
-    value: Union[int, float, str, bool, dict, List[str], List[int],
-                 List[float], None]
+    value: Union[
+        int, float, str, bool, dict, List[str], List[int], List[float], None
+    ]
 
 
 class Answer(Base):
     __tablename__ = "answer"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
-    question = Column(Integer,
-                      ForeignKey('question.id',
-                                 onupdate="CASCADE",
-                                 ondelete="CASCADE"),
-                      primary_key=True)
-    data = Column(Integer,
-                  ForeignKey('data.id', onupdate="CASCADE",
-                             ondelete="CASCADE"),
-                  primary_key=True)
+    question = Column(
+        Integer,
+        ForeignKey("question.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    data = Column(
+        Integer,
+        ForeignKey("data.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True,
+    )
     text = Column(Text, nullable=True)
     value = Column(Float, nullable=True)
     options = Column(pg.ARRAY(String), nullable=True)
-    repeat = Column(Integer, nullable=True)
+    repeat = Column(Integer, nullable=False, default=0)
 
-    def __init__(self,
-                 question: int,
-                 data: Optional[int] = None,
-                 text: Optional[str] = None,
-                 value: Optional[float] = None,
-                 options: Optional[List[str]] = None,
-                 repeat: Optional[int] = None):
+    def __init__(
+        self,
+        question: int,
+        data: Optional[int] = None,
+        text: Optional[str] = None,
+        value: Optional[float] = None,
+        options: Optional[List[str]] = None,
+        repeat: Optional[int] = 0,
+    ):
         self.question = question
         self.data = data
         self.text = text
@@ -60,7 +64,7 @@ class Answer(Base):
             "text": self.text,
             "value": self.value,
             "options": self.options,
-            "repeat": self.repeat
+            "repeat": self.repeat,
         }
 
     @property
@@ -70,8 +74,9 @@ class Answer(Base):
         }
         type = self.question_detail.type
         if type in [
-                QuestionType.administration, QuestionType.number,
-                QuestionType.answer_list
+            QuestionType.administration,
+            QuestionType.number,
+            QuestionType.answer_list,
         ]:
             answer.update({"value": self.value})
         if type in [QuestionType.text, QuestionType.geo, QuestionType.date]:
@@ -92,7 +97,7 @@ class AnswerBase(BaseModel):
     text: Optional[str] = None
     value: Optional[float] = None
     options: Optional[List[str]] = None
-    repeat: Optional[int] = None
+    repeat: Optional[int] = 0
 
     class Config:
         orm_mode = True
