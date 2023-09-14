@@ -32,18 +32,21 @@ class Answer(Base):
     text = Column(Text, nullable=True)
     value = Column(Float, nullable=True)
     options = Column(pg.ARRAY(String), nullable=True)
+    repeat = Column(Integer, nullable=True)
 
     def __init__(self,
                  question: int,
                  data: Optional[int] = None,
                  text: Optional[str] = None,
                  value: Optional[float] = None,
-                 options: Optional[List[str]] = None):
+                 options: Optional[List[str]] = None,
+                 repeat: Optional[int] = None):
         self.question = question
         self.data = data
         self.text = text
         self.value = value
         self.options = options
+        self.repeat = repeat
 
     def __repr__(self) -> int:
         return f"<Answer {self.id}>"
@@ -57,6 +60,7 @@ class Answer(Base):
             "text": self.text,
             "value": self.value,
             "options": self.options,
+            "repeat": self.repeat
         }
 
     @property
@@ -88,6 +92,7 @@ class AnswerBase(BaseModel):
     text: Optional[str] = None
     value: Optional[float] = None
     options: Optional[List[str]] = None
+    repeat: Optional[int] = None
 
     class Config:
         orm_mode = True
