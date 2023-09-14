@@ -31,6 +31,7 @@ class TestCategoryDataFrame(unittest.TestCase):
             {
                 "id": 1,
                 "data": 1,
+                "repeat": 0,
                 "form": 1,
                 "name": "Water",
                 "opt": {
@@ -45,6 +46,7 @@ class TestCategoryDataFrame(unittest.TestCase):
             {
                 "id": 1,
                 "data": 1,
+                "repeat": 0,
                 "form": 1,
                 "name": "Water",
                 "category": "Limited",
