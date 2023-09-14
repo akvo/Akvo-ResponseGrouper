@@ -120,9 +120,9 @@ def get_category(data: dict, file_path: str = "./.category.json"):
         configs = json.load(config_file)
     category = False
     # filter config with data name (e.g. water == water)
-    configs = list(filter(
-        lambda x: x["name"].lower() == name.lower(), configs
-    ))
+    configs = list(
+        filter(lambda x: x["name"].lower() == name.lower(), configs)
+    )
     for config in configs:
         for c in config["categories"]:
             category = get_valid_list(opt, c, category)
