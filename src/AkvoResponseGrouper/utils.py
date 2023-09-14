@@ -132,16 +132,18 @@ def get_category(data: dict, file_path: str = "./.category.json"):
 def transform_categories_to_df(
     categories: list, file_path: str = "./.category.json"
 ):
+    expected_cols = ["id", "data", "repeat", "form", "name", "opt", "category"]
     df = pd.DataFrame(categories)
     results = df.to_dict("records")
     for d in results:
         d.update({"category": get_category(data=d, file_path=file_path)})
     res = pd.DataFrame(results)
-    if list(res) != ["id", "data", "form", "name", "opt", "category"]:
+    if list(res) != expected_cols:
         return pd.DataFrame(
             columns=[
                 "id",
                 "data",
+                "repeat",
                 "form",
                 "name",
                 "category",
@@ -154,6 +156,7 @@ def transform_categories_to_df(
         [
             "id",
             "data",
+            "repeat",
             "form",
             "name",
             "category",

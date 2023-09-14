@@ -90,6 +90,7 @@ class TestViews:
         assert list(res.head(1).to_dict("records")[0].keys()) == [
             "id",
             "data",
+            "repeat",
             "form",
             "name",
             "category",

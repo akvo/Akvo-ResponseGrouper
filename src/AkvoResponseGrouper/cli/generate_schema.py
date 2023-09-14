@@ -83,7 +83,8 @@ def generate_schema(file_config: str) -> str:
             question_config = get_question_config(config=c, cl=question_config)
         ql = ",".join(question_config)
         mview += (
-            f"SELECT q.form, a.data, a.repeat, '{config['name']}' as name,"
+            "SELECT q.form, a.data, COALESCE(a.repeat, 0) as repeat,"
+            f" '{config['name']}' as name,"
             " jsonb_object_agg(a.question,COALESCE(a.options,"
             " array[a.value::text])) as opt \n"
         )

@@ -15,6 +15,7 @@ class GroupByDict(TypedDict):
 class CategoryDict(TypedDict):
     id: int
     data: int
+    repeat: int
     form: int
     name: str
     category: str
@@ -23,6 +24,7 @@ class CategoryDict(TypedDict):
 class CategoryModelDict(TypedDict):
     id: int
     data: int
+    repeat: int
     form: int
     name: str
     opt: dict
@@ -33,6 +35,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     form = Column(Integer)
     data = Column(Integer)
+    repeat = Column(Integer)
     name = Column(Text)
     opt = Column(JSON)
 
@@ -44,6 +47,7 @@ class Category(Base):
         return {
             "id": self.id,
             "data": self.data,
+            "repeat": self.repeat,
             "form": self.form,
             "name": self.name,
             "opt": self.opt,
