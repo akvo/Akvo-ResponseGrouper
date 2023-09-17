@@ -83,14 +83,15 @@ def generate_schema(file_config: str) -> str:
             question_config = get_question_config(config=c, cl=question_config)
         ql = ",".join(question_config)
         mview += (
-            f"SELECT q.form, a.data, '{config['name']}' as name,"
+            "SELECT q.form, a.data, COALESCE(a.repeat, 0) as repeat,"
+            f" '{config['name']}' as name,"
             " jsonb_object_agg(a.question,COALESCE(a.options,"
             " array[a.value::text])) as opt \n"
         )
         mview += "FROM answer a \n"
         mview += "LEFT JOIN question q ON q.id = a.question \n"
         mview += "WHERE (a.value IS NOT NULL OR a.options IS NOT NULL) \n"
-        mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data\n"
+        mview += f"AND q.id IN ({ql}) GROUP BY q.form, a.data, a.repeat\n"
         if main_union < len(configs) - 1:
             mview += " UNION "
     mview += ") as categories;"

@@ -119,6 +119,7 @@
     },
     {
       "question_group": "Core Drinking Water Questions",
+      "repeatable": true,
       "questions": [
         {
           "id": 580800138,
@@ -187,6 +188,7 @@
     },
     {
       "question_group": "Core Sanitation Questions",
+      "repeatable": true,
       "questions": [
         {
           "id": 567800083,
@@ -303,6 +305,7 @@
     },
     {
       "question_group": "Core Hygiene Questions",
+      "repeatable": true,
       "questions": [
         {
           "id": 578820194,

@@ -20,36 +20,40 @@ session = SessionLocal()
 def generate_answer(data, form, fake) -> None:
     answered_data = []
     for qg in form.question_group:
-        for q in qg.question:
-            answer = Answer(question=q.id, data=data.id)
-            if q.dependency:
-                valid = 0
-                for d in q.dependency:
-                    answered = list(
-                        filter(lambda x: x["id"] == d["id"], answered_data)
-                    )
-                    if len(answered):
-                        if len(
-                            set(answered[0]["options"]).intersection(
-                                d["options"]
-                            )
-                        ):
-                            valid += 1
-                if valid != len(q.dependency):
-                    continue
-            if len(q.option):
-                ox = random.randint(0, len(q.option) - 1)
-                opt = q.option[ox]
-                answer.options = [opt.name]
-            if q.type == QuestionType.number:
-                # 0 For No Service Test
-                answer.value = random.randint(0 if q.id == 999 else 1, 5)
-            if q.type == QuestionType.text:
-                answer.text = fake.name()
-            aw = answer.options or answer.value or answer.text
-            if aw:
-                answered_data.append({"id": q.id, "options": aw})
-                data.answer.append(answer)
+        repeats = random.randint(0, 3) if qg.repeatable else 1
+        for repeat_index in range(repeats):
+            for q in qg.question:
+                answer = Answer(
+                    question=q.id, data=data.id, repeat=repeat_index
+                )
+                if q.dependency:
+                    valid = 0
+                    for d in q.dependency:
+                        answered = list(
+                            filter(lambda x: x["id"] == d["id"], answered_data)
+                        )
+                        if len(answered):
+                            if len(
+                                set(answered[0]["options"]).intersection(
+                                    d["options"]
+                                )
+                            ):
+                                valid += 1
+                    if valid != len(q.dependency):
+                        continue
+                if len(q.option):
+                    ox = random.randint(0, len(q.option) - 1)
+                    opt = q.option[ox]
+                    answer.options = [opt.name]
+                if q.type == QuestionType.number:
+                    # 0 For No Service Test
+                    answer.value = random.randint(0 if q.id == 999 else 1, 5)
+                if q.type == QuestionType.text:
+                    answer.text = fake.name()
+                aw = answer.options or answer.value or answer.text
+                if aw:
+                    answered_data.append({"id": q.id, "options": aw})
+                    data.answer.append(answer)
 
 
 def seed(session=Session, repeats=int) -> None:
@@ -69,7 +73,7 @@ def seed(session=Session, repeats=int) -> None:
             session.refresh(data)
         print(f"ADDED {repeats} datapoint to {form.name}")
 
-    if inspect(engine).has_table('ar_category'):
+    if inspect(engine).has_table("ar_category"):
         refresh_view(session)
 
 
